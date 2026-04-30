@@ -652,3 +652,47 @@ export const MODEL_PAIRINGS = [
     isAntiPattern: true,
   },
 ] as const;
+
+/**
+ * ESCALATION_RULE
+ * What to do when a slice gets two consecutive Verifier FAILs.
+ *
+ * The framing is deliberate: a second FAIL is almost never a Builder problem —
+ * it is a slice-definition problem. The default response is to STOP, freeze
+ * the Builder, and re-scope the slice in HANDOFF.md. Swapping models or
+ * scolding the Builder is what teams reach for first; it is also what burns
+ * the most tokens for the least signal.
+ */
+export const ESCALATION_RULE = {
+  rule: "Two consecutive FAILs on the same slice = freeze the slice, not the Builder.",
+  premise:
+    "A single FAIL is a Builder mistake. A second FAIL on the same slice is a slice-definition mistake. The Verifier is telling you the HANDOFF.md is ambiguous, the Acceptance Criteria are untestable, or the slice is too big — not that the Builder is bad. Treat the second FAIL as a hard stop, not a third attempt.",
+  steps: [
+    {
+      n: "01",
+      title: "Stop the Builder. Do not retry the slice.",
+      body: "A third Builder attempt on the same HANDOFF.md will produce a third correlated failure. Close the second PR without merging. Tag it `escalated/<slice-name>` so you can find it later.",
+    },
+    {
+      n: "02",
+      title: "Read both Verifier reports side-by-side.",
+      body: "Look for the same criterion failing twice, or two different criteria failing because of one underlying ambiguity. The pattern is the diagnosis. If the two reports disagree about what failed, the slice itself is under-specified.",
+    },
+    {
+      n: "03",
+      title: "Re-scope the slice in HANDOFF.md, do not re-prompt the Builder.",
+      body: "Three honest options: (a) split the slice into two smaller slices, (b) tighten the Acceptance Criteria so they are individually testable, or (c) add a missing constraint the Builder kept inventing wrong. Commit the new HANDOFF.md as its own commit so the audit trail shows the re-scope.",
+    },
+    {
+      n: "04",
+      title: "Only after re-scoping, restart with a fresh Builder context.",
+      body: "Use the same Builder model on the new HANDOFF.md — do not switch models to mask a slice-definition problem. If the same Builder still fails the re-scoped slice, then escalate to a human and treat it as a real engineering problem, not an agent problem.",
+    },
+  ],
+  antiPatterns: [
+    "Swapping the Builder model on the third attempt — masks the real defect.",
+    "Letting the Verifier propose the fix — violates the independence rule and creates a feedback loop where the Verifier grades its own suggestions.",
+    "Merging a CONDITIONAL PASS as if it were a PASS to avoid the escalation — the silent debt this creates is exactly the failure mode this whole framework was built to prevent.",
+    "Treating the second FAIL as a Builder performance issue — it is almost always an upstream HANDOFF.md issue.",
+  ],
+} as const;

@@ -22,6 +22,7 @@ import {
   BUILD_VERIFY_PRINCIPLES,
   BUILD_VERIFY_STAGES,
   CLOSEOUT_PROMPT,
+  ESCALATION_RULE,
   FAILURE_MODES,
   HANDOFF_TEMPLATE,
   MODEL_PAIRINGS,
@@ -739,6 +740,86 @@ function BuildAndVerify() {
             different lab — that captures most of the independence benefit at
             a fraction of the cost.
           </p>
+        </div>
+
+        {/* Escalation rule — what to do when a slice gets two consecutive Verifier FAILs */}
+        <div className="mt-16">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="stamp">ESCALATION RULE · TWO FAILS = STOP</div>
+              <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+                When a slice fails verification twice in a row.
+              </h3>
+            </div>
+            <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
+              The reflex is to swap the Builder model. The right move is to
+              freeze the slice, read both Verifier reports, and re-scope the
+              <code className="mx-1 font-mono text-foreground">HANDOFF.md</code>.
+              Two FAILs is a slice problem, not a Builder problem.
+            </p>
+          </div>
+
+          <div className="mt-8 paper-card overflow-hidden">
+            {/* The rule, stamped at the top */}
+            <div className="border-b border-border bg-primary/5 px-6 py-5">
+              <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+                The Rule
+              </div>
+              <p className="mt-2 font-display text-2xl font-bold leading-snug text-foreground">
+                {ESCALATION_RULE.rule}
+              </p>
+              <p className="mt-3 max-w-prose text-[14px] leading-relaxed text-foreground/85">
+                {ESCALATION_RULE.premise}
+              </p>
+            </div>
+
+            {/* The four steps */}
+            <ol className="divide-y divide-border">
+              {ESCALATION_RULE.steps.map((step) => (
+                <li
+                  key={step.n}
+                  className="grid grid-cols-12 gap-6 px-6 py-6"
+                >
+                  <div className="col-span-12 sm:col-span-2">
+                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+                      Step {step.n}
+                    </span>
+                  </div>
+                  <div className="col-span-12 sm:col-span-10">
+                    <h4 className="font-display text-xl font-bold leading-snug text-foreground">
+                      {step.title}
+                    </h4>
+                    <p className="mt-2 max-w-prose text-[15px] leading-relaxed text-foreground/85">
+                      {step.body}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+
+            {/* Anti-patterns footer */}
+            <div className="border-t border-border bg-secondary/40 px-6 py-5">
+              <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+                Anti-patterns · Do not do these
+              </div>
+              <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">
+                {ESCALATION_RULE.antiPatterns.map((p, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-2 text-[14px] leading-relaxed text-foreground/85"
+                  >
+                    <span
+                      aria-hidden
+                      className="mt-1 font-mono text-[11px] font-bold text-primary"
+                    >
+                      ✕
+                    </span>
+                    <span>{p}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </div>
         </div>
 
         {/* The drop-in markdown spec */}
