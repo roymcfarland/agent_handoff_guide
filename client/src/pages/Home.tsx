@@ -39,6 +39,7 @@ import {
   PHASE_TWO_CALIBRATION,
   PHASE_TWO_DORMANT,
   PHASE_TWO_FINDINGS,
+  PHASE_TWO_BUILDER_PROMPT,
   PHASE_TWO_INSTALL_COMPLETE,
   PHASE_TWO_INTRO,
   PHASE_TWO_LEVERAGE,
@@ -1151,7 +1152,40 @@ function PhaseTwo() {
           </div>
         </div>
 
-        {/* Phase 2 prompt — copyable */}
+        {/* Phase 2 Builder prompt — copyable */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">PROMPT · PHASE 2 BUILD</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              The Builder prompt for code-PR authoring.
+            </h3>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              Phase 2 has two prompts, not one. The Builder ships features
+              against the spec; the Verifier audits them. Pair them every PR.
+            </p>
+            <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
+              Six rules, but the spine is two: <em>read PROJECT.md before
+              writing code</em>, and <em>write the PR description so the
+              Verifier's job is easy</em>. Both rules trade a few seconds of
+              Builder discipline for a Verifier pass on the first try.
+            </p>
+            <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
+              Self-flagged{" "}
+              <code className="font-mono text-foreground">SPEC-CONFLICT</code>{" "}
+              notes are a feature, not a failure. They surface drift before
+              code is written instead of after the Verifier rejects the PR.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <PromptCard
+              label="PROMPT · PHASE 2 BUILD"
+              title="Builder ships a PR against PROJECT.md"
+              subtitle="Actor — Builder LLM (or human) · per task"
+              body={PHASE_TWO_BUILDER_PROMPT}
+            />
+          </div>
+        </div>
+        {/* Phase 2 Verifier prompt — copyable */}
         <div className="mt-16 grid gap-8 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <div className="stamp">PROMPT · PHASE 2 AUDIT</div>
