@@ -1282,6 +1282,62 @@ What I want from you:
 Scope: this task only. Do not modify PROJECT.md. Do not introduce
 features, files, or dependencies that were not requested.
 `;
+export const PHASE_TWO_BUILDER_PR_DESCRIPTION = `## Phase 2 Builder PR — <feature or fix name>
+**Builder model:** <name + version, e.g. claude-sonnet-4.5-2026-03 — or "human">
+**Branch:** \`feature/<short-name>\` or \`fix/<short-name>\`
+**PROJECT.md ref:** <commit SHA of PROJECT.md the Builder worked against>
+> One-paragraph summary of what this PR does, in plain language. Match the
+> wording used in the task description so the Verifier can map it directly
+> to the requested change.
+---
+### What changed
+| File | Change | Why |
+|---|---|---|
+| \`src/...\` | <one-line description> | <link to task or PROJECT.md section> |
+| \`src/...\` | <one-line description> | <link to task or PROJECT.md section> |
+_(One row per touched file. If a row is not directly justified by the
+requested task, it is out of scope and should be removed from this PR.)_
+### Non-goals respected
+- I read PROJECT.md § Non-goals before opening this PR.
+- This PR does not cross any of the following non-goals: <list the ones
+  that were even adjacent to this PR's surface area>.
+- If a non-goal felt like it was being approached, I stopped and surfaced
+  it in the next section instead.
+### SPEC-CONFLICT notes
+- None.
+_(If during implementation you discovered that PROJECT.md is wrong or
+has been obsoleted by the product's evolution, write it here. Do NOT
+amend PROJECT.md inside this PR. The Gatekeeper will decide whether to
+open a separate spec-amendment PR first.)_
+### Out-of-scope changes
+- None.
+_(If you touched anything outside the requested task — refactors, new
+dependencies, unrelated edits — list them here and justify. The Verifier
+will flag them either way; declaring them here is faster than getting a
+REQUEST-CHANGES verdict.)_
+### Self-classification of judgment calls
+- INFO: <stylistic choice, naming decision, or other non-blocking call>.
+- MINOR: <choice that the Verifier may push back on; reasoning here>.
+_(If you self-flag a MAJOR finding, the PR is not ready. Fix it before
+opening the PR or attach a SPEC-CONFLICT note above.)_
+### Tests run
+\`\`\`
+$ <test command> — <result>
+$ <typecheck command> — <result>
+$ <lint command> — <result>
+\`\`\`
+_(A red CI is a wasted Verifier cycle. All three should be green before
+you open the PR.)_
+### Verifier expectation
+- Expected verdict: \`APPROVE\` (no MAJOR findings expected).
+- If \`SPEC-UPDATE-REQUIRED\` is returned, the Builder will open a separate
+  spec-amendment PR before this one merges.
+---
+_Phase 2 Builder rules: scope is the requested task only, no
+out-of-scope refactors, no silent debt, no quiet PROJECT.md amendments.
+All non-goals are respected unless explicitly amended in a separate PR
+first._
+`;
 export const PHASE_TWO_PROMPT = `PHASE 2 AUDIT — <repo name>
 
 Context:

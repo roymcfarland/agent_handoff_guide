@@ -39,6 +39,7 @@ import {
   PHASE_TWO_CALIBRATION,
   PHASE_TWO_DORMANT,
   PHASE_TWO_FINDINGS,
+  PHASE_TWO_BUILDER_PR_DESCRIPTION,
   PHASE_TWO_BUILDER_PROMPT,
   PHASE_TWO_INSTALL_COMPLETE,
   PHASE_TWO_INTRO,
@@ -1219,7 +1220,46 @@ function PhaseTwo() {
             />
           </div>
         </div>
-
+        {/* Phase 2 Builder PR description template — copyable */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">TEMPLATE · PHASE 2 PR BODY</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              The Builder PR description — fill-in template.
+            </h3>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              The PR body the Builder writes is what the Verifier compares
+              the diff against. Silent debt left out of this template is the
+              most expensive kind.
+            </p>
+            <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
+              Three fields do most of the work:{" "}
+              <em>Non-goals respected</em> (forces a re-read of
+              PROJECT.md before the PR ships),{" "}
+              <em>SPEC-CONFLICT notes</em> (surface drift before merge
+              instead of after), and <em>Out-of-scope changes</em> (the
+              most common MAJOR finding).
+            </p>
+            <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
+              Mirrors the Phase 1{" "}
+              <code className="font-mono text-foreground">
+                builder-pr-description.md
+              </code>{" "}
+              template in section 06, with the{" "}
+              <em>Acceptance Criteria self-audit</em> swapped for{" "}
+              <em>Non-goals respected</em> — because Phase 2 has no
+              HANDOFF.md, only PROJECT.md.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <PromptCard
+              label="TEMPLATE · PHASE 2 PR BODY"
+              title="Builder fills in this template before opening the PR"
+              subtitle="Actor — Builder LLM (or human) · per PR"
+              body={PHASE_TWO_BUILDER_PR_DESCRIPTION}
+            />
+          </div>
+        </div>
         {/* How to wire Phase 2 into PR flow */}
         <div className="mt-16 grid gap-8 lg:grid-cols-12">
           <div className="lg:col-span-4">
