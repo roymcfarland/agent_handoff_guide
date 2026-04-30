@@ -143,6 +143,33 @@
   section[id] {
     scroll-margin-top: 4.5rem;
   }
+  /* Stage-3 mobile fix: shadcn's <Table> applies whitespace-nowrap to every
+     <th> and <td> by default. That keeps cells on one line and grows the
+     table to its natural width, overflowing the page on mobile. The tables
+     in this guide are all prose-style — wrapping is fine and preferred over
+     forcing horizontal scroll on phone. */
+  @media (max-width: 767px) {
+    table th, table td {
+      white-space: normal;
+    }
+  }
+  /* Stage-3 mobile fix: any element marked as a horizontally-scrollable
+     viewport (overflow-x-auto / overflow-x-scroll) needs min-width: 0 so its
+     parent flex/grid item is allowed to shrink below the wrapper's intrinsic
+     content width. Without this, the wrapper passes its content's natural
+     width up to the parent and the page widens on mobile. */
+  .overflow-x-auto, .overflow-x-scroll {
+    min-width: 0;
+  }
+  /* Stage-3 mobile fix: grid items and direct children of common layout
+     wrappers default to min-width: auto, which is min-content. That means a
+     long unbreakable label inside a grid cell (e.g. an h4 with hyphens) keeps
+     the grid cell at the label's min-content width and overflows the page.
+     Setting min-width: 0 lets the cell shrink and the wrap rules on the h4
+     take effect. */
+  [class*="grid-cols"] > *, [class*="col-span"] {
+    min-width: 0;
+  }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     font-weight: 700;
