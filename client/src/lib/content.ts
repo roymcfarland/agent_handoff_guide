@@ -19,38 +19,33 @@ export const SECTIONS = [
   { id: "install", label: "Install on Repo", number: "04" },
   { id: "prompts", label: "Prompt Library", number: "05" },
   { id: "build-verify", label: "Build & Verify", number: "06" },
+  { id: "phase-2", label: "After the Install", number: "07" },
 ] as const;
 
 export const FAILURE_MODES = [
   {
     title: "Committing directly to main",
-    body:
-      "Every handoff lands unreviewed code on main. No diff surface, no CI gate, no easy revert. The agent is incentivized to make it pass locally rather than make it correct, because there is no PR conversation.",
+    body: "Every handoff lands unreviewed code on main. No diff surface, no CI gate, no easy revert. The agent is incentivized to make it pass locally rather than make it correct, because there is no PR conversation.",
   },
   {
     title: "One document doing five jobs",
-    body:
-      "When the handoff doc is roadmap, task list, status log, architectural notes, and next-builder briefing all at once, every new agent re-reads the entire history and wastes context relitigating decisions that are already settled.",
+    body: "When the handoff doc is roadmap, task list, status log, architectural notes, and next-builder briefing all at once, every new agent re-reads the entire history and wastes context relitigating decisions that are already settled.",
   },
   {
     title: "Weak persona priming",
-    body:
-      "Telling an agent it is a 'professional software engineer' does not constrain behavior. A useful prompt tells the agent what NOT to do — do not refactor outside scope, do not add dependencies, do not expand the plan.",
+    body: "Telling an agent it is a 'professional software engineer' does not constrain behavior. A useful prompt tells the agent what NOT to do — do not refactor outside scope, do not add dependencies, do not expand the plan.",
   },
   {
     title: "No definition of done",
-    body:
-      "Without an explicit acceptance contract, the agent decides when it is done. That is where scope creep and 'I also went ahead and...' come from.",
+    body: "Without an explicit acceptance contract, the agent decides when it is done. That is where scope creep and 'I also went ahead and...' come from.",
   },
   {
     title: "Self-graded handoffs",
-    body:
-      "Agents are biased to claim success on their own work. Without a forced honesty step, the next agent inherits silent debt — stubs, hacks, and skipped criteria that were never declared.",
+    body: "Agents are biased to claim success on their own work. Without a forced honesty step, the next agent inherits silent debt — stubs, hacks, and skipped criteria that were never declared.",
   },
   {
     title: "Planning vs. building drift",
-    body:
-      "Agents drift into planning mode when the task is ambiguous, the doc reads like a brainstorm, or there is no explicit BUILD-ONLY framing with a stop condition.",
+    body: "Agents drift into planning mode when the task is ambiguous, the doc reads like a brainstorm, or there is no explicit BUILD-ONLY framing with a stop condition.",
   },
 ] as const;
 
@@ -136,7 +131,8 @@ export const INSTALL_STEPS = [
     n: "02",
     duration: "~30 min",
     actor: "You — the highest-leverage step",
-    title: "Edit PROJECT.md — fix Conventions, fill in Non-goals and Human-only context",
+    title:
+      "Edit PROJECT.md — fix Conventions, fill in Non-goals and Human-only context",
     body: "The draft will be ~70% right. You fix the Conventions section (the Builder spots patterns; only you know which ones are intentional vs. tech debt), fill in Non-goals (what the project deliberately does NOT do — the most important section and the one the Builder cannot infer), answer the Open Questions, and add a Human-only context section for business or regulatory constraints the code does not encode. Commit as `docs: bootstrap PROJECT.md`.",
     promptRef: "edit-pass",
   },
@@ -775,8 +771,10 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         actor: "builder",
         filename: "prompt-00-inventory.md",
         title: "Inventory — reverse-engineer PROJECT.md",
-        whenToUse: "Run first. Read-only pass over the repo to produce a draft PROJECT.md.",
-        context: "Drop into Codex or Cursor at the start of install. Agent is forbidden from writing code.",
+        whenToUse:
+          "Run first. Read-only pass over the repo to produce a draft PROJECT.md.",
+        context:
+          "Drop into Codex or Cursor at the start of install. Agent is forbidden from writing code.",
         body: INVENTORY_PROMPT,
         toastLabel: "Inventory prompt copied",
       },
@@ -787,8 +785,10 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         actor: "human",
         filename: "edit-pass-checklist.md",
         title: "Edit Pass Checklist — you, not the LLM",
-        whenToUse: "Run immediately after Inventory. The draft is ~70% right; this checklist finishes the other 30%.",
-        context: "This is a human checklist, not an LLM prompt. Keep it open alongside the draft PROJECT.md and check boxes as you go.",
+        whenToUse:
+          "Run immediately after Inventory. The draft is ~70% right; this checklist finishes the other 30%.",
+        context:
+          "This is a human checklist, not an LLM prompt. Keep it open alongside the draft PROJECT.md and check boxes as you go.",
         body: EDIT_PASS_CHECKLIST,
         toastLabel: "Edit Pass checklist copied",
       },
@@ -799,8 +799,10 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         actor: "verifier",
         filename: "prompt-02-project-md-sanity.md",
         title: "PROJECT.md Sanity Check — Verifier, clean context",
-        whenToUse: "After your Edit Pass. Ask a different LLM, in a clean chat, to audit the doc against the repo.",
-        context: "Paste the edited PROJECT.md and a directory listing into a fresh Verifier session. Allow it to diagnose, never to rewrite.",
+        whenToUse:
+          "After your Edit Pass. Ask a different LLM, in a clean chat, to audit the doc against the repo.",
+        context:
+          "Paste the edited PROJECT.md and a directory listing into a fresh Verifier session. Allow it to diagnose, never to rewrite.",
         body: VERIFIER_SANITY_PROMPT,
         toastLabel: "PROJECT.md sanity prompt copied",
       },
@@ -811,8 +813,10 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         actor: "human",
         filename: "prompt-03-first-handoff-scoping.md",
         title: "First HANDOFF.md — scoping assistant",
-        whenToUse: "Optional scoping aid when you write the first HANDOFF.md. Forces a small, observable slice.",
-        context: "The assistant asks you five scoping questions, validates scope, and only then drafts the HANDOFF.md. It will refuse a slice with more than 5 criteria or 5 files.",
+        whenToUse:
+          "Optional scoping aid when you write the first HANDOFF.md. Forces a small, observable slice.",
+        context:
+          "The assistant asks you five scoping questions, validates scope, and only then drafts the HANDOFF.md. It will refuse a slice with more than 5 criteria or 5 files.",
         body: FIRST_HANDOFF_PROMPT,
         toastLabel: "First HANDOFF prompt copied",
       },
@@ -821,7 +825,8 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
   {
     scenario: "Recurring loop — every slice",
     scenarioTag: "LOOP",
-    cadence: "Run in order for each slice. Same Builder session for 04 and 05; different LLM, fresh context, for 06.",
+    cadence:
+      "Run in order for each slice. Same Builder session for 04 and 05; different LLM, fresh context, for 06.",
     intro:
       "These are the three prompts your team uses on every slice once the install is complete. The Builder and Closeout are the same session. The Verifier is a separate model in a clean context window.",
     items: [
@@ -832,8 +837,10 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         actor: "builder",
         filename: "prompt-04-builder.md",
         title: "Builder — executes the slice",
-        whenToUse: "Open each slice with this. Agent reads PROJECT.md and HANDOFF.md, writes code, runs tests.",
-        context: "Builder session. Do not allow the agent to replan or expand scope. The Acceptance Criteria in HANDOFF.md are the contract.",
+        whenToUse:
+          "Open each slice with this. Agent reads PROJECT.md and HANDOFF.md, writes code, runs tests.",
+        context:
+          "Builder session. Do not allow the agent to replan or expand scope. The Acceptance Criteria in HANDOFF.md are the contract.",
         body: BUILDER_PROMPT,
         toastLabel: "Builder prompt copied",
       },
@@ -844,8 +851,10 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         actor: "builder",
         filename: "prompt-05-closeout.md",
         title: "Closeout — honest self-audit, next HANDOFF.md",
-        whenToUse: "Run immediately after the Builder finishes. Same session, same context.",
-        context: "Forces declaration of stubs, skipped criteria, and debt. Also drafts the next slice's HANDOFF.md. No feature code during this phase.",
+        whenToUse:
+          "Run immediately after the Builder finishes. Same session, same context.",
+        context:
+          "Forces declaration of stubs, skipped criteria, and debt. Also drafts the next slice's HANDOFF.md. No feature code during this phase.",
         body: CLOSEOUT_PROMPT,
         toastLabel: "Closeout prompt copied",
       },
@@ -856,8 +865,10 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         actor: "verifier",
         filename: "prompt-06-verifier.md",
         title: "Verifier — independent check on the PR",
-        whenToUse: "After the Builder opens the PR. A DIFFERENT LLM, in a CLEAN context window.",
-        context: "Reads only the diff and HANDOFF.md. Returns PASS / CONDITIONAL PASS / FAIL with evidence. Does not propose fixes.",
+        whenToUse:
+          "After the Builder opens the PR. A DIFFERENT LLM, in a CLEAN context window.",
+        context:
+          "Reads only the diff and HANDOFF.md. Returns PASS / CONDITIONAL PASS / FAIL with evidence. Does not propose fixes.",
         body: VERIFIER_PROMPT,
         toastLabel: "Verifier prompt copied",
       },
@@ -868,8 +879,10 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         actor: "builder",
         filename: "builder-pr-description.md",
         title: "Builder PR description — fill-in template",
-        whenToUse: "Paste into the PR body when the Builder opens the PR. Fill in the self-audit, scope-of-change, and declared stubs.",
-        context: "This is what the Verifier and gatekeeper will compare the diff against. Silent debt left out of this template is the most expensive kind.",
+        whenToUse:
+          "Paste into the PR body when the Builder opens the PR. Fill in the self-audit, scope-of-change, and declared stubs.",
+        context:
+          "This is what the Verifier and gatekeeper will compare the diff against. Silent debt left out of this template is the most expensive kind.",
         body: BUILDER_PR_DESCRIPTION,
         toastLabel: "Builder PR description copied",
       },
@@ -880,8 +893,10 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         actor: "verifier",
         filename: "verifier-report.md",
         title: "Verifier PR comment — fill-in template",
-        whenToUse: "The Verifier posts this as the first comment on the PR, with the verdict line at the top.",
-        context: "Mirrors the Builder PR description so a human can compare claim against verdict in one scan. No fixes, no refactors.",
+        whenToUse:
+          "The Verifier posts this as the first comment on the PR, with the verdict line at the top.",
+        context:
+          "Mirrors the Builder PR description so a human can compare claim against verdict in one scan. No fixes, no refactors.",
         body: VERIFIER_PR_COMMENT,
         toastLabel: "Verifier PR-comment template copied",
       },
@@ -890,7 +905,8 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
   {
     scenario: "Recovery — first cycle or after trouble",
     scenarioTag: "RECOVERY",
-    cadence: "Run at the end of the first install cycle, or any time PROJECT.md has drifted from reality.",
+    cadence:
+      "Run at the end of the first install cycle, or any time PROJECT.md has drifted from reality.",
     intro:
       "These prompts close the loop back to PROJECT.md. The Calibration Debrief runs at the end of the first full cycle — its output is the second, smaller PROJECT.md commit that reflects what you learned in cycle #1.",
     items: [
@@ -901,8 +917,10 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         actor: "builder",
         filename: "prompt-07-calibration-debrief.md",
         title: "Calibration Debrief — propose PROJECT.md edits",
-        whenToUse: "Run at the end of the first slice's cycle. Produces a structured proposal, not a rewrite.",
-        context: "The Builder is a PROPOSER here, not an editor. It reads PROJECT.md, HANDOFF.md, the merged diff, and the Verifier report — and returns a diff-style list of proposed doc edits.",
+        whenToUse:
+          "Run at the end of the first slice's cycle. Produces a structured proposal, not a rewrite.",
+        context:
+          "The Builder is a PROPOSER here, not an editor. It reads PROJECT.md, HANDOFF.md, the merged diff, and the Verifier report — and returns a diff-style list of proposed doc edits.",
         body: CALIBRATION_DEBRIEF_PROMPT,
         toastLabel: "Calibration Debrief prompt copied",
       },
@@ -920,45 +938,38 @@ export const BUILD_VERIFY_STAGES = [
     tag: "A",
     actor: "Builder LLM",
     role: "Executes the slice",
-    body:
-      "Reads PROJECT.md and HANDOFF.md. Writes code that satisfies the Acceptance Criteria. Runs the Closeout prompt: commits to a feature branch, opens a PR, appends to CHANGELOG.md, and drafts the next HANDOFF.md.",
+    body: "Reads PROJECT.md and HANDOFF.md. Writes code that satisfies the Acceptance Criteria. Runs the Closeout prompt: commits to a feature branch, opens a PR, appends to CHANGELOG.md, and drafts the next HANDOFF.md.",
   },
   {
     tag: "B",
     actor: "Verifier LLM",
     role: "Independent check",
-    body:
-      "A different model in a fresh context window. Reads ONLY the PR diff and HANDOFF.md. Returns PASS, CONDITIONAL PASS, or FAIL with one line of evidence per Acceptance Criterion. Does not write code.",
+    body: "A different model in a fresh context window. Reads ONLY the PR diff and HANDOFF.md. Returns PASS, CONDITIONAL PASS, or FAIL with one line of evidence per Acceptance Criterion. Does not write code.",
   },
   {
     tag: "C",
     actor: "You (gatekeeper)",
     role: "Merges or returns",
-    body:
-      "Reviews the Verifier's verdict. PASS → merge to main and run the next Builder. FAIL → reopen the slice and send the verdict back to the Builder. CONDITIONAL PASS → decide whether to merge with a follow-up ticket or revise.",
+    body: "Reviews the Verifier's verdict. PASS → merge to main and run the next Builder. FAIL → reopen the slice and send the verdict back to the Builder. CONDITIONAL PASS → decide whether to merge with a follow-up ticket or revise.",
   },
 ] as const;
 
 export const BUILD_VERIFY_PRINCIPLES = [
   {
     title: "Different model, not just different context",
-    body:
-      "Use a different LLM family for the Verifier than the Builder (e.g., Builder = Claude, Verifier = GPT, or vice versa). Different training distributions catch different failure modes. Same-model verification mostly rubber-stamps the Builder's mistakes.",
+    body: "Use a different LLM family for the Verifier than the Builder (e.g., Builder = Claude, Verifier = GPT, or vice versa). Different training distributions catch different failure modes. Same-model verification mostly rubber-stamps the Builder's mistakes.",
   },
   {
     title: "Clean context window — always",
-    body:
-      "The Verifier must boot with no prior conversation, no prior slice memory, no scratchpad. It reads only the diff and HANDOFF.md. This is the single most important rule; without it, the Verifier inherits the Builder's biases.",
+    body: "The Verifier must boot with no prior conversation, no prior slice memory, no scratchpad. It reads only the diff and HANDOFF.md. This is the single most important rule; without it, the Verifier inherits the Builder's biases.",
   },
   {
     title: "Diff-only reading",
-    body:
-      "The Verifier is forbidden from reading the rest of the codebase unless evaluating a specific Acceptance Criterion requires it. This caps cost and forces the verdict to be grounded in what the slice actually changed.",
+    body: "The Verifier is forbidden from reading the rest of the codebase unless evaluating a specific Acceptance Criterion requires it. This caps cost and forces the verdict to be grounded in what the slice actually changed.",
   },
   {
     title: "Verdict, not advice",
-    body:
-      "The Verifier returns PASS / CONDITIONAL PASS / FAIL with evidence. It does NOT propose fixes, does NOT suggest refactors, and does NOT write code. Mixing roles destroys the independence that makes the check valuable.",
+    body: "The Verifier returns PASS / CONDITIONAL PASS / FAIL with evidence. It does NOT propose fixes, does NOT suggest refactors, and does NOT write code. Mixing roles destroys the independence that makes the check valuable.",
   },
 ] as const;
 
@@ -1151,3 +1162,194 @@ If the Verifier returns FAIL twice in a row on the same slice, escalate to
 the gatekeeper for re-scoping. The slice itself may be wrong, not the
 Builder's execution.
 `;
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* SECTION 07 — AFTER THE INSTALL (PHASE 2 OPERATION)                          */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+export const PHASE_TWO_INTRO = {
+  pull: "Closing the install does not end the Verifier. It graduates the Verifier into its real job.",
+  body: "When the Verifier returns its first VERDICT: CLOSE on PROJECT.md, the natural assumption is that the framework is done. It is not. The install is Phase 1 of a two-phase operating model. Stopping here is the most common failure mode of dual-agent systems and the single biggest waste of the work you just put in.",
+} as const;
+
+export const PHASE_TWO_PHASES = [
+  {
+    tag: "Phase 1",
+    name: "Spec Authoring",
+    trigger:
+      "Repo has no PROJECT.md, contradictions exist between files, non-goals undefined.",
+    builderJob:
+      "Answer open questions, draft PROJECT.md, ship spec corrections.",
+    verifierJob:
+      "Audit PROJECT.md against the codebase and against itself for internal coherence.",
+    exit: "VERDICT: CLOSE. Spec is in steady-state.",
+    duration: "Finite. Typically 3–8 audit cycles.",
+  },
+  {
+    tag: "Phase 2",
+    name: "Feature Review",
+    trigger:
+      "A stable PROJECT.md exists; an active feature roadmap is being shipped.",
+    builderJob:
+      "Ship features as ordinary code PRs (new routes, components, schemas, integrations).",
+    verifierJob: "Audit every code PR against PROJECT.md before it merges.",
+    exit: "None. Phase 2 is the steady-state operating mode.",
+    duration: "Indefinite. Runs for the life of the project.",
+  },
+] as const;
+
+export const PHASE_TWO_LEVERAGE = {
+  headline: "The leverage math",
+  body: "Phase 1 has a fixed, bounded cost. Eight audit cycles spread across a few weeks, producing one durable specification file. Phase 2 has a small marginal cost per PR and runs continuously. Fifty PRs over a project's first year — modest for a real product — means the Verifier reviews fifty PRs, each one informed by the spec you spent eight cycles getting right. Roughly fifty times the leverage of the install effort, paid out over time on a one-time fixed cost.",
+  callout:
+    "If you stop running the Verifier after install, you have built a constitution and then dissolved the supreme court. The document still exists. It enforces nothing.",
+} as const;
+
+export const PHASE_TWO_FINDINGS = [
+  {
+    type: "Non-goal violation",
+    example:
+      "A PR adds a recruiter-facing endpoint when PROJECT.md non-goals declare 'Not a recruiter-side tool.'",
+    miss: "Linters and tests have no concept of product scope.",
+  },
+  {
+    type: "Convention violation",
+    example:
+      "A PR adds a 200-line router file when the convention is 'thin per-domain routers, ≤150 lines.'",
+    miss: "The Verifier knows the cap because it read PROJECT.md; ESLint does not unless explicitly configured.",
+  },
+  {
+    type: "Stack drift",
+    example:
+      "A PR adds aws-sdk for object storage when PROJECT.md specifies 'Supabase Storage is the only object store.'",
+    miss: "Dependency scanners see the new package; only the Verifier sees that it contradicts the declared stack.",
+  },
+  {
+    type: "Architecture drift",
+    example:
+      "A PR puts business logic in a route handler when PROJECT.md requires 'thin handlers, logic in service modules.'",
+    miss: "A code-review judgment call that no automated test catches. Surfaces only if the reviewer remembers the rule — or if PROJECT.md enforces it.",
+  },
+  {
+    type: "Spec staleness",
+    example:
+      "A PR ships a feature that contradicts a non-goal — e.g., adds React Native scaffolding when 'no native mobile' is a non-goal.",
+    miss: "The Verifier flags both the violation and prompts a PROJECT.md update if the non-goal is genuinely obsolete.",
+  },
+] as const;
+
+export const PHASE_TWO_PROMPT = `PHASE 2 AUDIT — <repo name>
+
+Context:
+PROJECT.md (attached / at repo root) is the authoritative spec for
+this project. It declares the stack, architecture, conventions,
+non-goals, and resolved open questions. The Verifier's job in this
+phase is to audit incoming code PRs against PROJECT.md.
+
+Target of this audit:
+PR #<N> — <title>
+Branch: <branch-name>
+Diff: <attach \`gh pr diff <N>\` output, or paste the diff>
+
+What I want from you:
+
+1. Audit the PR diff against PROJECT.md.
+
+2. Classify every finding as one of:
+   - MAJOR: must be fixed before merge. Violates a non-goal, a hard
+     convention, the declared stack, or the architecture rules.
+   - MINOR: should be fixed before merge or documented as an
+     intentional exception in the PR description.
+   - INFO: style, preference, or observation. Not blocking.
+
+3. Be especially strict on non-goal violations. Non-goals are the
+   bright lines the project owner explicitly drew. Treat them as
+   non-negotiable unless the PR description argues for moving the
+   line and updating PROJECT.md.
+
+4. If the PR appears to obsolete part of PROJECT.md (e.g., the
+   feature being added contradicts a stated non-goal but is clearly
+   intentional), flag this as a SPEC-UPDATE finding: the PR should
+   include a PROJECT.md amendment, not just code.
+
+5. End with an explicit verdict line in this format:
+
+   VERDICT: APPROVE              — no MAJOR findings; merge as-is or with MINOR fixes.
+   VERDICT: REQUEST-CHANGES      — one or more MAJOR findings; do not merge.
+   VERDICT: SPEC-UPDATE-REQUIRED — PR is intentional but PROJECT.md must be amended in the same PR.
+
+Scope: this PR only. Do not re-audit PROJECT.md itself unless the
+PR modifies it.
+`;
+
+export const PHASE_TWO_WIRING = [
+  {
+    n: "01",
+    title: "Builder opens a PR",
+    body: "Cursor, Codex, or a human authors a feature PR through your normal workflow. No change here.",
+  },
+  {
+    n: "02",
+    title: "Run the Phase 2 prompt against the PR diff",
+    body: "Paste the diff (or attach gh pr diff <N>) and PROJECT.md into a fresh Verifier context. Use the prompt template above.",
+  },
+  {
+    n: "03",
+    title: "Branch on the verdict",
+    body: "APPROVE: merge per your normal process. REQUEST-CHANGES: post findings as a PR comment, have Builder address them, re-run the Verifier on the updated diff. SPEC-UPDATE-REQUIRED: the Builder amends PROJECT.md in the same PR before merge.",
+  },
+  {
+    n: "04",
+    title: "Merge with confidence",
+    body: "The Verifier's verdict is your second pair of eyes. The discipline is one Verifier run per PR, before merge. Skipping the Verifier on 'small' PRs is how the spec drifts back into irrelevance over time.",
+  },
+] as const;
+
+export const PHASE_TWO_TRIAGE = {
+  headline: "Amend PROJECT.md vs. reject the PR",
+  intro:
+    "The most common Phase 2 judgment call: a PR violates the spec, but the spec is what's wrong, not the PR. Use this triage.",
+  rows: [
+    {
+      condition: "PR violates an in-effect rule that still serves the project.",
+      action: "Reject the PR. Fix the code.",
+    },
+    {
+      condition:
+        "PR violates a rule that has been obsoleted by the product's evolution.",
+      action: "Amend PROJECT.md in the same PR; then accept the code change.",
+    },
+    {
+      condition:
+        "PR violates a non-goal you have quietly changed your mind about.",
+      action:
+        "STOP. Do not amend PROJECT.md inside a feature PR. Open a separate spec-amendment PR first, run the Phase 1 audit on it, merge it, then return to the feature PR.",
+    },
+  ],
+  warning:
+    "The third case is the trap. Non-goals are slow-moving by design; amending one inside a feature PR is how the constitution gets quietly rewritten without judicial review.",
+} as const;
+
+export const PHASE_TWO_CALIBRATION = {
+  headline: "Calibration: the first 5–10 PRs are noisy",
+  body: "Phase 2 does not run cleanly out of the gate. The first 5–10 code PRs you run through the Verifier are themselves a calibration period: the prompt may need tightening (too many INFO findings) or loosening (Verifier flagging stylistic preferences as MAJOR); PROJECT.md itself may have implicit rules that need to be made explicit before the Verifier can enforce them consistently; the MAJOR/MINOR boundary is project-specific.",
+  conclusion:
+    "Set this expectation up front: Phase 2's first weeks feel like Phase 1 cycles all over again. After calibration, Phase 2 becomes quiet background hygiene — exactly what you want it to be.",
+} as const;
+
+export const PHASE_TWO_INSTALL_COMPLETE = [
+  "PROJECT.md exists, is internally coherent, and has received a VERDICT: CLOSE from the Verifier.",
+  "The standard PR workflow has been updated to include a Phase 2 audit before every merge.",
+  "At least one feature PR has been successfully run through the Phase 2 audit, demonstrating the loop is wired correctly.",
+] as const;
+
+export const PHASE_TWO_DORMANT = {
+  headline: "Counter-pattern — the dormant Verifier",
+  intro:
+    "The most common way Phase 2 fails: it never starts. If you recognize these symptoms, the framework has effectively been uninstalled. The fix is operational, not technical: re-introduce the Phase 2 audit into the next PR you ship, and the loop restarts. The spec is still there; only the discipline lapsed.",
+  symptoms: [
+    "PROJECT.md exists but has not been touched since the install.",
+    "New PRs are merging without any Verifier output in their comments or descriptions.",
+    "The team or solo operator describes the framework as 'we did that earlier this year' rather than 'we run that on every PR.'",
+  ],
+} as const;
