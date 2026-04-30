@@ -25,6 +25,9 @@ import {
   ESCALATION_RULE,
   FAILURE_MODES,
   HANDOFF_TEMPLATE,
+  INSTALL_ANTI_PATTERNS,
+  INSTALL_STEPS,
+  INVENTORY_PROMPT,
   MODEL_PAIRINGS,
   MODEL_PAIRINGS_FRESHNESS,
   PRACTICES,
@@ -41,6 +44,7 @@ export default function Home() {
         <Hero />
         <Diagnosis />
         <Schema />
+        <Install />
         <Prompts />
         <BuildAndVerify />
         <Practices />
@@ -304,14 +308,154 @@ function TemplateBlock() {
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+/* ───────────────────────────────────────────────────────────────────────── */
+
+function Install() {
+  return (
+    <section id="install" className="border-t border-border">
+      <div className="container py-20 lg:py-24">
+        <SectionHeader
+          number="04"
+          label="INSTALL ON EXISTING REPO"
+          title="How to bootstrap the loop on a codebase that already exists."
+          kicker={
+            <>
+              Most teams fail at install, not at workflow. The honest order:
+              reverse-engineer{" "}
+              <code className="font-mono text-foreground">PROJECT.md</code> from the
+              code, edit it with the human-only context, sanity-check it with the
+              Verifier, write a tiny first slice, then run a calibration cycle and
+              update the doc based on what surfaced.
+            </>
+          }
+        />
+
+        {/* The five steps */}
+        <div className="mt-14 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">FIVE STEPS · ~90 MIN</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              The 90-minute install.
+            </h3>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              Each step has a single owner and a single output. Step 02 — your
+              edit pass on{" "}
+              <code className="font-mono text-foreground">PROJECT.md</code> — is
+              the highest-leverage 30 minutes you will spend on this project.
+              Don&apos;t skip it.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <ol className="divide-y divide-border border-y border-border">
+              {INSTALL_STEPS.map((step) => (
+                <li key={step.n} className="grid grid-cols-12 gap-6 py-6">
+                  <div className="col-span-12 sm:col-span-2">
+                    <div className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+                      Step {step.n}
+                    </div>
+                    <div className="mt-1 font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
+                      {step.duration}
+                    </div>
+                  </div>
+                  <div className="col-span-12 sm:col-span-10">
+                    <div className="font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
+                      {step.actor}
+                    </div>
+                    <h4 className="mt-1 font-display text-xl font-bold leading-snug text-foreground">
+                      {step.title}
+                    </h4>
+                    <p className="mt-2 max-w-prose text-[15px] leading-relaxed text-foreground/85">
+                      {step.body}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        {/* Inventory prompt copy card */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">PROMPT 00 · INVENTORY</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              The one-off prompt that bootstraps PROJECT.md.
+            </h3>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              A strict read-only Builder run. The agent reads the repo and
+              writes a single draft{" "}
+              <code className="font-mono text-foreground">PROJECT.md</code> with
+              evidence pointers. Anywhere it cannot ground a claim in code, it
+              is required to write &ldquo;INSUFFICIENT EVIDENCE&rdquo; instead
+              of guessing. Drop into Codex or Cursor at the start of install.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <PromptCard
+              label="PROMPT 00 / INVENTORY"
+              title="Reverse-engineers PROJECT.md from an existing repo."
+              subtitle="Read-only. The agent must not modify any code in this run."
+              body={INVENTORY_PROMPT}
+            />
+          </div>
+        </div>
+
+        {/* Anti-patterns block */}
+        <div className="mt-16">
+          <div className="stamp">ANTI-PATTERNS · DO NOT DO THESE</div>
+          <h3 className="mt-3 max-w-3xl font-display text-3xl font-bold leading-tight">
+            Two install mistakes that look productive and poison the loop.
+          </h3>
+          <div className="mt-8 grid gap-6 lg:grid-cols-2">
+            {INSTALL_ANTI_PATTERNS.map((p) => (
+              <article
+                key={p.title}
+                className="paper-card flex flex-col gap-4 border-l-4 border-l-primary p-6"
+              >
+                <div className="flex items-start gap-3">
+                  <span
+                    aria-hidden
+                    className="mt-0.5 font-mono text-base font-bold text-primary"
+                  >
+                    ✕
+                  </span>
+                  <h4 className="font-display text-xl font-bold leading-snug text-foreground">
+                    {p.title}
+                  </h4>
+                </div>
+                <div>
+                  <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Why it&apos;s tempting
+                  </div>
+                  <p className="mt-1 text-[14px] leading-relaxed text-foreground/85">
+                    {p.why}
+                  </p>
+                </div>
+                <div>
+                  <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+                    What it costs you
+                  </div>
+                  <p className="mt-1 text-[14px] leading-relaxed text-foreground/85">
+                    {p.cost}
+                  </p>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────────────────────────────────────────────────────── */
 
 function Prompts() {
   return (
     <section id="prompts" className="border-t border-border bg-background/60">
       <div className="container py-20 lg:py-24">
         <SectionHeader
-          number="04"
+          number="05"
           label="CORE PROMPTS"
           title="Three prompts. Three roles. Each one constrains the next."
           kicker={
@@ -356,7 +500,7 @@ function Practices() {
       <div className="container grid gap-12 py-20 lg:grid-cols-12 lg:py-24">
         <div className="lg:col-span-4">
           <SectionHeader
-            number="05"
+            number="07"
             label="BEST PRACTICES"
             title="Habits that keep the loop honest."
             kicker={
@@ -403,7 +547,7 @@ function Moonshots() {
         <div className="grid gap-12 lg:grid-cols-12">
           <div className="lg:col-span-5">
             <SectionHeader
-              number="06"
+              number="08"
               label="MOONSHOTS"
               title="If you want to go further."
               kicker={
@@ -457,7 +601,7 @@ function BuildAndVerify() {
     <section id="build-verify" className="border-t border-border bg-background/60">
       <div className="container py-20 lg:py-24">
         <SectionHeader
-          number="05"
+          number="06"
           label="BUILD & VERIFY"
           title="One LLM builds. A different LLM verifies. You merge."
           kicker={

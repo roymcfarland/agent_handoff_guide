@@ -7,6 +7,19 @@
 import { useEffect, useState } from "react";
 import { SECTIONS } from "@/lib/content";
 
+// Compact labels swap in below xl. Number prefix carries the wayfinding;
+// the short text is enough to disambiguate at a glance.
+const SHORT_LABEL: Record<string, string> = {
+  overview: "Overview",
+  diagnosis: "Diagnosis",
+  schema: "Schema",
+  install: "Install",
+  prompts: "Prompts",
+  "build-verify": "Verify",
+  practices: "Practices",
+  moonshots: "Moonshots",
+};
+
 export function SiteHeader() {
   const [active, setActive] = useState<string>(SECTIONS[0].id);
 
@@ -47,21 +60,24 @@ export function SiteHeader() {
         <nav className="-mr-2 flex items-center gap-0 overflow-x-auto">
           {SECTIONS.map(({ id, label, number }) => {
             const isActive = active === id;
+            const short = SHORT_LABEL[id] ?? label;
             return (
               <a
                 key={id}
                 href={`#${id}`}
                 aria-current={isActive ? "true" : undefined}
-                className={`relative whitespace-nowrap px-2.5 py-2 font-mono text-[10.5px] font-bold uppercase tracking-[0.14em] transition-colors duration-150 ease-out lg:px-3 ${
+                className={`relative whitespace-nowrap px-2 py-2 font-mono text-[10.5px] font-bold uppercase tracking-[0.12em] transition-colors duration-150 ease-out xl:px-2.5 ${
                   isActive
                     ? "text-primary"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
                 <span className="opacity-60">{number}</span>
-                <span className="ml-1.5">{label}</span>
+                {/* Short label up to xl, full label only on the largest screens */}
+                <span className="ml-1.5 2xl:hidden">{short}</span>
+                <span className="ml-1.5 hidden 2xl:inline">{label}</span>
                 {isActive && (
-                  <span className="absolute inset-x-2.5 -bottom-px h-px bg-primary lg:inset-x-3" />
+                  <span className="absolute inset-x-2 -bottom-px h-px bg-primary xl:inset-x-2.5" />
                 )}
               </a>
             );

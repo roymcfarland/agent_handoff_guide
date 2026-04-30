@@ -10,10 +10,11 @@ export const SECTIONS = [
   { id: "overview", label: "Overview", number: "01" },
   { id: "diagnosis", label: "Diagnosis", number: "02" },
   { id: "schema", label: "Document Schema", number: "03" },
-  { id: "prompts", label: "Core Prompts", number: "04" },
-  { id: "build-verify", label: "Build & Verify", number: "05" },
-  { id: "practices", label: "Best Practices", number: "06" },
-  { id: "moonshots", label: "Moonshots", number: "07" },
+  { id: "install", label: "Install on Repo", number: "04" },
+  { id: "prompts", label: "Core Prompts", number: "05" },
+  { id: "build-verify", label: "Build & Verify", number: "06" },
+  { id: "practices", label: "Best Practices", number: "07" },
+  { id: "moonshots", label: "Moonshots", number: "08" },
 ] as const;
 
 export const FAILURE_MODES = [
@@ -696,3 +697,124 @@ export const ESCALATION_RULE = {
     "Treating the second FAIL as a Builder performance issue — it is almost always an upstream HANDOFF.md issue.",
   ],
 } as const;
+
+/**
+ * INSTALL_STEPS — The five-step bootstrap for adopting the framework on a
+ * repo that already has a codebase. Most teams fail at install, not workflow.
+ * The honest order is: reverse-engineer PROJECT.md from the code, edit it
+ * with the human-only context, sanity-check it with the Verifier, write a
+ * tiny first slice, run a calibration cycle and update PROJECT.md based on
+ * what surfaced.
+ */
+export const INSTALL_STEPS = [
+  {
+    n: "01",
+    duration: "~15 min",
+    actor: "Builder model · read-only",
+    title: "Inventory pass — reverse-engineer PROJECT.md from the code",
+    body: "Drop the Inventory prompt into your Builder tool (Codex/Cursor) and let it read the repo without writing any code. It produces a draft PROJECT.md grounded in what is actually in the repo — stack, architecture, conventions it can point to with file paths, and an explicit list of open questions for you. The output is a draft, not a finished document.",
+  },
+  {
+    n: "02",
+    duration: "~30 min",
+    actor: "You — the highest-leverage step",
+    title: "Edit PROJECT.md — fix Conventions, fill in Non-goals and Human-only context",
+    body: "The draft will be ~70% right. You fix the Conventions section (the Builder spots patterns; only you know which ones are intentional vs. tech debt), fill in Non-goals (what the project deliberately does NOT do — the most important section and the one the Builder cannot infer), answer the Open Questions, and add a Human-only context section for business or regulatory constraints the code does not encode. Commit as `docs: bootstrap PROJECT.md`.",
+  },
+  {
+    n: "03",
+    duration: "~5 min",
+    actor: "Verifier model · clean context",
+    title: "Sanity-check PROJECT.md against the actual repo",
+    body: "Open the Verifier in a fresh chat. Give it your edited PROJECT.md and a directory listing. Ask it to flag anything in PROJECT.md that contradicts the repo or appears unsupported by the code. This catches the case where you wrote down what you wished were true rather than what is true. Do not let the Verifier propose changes — only diagnoses.",
+  },
+  {
+    n: "04",
+    duration: "~15 min",
+    actor: "You",
+    title: "Write the first HANDOFF.md — pick a small, low-stakes slice",
+    body: "Do not try to spec the backlog. Pick one slice that is small, well-defined, and low-stakes — a bug fix, a small endpoint, a test you have been meaning to write. The point of slice #1 is not to ship value, it is to prove the loop runs end-to-end on this repo. If you cannot write three crisp Acceptance Criteria, the slice is too big — pick a smaller one.",
+  },
+  {
+    n: "05",
+    duration: "~25 min",
+    actor: "Full loop · calibration",
+    title: "Run the first cycle — and treat it as a calibration run",
+    body: "The first cycle will reveal everything you got wrong in PROJECT.md. The Builder will hit a convention you forgot to document; the Verifier will FAIL because Acceptance Criteria were ambiguous; the Closeout will admit it stubbed something because a constraint was not declared. That is the install completing, not failure. Update PROJECT.md based on what surfaced. Now you have a real PROJECT.md, written by reality rather than imagination.",
+  },
+] as const;
+
+/**
+ * INVENTORY_PROMPT — The one-off prompt that bootstraps PROJECT.md from an
+ * existing codebase. It is a strict read-only Builder run; the agent must
+ * not modify or "improve" any code. The point is documentation grounded in
+ * evidence, with explicit "INSUFFICIENT EVIDENCE" markers anywhere the
+ * agent had to guess.
+ */
+export const INVENTORY_PROMPT = `You are a senior engineer onboarding to an existing repository. Your only
+job in this session is to produce a draft PROJECT.md by reading the
+codebase. You will NOT write, modify, refactor, or "improve" any code.
+
+Inputs you will read (in this order):
+1. README.md (if present) and any docs/ folder
+2. package.json / pyproject.toml / go.mod / Cargo.toml — whatever
+   declares the stack and dependencies
+3. The directory structure of src/ (or equivalent) — top two levels only
+4. Up to 10 representative source files you select. Pick them to cover:
+   - The entry point
+   - One route/controller (if web)
+   - One model/schema (if data)
+   - One test file
+   - The build/CI config
+
+Produce a single PROJECT.md with these sections, and ONLY these sections:
+
+  ## Purpose
+  One paragraph. What does this project do, in plain language?
+
+  ## Stack
+  Languages, frameworks, package manager, runtime versions. Bullet list.
+
+  ## Architecture
+  3–5 sentences. How is the code organized? What are the main layers?
+
+  ## Conventions
+  What patterns appear repeatedly? (e.g., "controllers return Result<T,E>",
+  "tests live next to source as *.test.ts", "no default exports").
+  List only conventions you can point to with evidence in the code.
+
+  ## Non-goals
+  What this project deliberately does NOT do. Leave as a placeholder
+  ("TBD — human to fill in") if not obvious from the code.
+
+  ## Open questions for the human
+  Anything you could not infer from the code. Be specific — "is X
+  intentional or legacy?" not "tell me more about the project."
+
+Rules:
+- Cite a file path for every claim in Conventions and Architecture.
+- If you cannot find evidence for a section, write "INSUFFICIENT EVIDENCE
+  — human to fill in." Do not guess.
+- Do not invent features, roadmaps, or future plans.
+- Do not modify any file other than creating PROJECT.md.
+
+Stop when PROJECT.md is written. Do not start any other work.
+`;
+
+/**
+ * INSTALL_ANTI_PATTERNS — Two specific failure modes during install. Both
+ * are tempting because they look productive; both poison the loop before it
+ * starts.
+ */
+export const INSTALL_ANTI_PATTERNS = [
+  {
+    title: "Generate PROJECT.md, then immediately start shipping features",
+    why: "Looks productive. Skips the boring step.",
+    cost: "The undocumented conventions silently leak into Builder hallucinations from cycle 2 onward. Compounds badly across slices.",
+  },
+  {
+    title: "Have the Builder fix code while it is writing PROJECT.md",
+    why: "Why do two passes when you could do one?",
+    cost: "The Builder will start refactoring opportunistically and you lose the ability to review the doc separately from the code changes. Two commits, two PRs, always.",
+  },
+] as const;

@@ -1,6 +1,7 @@
-# Escalation Rule callout — Todo
+# Install-on-existing-repo section — Todo
 
-- [ ] Author ESCALATION_RULE data (the rule, the four steps, anti-patterns) in `lib/content.ts`
-- [ ] Render a notebook callout block beneath the Model Pairings table in Home.tsx
+- [ ] Author INSTALL_STEPS, INVENTORY_PROMPT, and INSTALL_ANTI_PATTERNS in `lib/content.ts`
+- [ ] Add new SECTIONS entry "Install" (slot 04, between Document Schema and Core Prompts), renumber the rest
+- [ ] Render the new section in Home.tsx with the five-step flow, the Inventory prompt copy card, and the anti-patterns block
 - [ ] Verify the build (typecheck + visual)
 - [ ] Save checkpoint and deliver
