@@ -120,7 +120,10 @@
   }
   html {
     scroll-behavior: smooth;
-    scroll-padding-top: 5rem;
+    /* Match the actual sticky header height. The header is ~56px on mobile and
+       ~64px above md. We use a single value that errs slightly high so anchor
+       targets clear the header at every width. */
+    scroll-padding-top: 4.5rem;
   }
   body {
     @apply bg-background text-foreground;
@@ -128,11 +131,27 @@
     font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
+    /* Defensive: prevent any rogue wide child from creating a horizontal
+       scrollbar on mobile. `clip` is preferred over `hidden` because it does
+       not establish a new scroll context (so position: sticky on the header
+       still works). */
+    overflow-x: clip;
+  }
+  /* Each in-page section is a scroll target via the top nav anchors. Without
+     this, the sticky header overlaps the section heading on jump. Mirrors
+     scroll-padding-top on html for IntersectionObserver-based active state. */
+  section[id] {
+    scroll-margin-top: 4.5rem;
   }
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     font-weight: 700;
     letter-spacing: -0.015em;
+    /* Long, dash-laden display headings would otherwise extend past the
+       viewport on narrow widths because em-dashes suppress word breaks.
+       `overflow-wrap: anywhere` allows mid-word breaks only when nothing else
+       fits, preserving typographic hierarchy at most widths. */
+    overflow-wrap: anywhere;
   }
   code, pre, kbd, samp {
     font-family: var(--font-mono);
