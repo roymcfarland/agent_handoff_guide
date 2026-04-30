@@ -1238,6 +1238,50 @@ export const PHASE_TWO_FINDINGS = [
   },
 ] as const;
 
+export const PHASE_TWO_BUILDER_PROMPT = `PHASE 2 BUILD — <repo name>
+Context:
+PROJECT.md (attached / at repo root) is the authoritative spec for
+this project. It declares the stack, architecture, conventions,
+non-goals, and resolved open questions. Every PR you ship in this
+phase will be audited against PROJECT.md by an independent Verifier
+before merge. Your job is to produce a PR that the Verifier returns
+VERDICT: APPROVE on, on the first pass.
+Task:
+<one-line description of the feature, fix, or refactor>
+What I want from you:
+1. Read PROJECT.md before you write any code. If the task appears
+   to violate a non-goal or a hard convention, STOP and respond with
+   a SPEC-CONFLICT note instead of code. Do not silently work around
+   the spec.
+2. Implement the task using only the stack, conventions, and
+   architecture declared in PROJECT.md. New dependencies, new
+   patterns, or new architectural seams require explicit
+   justification in the PR description.
+3. Stay inside the bounds of the requested task. Do not refactor
+   adjacent code, rename files, reformat unrelated modules, or
+   upgrade dependencies as a side effect. Out-of-scope changes are
+   the most common MAJOR finding in Phase 2.
+4. If during implementation you discover that PROJECT.md is wrong
+   or has been obsoleted by the product's evolution, STOP. Do not
+   amend PROJECT.md inside this PR unless explicitly instructed.
+   Surface the conflict in the PR description and let the
+   Gatekeeper decide whether to open a separate spec-amendment PR
+   first.
+5. Write the PR description to make the Verifier's job easy:
+   - One-line summary of what changed.
+   - Bullet list of files touched and why.
+   - Explicit "Non-goals respected" line confirming you reviewed
+     PROJECT.md's non-goals and none were crossed.
+   - Explicit "Out-of-scope changes" line — should be "none" in
+     well-scoped PRs.
+   - Self-classification of any judgment calls as MINOR or INFO,
+     with reasoning. If you self-flag a MAJOR finding, the PR is
+     not ready.
+6. Run the project's test suite, linter, and typechecker locally
+   before pushing. A red CI is a wasted Verifier cycle.
+Scope: this task only. Do not modify PROJECT.md. Do not introduce
+features, files, or dependencies that were not requested.
+`;
 export const PHASE_TWO_PROMPT = `PHASE 2 AUDIT — <repo name>
 
 Context:
