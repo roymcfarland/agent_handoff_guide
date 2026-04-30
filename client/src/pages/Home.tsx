@@ -17,6 +17,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import {
   BUILDER_PROMPT,
+  BUILDER_PR_DESCRIPTION,
   BUILD_VERIFY_MARKDOWN,
   BUILD_VERIFY_PRINCIPLES,
   BUILD_VERIFY_STAGES,
@@ -506,34 +507,69 @@ function BuildAndVerify() {
           <BuildVerifyDiagram />
         </div>
 
-        {/* PR-comment template the Verifier posts as the first comment on the Builder's PR */}
-        <div className="mt-12 grid gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <div className="stamp">PR COMMENT · VERIFIER</div>
-            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
-              The report the Verifier posts on the PR.
-            </h3>
-            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              A literal markdown skeleton for the Verifier agent's first PR
-              comment. Copy it, fill in the model names and evidence lines, and
-              post it as-is. The verdict at the top lets you triage in two
-              seconds; the structure below forces the Verifier to ground each
-              criterion in a file and line number from the diff.
+        {/* PR templates — Builder PR body and Verifier PR comment, paired side-by-side */}
+        <div className="mt-16">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="stamp">PR TEMPLATES · BOTH SIDES</div>
+              <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+                Two templates. One PR. A clean audit trail.
+              </h3>
+            </div>
+            <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
+              The Builder posts the left-hand body when it opens the PR. The
+              Verifier posts the right-hand comment as the first review. The two
+              are mirrors so a human can compare claim against verdict in one
+              scan.
             </p>
-            <ul className="mt-6 space-y-2 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
-              <li>· Verdict line first — PASS / COND. PASS / FAIL</li>
-              <li>· One evidence pointer per criterion</li>
-              <li>· Out-of-scope changes called out explicitly</li>
-              <li>· No fixes, no refactors, no new code</li>
-            </ul>
           </div>
-          <div className="lg:col-span-8">
-            <MarkdownBlock
-              filename="verifier-report.md"
-              description="PR comment template"
-              body={VERIFIER_PR_COMMENT}
-              toastLabel="Verifier PR-comment template copied"
-            />
+
+          <div className="mt-10 grid gap-8 lg:grid-cols-2">
+            {/* Builder PR description */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="font-mono text-[11px] font-bold uppercase tracking-widest text-primary">
+                  Stage A · Builder posts this as the PR body
+                </div>
+                <code className="font-mono text-[11px] text-muted-foreground">
+                  feature/&lt;slice&gt;
+                </code>
+              </div>
+              <MarkdownBlock
+                filename="builder-pr-description.md"
+                description="Builder PR body"
+                body={BUILDER_PR_DESCRIPTION}
+                toastLabel="Builder PR description copied"
+              />
+              <ul className="mt-1 space-y-1.5 font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
+                <li>· Self-audit against every Acceptance Criterion</li>
+                <li>· Scope-of-change table tied to criteria</li>
+                <li>· Declared stubs — silent debt is forbidden</li>
+              </ul>
+            </div>
+
+            {/* Verifier PR comment */}
+            <div className="flex flex-col gap-4">
+              <div className="flex items-baseline justify-between gap-3">
+                <div className="font-mono text-[11px] font-bold uppercase tracking-widest text-primary">
+                  Stage B · Verifier posts this as the first comment
+                </div>
+                <code className="font-mono text-[11px] text-muted-foreground">
+                  clean context
+                </code>
+              </div>
+              <MarkdownBlock
+                filename="verifier-report.md"
+                description="Verifier PR comment"
+                body={VERIFIER_PR_COMMENT}
+                toastLabel="Verifier PR-comment template copied"
+              />
+              <ul className="mt-1 space-y-1.5 font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
+                <li>· Verdict line first — PASS / COND. PASS / FAIL</li>
+                <li>· One evidence pointer per criterion</li>
+                <li>· No fixes, no refactors, no new code</li>
+              </ul>
+            </div>
           </div>
         </div>
 
