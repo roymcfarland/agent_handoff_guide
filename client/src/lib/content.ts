@@ -19,7 +19,7 @@ export const SECTIONS = [
   { id: "install", label: "Install on Repo", number: "04" },
   { id: "prompts", label: "Prompt Library", number: "05" },
   { id: "build-verify", label: "Build & Verify", number: "06" },
-  { id: "phase-2", label: "After the Install", number: "07" },
+  { id: "phase-2", label: "Operate the framework", number: "07" },
 ] as const;
 
 export const FAILURE_MODES = [
