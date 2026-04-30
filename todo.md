@@ -1,6 +1,6 @@
-# Builder PR-description card — Todo
+# Model pairings table — Todo
 
-- [ ] Add `BUILDER_PR_DESCRIPTION` markdown constant to `lib/content.ts`
-- [ ] Restructure the section to show Builder + Verifier templates side-by-side as paired cards under the diagram
+- [ ] Author MODEL_PAIRINGS data + freshness/disclaimer note in `lib/content.ts`
+- [ ] Render a styled notebook table under the non-negotiables list
 - [ ] Verify the build (typecheck + visual)
 - [ ] Save checkpoint and deliver

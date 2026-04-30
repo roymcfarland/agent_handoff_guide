@@ -587,3 +587,68 @@ _Builder rules: scope is HANDOFF.md only, no planning, no out-of-scope
 refactors, no silent debt. Every Acceptance Criterion is either checked off
 or explicitly declared blocked above._
 `;
+
+/**
+ * MODEL_PAIRINGS
+ * A starter matrix of Builder ↔ Verifier combinations.
+ *
+ * IMPORTANT: This is a *living* recommendation, not gospel. Model quality
+ * and behavior shift on a quarterly cadence. The point is the *principle* —
+ * pair across training distributions and across reasoning styles — not the
+ * specific brand names. Re-evaluate the table every ~3 months.
+ *
+ * The "tier" column is what your team should optimize for, not the brand.
+ */
+export const MODEL_PAIRINGS_FRESHNESS = "April 2026";
+
+export const MODEL_PAIRINGS = [
+  {
+    tier: "Default",
+    builder: "Claude (Sonnet/Opus class)",
+    verifier: "GPT (frontier reasoning class)",
+    rationale:
+      "Strong code-writing model paired with a strong reasoning model from a different lab. Different training data and different RLHF priors mean the Verifier is unlikely to hallucinate the same way the Builder did. Best general-purpose pairing for production code.",
+    cost: "Medium",
+  },
+  {
+    tier: "Inverted default",
+    builder: "GPT (frontier reasoning class)",
+    verifier: "Claude (Sonnet/Opus class)",
+    rationale:
+      "Useful when the slice is reasoning-heavy (algorithms, edge-case logic). The Builder gets the reasoning model and the Verifier brings code-grounded scrutiny. Swap with the Default pairing depending on slice type.",
+    cost: "Medium",
+  },
+  {
+    tier: "Three-lab triangle",
+    builder: "Claude or GPT",
+    verifier: "Gemini (frontier class)",
+    rationale:
+      "Use Gemini as the Verifier when you want a third training distribution in the loop. Particularly valuable when both your team's preferred labs have shipped from similar data cuts. Reduces correlated failure modes.",
+    cost: "Medium",
+  },
+  {
+    tier: "Cost-controlled",
+    builder: "Claude/GPT (frontier)",
+    verifier: "Smaller frontier model from a different lab",
+    rationale:
+      "Verification is mostly a structured comparison task — it does not need the largest model. Pairing a frontier Builder with a smaller-but-different-lab Verifier captures most of the independence benefit at a fraction of the token cost.",
+    cost: "Low",
+  },
+  {
+    tier: "Local / privacy",
+    builder: "Hosted frontier model",
+    verifier: "Local model from a different family (e.g., Llama, Qwen)",
+    rationale:
+      "When the diff cannot leave your environment, run the Verifier locally on a different-family model. Quality drops vs. a frontier Verifier, but you preserve the cross-distribution check, which is the structural goal.",
+    cost: "Variable",
+  },
+  {
+    tier: "Anti-pattern",
+    builder: "Model X",
+    verifier: "Same model X (different prompt)",
+    rationale:
+      "DO NOT pair a model with itself. Same-distribution verification rubber-stamps the Builder's mistakes — the failure modes are correlated. Different prompts on the same model is not a substitute for a different model.",
+    cost: "—",
+    isAntiPattern: true,
+  },
+] as const;
