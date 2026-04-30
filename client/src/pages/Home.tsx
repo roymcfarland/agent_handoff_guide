@@ -9,12 +9,17 @@
 import { useState } from "react";
 import { ArrowDown, Check, Copy } from "lucide-react";
 import { toast } from "sonner";
+import { BuildVerifyDiagram } from "@/components/BuildVerifyDiagram";
+import { MarkdownBlock } from "@/components/MarkdownBlock";
 import { PromptCard } from "@/components/PromptCard";
 import { SectionHeader } from "@/components/SectionHeader";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import {
   BUILDER_PROMPT,
+  BUILD_VERIFY_MARKDOWN,
+  BUILD_VERIFY_PRINCIPLES,
+  BUILD_VERIFY_STAGES,
   CLOSEOUT_PROMPT,
   FAILURE_MODES,
   HANDOFF_TEMPLATE,
@@ -32,6 +37,7 @@ export default function Home() {
         <Diagnosis />
         <Schema />
         <Prompts />
+        <BuildAndVerify />
         <Practices />
         <Moonshots />
       </main>
@@ -428,6 +434,133 @@ function Moonshots() {
                 body="Use a different model for the Verifier than for the Builder. Different training distributions catch different failure modes. The marginal cost is small; the marginal signal is high."
               />
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* BUILD & VERIFY                                                              */
+/* Two-LLM workflow: Builder ships the slice; a different LLM (clean context)  */
+/* verifies the diff against HANDOFF.md before the gatekeeper merges.          */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+function BuildAndVerify() {
+  return (
+    <section id="build-verify" className="border-t border-border bg-background/60">
+      <div className="container py-20 lg:py-24">
+        <SectionHeader
+          number="05"
+          label="BUILD & VERIFY"
+          title="One LLM builds. A different LLM verifies. You merge."
+          kicker={
+            <>
+              The Builder is biased to claim success on its own work. A second LLM in
+              a clean context, reading only the diff and{" "}
+              <code className="font-mono text-foreground">HANDOFF.md</code>, catches
+              what the Builder will never report on itself. Drop the markdown spec
+              below into your repo as a single source of truth.
+            </>
+          }
+        />
+
+        {/* Stages: A → B → C */}
+        <div className="mt-14 grid gap-px bg-border md:grid-cols-3">
+          {BUILD_VERIFY_STAGES.map((stage) => (
+            <article
+              key={stage.tag}
+              className="paper-card flex flex-col gap-4 p-6"
+              style={{ boxShadow: "none" }}
+            >
+              <div className="flex items-center gap-4">
+                <div
+                  aria-hidden
+                  className="flex h-12 w-12 shrink-0 items-center justify-center border border-foreground bg-background font-display text-2xl font-black text-primary"
+                >
+                  {stage.tag}
+                </div>
+                <div className="min-w-0">
+                  <div className="font-mono text-[11px] font-bold uppercase tracking-widest text-primary">
+                    Stage {stage.tag}
+                  </div>
+                  <h3 className="font-display text-xl font-bold leading-tight">
+                    {stage.actor}
+                  </h3>
+                </div>
+              </div>
+              <p className="font-display text-sm font-semibold text-foreground/70">
+                {stage.role}
+              </p>
+              <p className="text-[15px] leading-relaxed text-foreground/85">
+                {stage.body}
+              </p>
+            </article>
+          ))}
+        </div>
+
+        {/* The visual loop */}
+        <div className="mt-12">
+          <BuildVerifyDiagram />
+        </div>
+
+        {/* Non-negotiable principles */}
+        <div className="mt-16 grid gap-12 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">NON-NEGOTIABLES</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              Four rules that make the loop actually work.
+            </h3>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              Skip any of these and you will get a Verifier that rubber-stamps the
+              Builder. The independence between the two LLMs is the entire point.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <ul className="divide-y divide-border border-y border-border">
+              {BUILD_VERIFY_PRINCIPLES.map((p, i) => (
+                <li key={p.title} className="grid grid-cols-12 gap-6 py-6">
+                  <div className="col-span-12 sm:col-span-2">
+                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <div className="col-span-12 sm:col-span-10">
+                    <h4 className="font-display text-xl font-bold leading-snug text-foreground">
+                      {p.title}
+                    </h4>
+                    <p className="mt-2 text-[15px] leading-relaxed text-foreground/80">
+                      {p.body}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </div>
+
+        {/* The drop-in markdown spec */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">SPEC · DROP-IN</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              The markdown your team can paste into a repo.
+            </h3>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              Self-contained: explains the loop, lists the non-negotiables, and
+              embeds the Builder, Closeout, and Verifier prompts inline so a reader
+              never has to bounce between files. Save it as{" "}
+              <code className="font-mono text-foreground">docs/build-and-verify.md</code>.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <MarkdownBlock
+              filename="docs/build-and-verify.md"
+              description="Two-LLM workflow spec"
+              body={BUILD_VERIFY_MARKDOWN}
+              toastLabel="Build & Verify spec copied"
+            />
           </div>
         </div>
       </div>
