@@ -456,3 +456,52 @@ If the Verifier returns FAIL twice in a row on the same slice, escalate to
 the gatekeeper for re-scoping. The slice itself may be wrong, not the
 Builder's execution.
 `;
+
+/**
+ * VERIFIER_PR_COMMENT
+ * The literal markdown the Verifier agent should post as the first comment on
+ * the Builder's PR. Designed to be copied as-is and filled in. Keep the
+ * structure aggressive and the verdict line at the top so a human reviewer can
+ * triage in two seconds.
+ */
+export const VERIFIER_PR_COMMENT = `## Verifier Report
+
+**Model:** <name + version, e.g. gpt-5-thinking-2026-04>
+**Context:** clean — no prior slices loaded
+**Builder model:** <name + version, e.g. claude-sonnet-4.5-2026-03>
+**Slice:** <slice name from HANDOFF.md>
+**Verdict:** <PASS | CONDITIONAL PASS | FAIL>
+
+---
+
+### Acceptance Criteria
+
+- [PASS] <criterion 1> — evidence: \`src/api/routes.ts:42\`
+- [PASS] <criterion 2> — evidence: \`src/api/routes.ts:67\`
+- [FAIL] <criterion 3> — evidence: \`src/api/routes.ts:88\` (returns 500 on empty body, criterion required 400)
+
+### Out-of-scope changes
+
+- \`src/utils/logger.ts\` — refactored unrelated logging helper (not in HANDOFF.md scope)
+- \`package.json\` — added \`lodash\` dependency (not declared in slice)
+
+_(or write "None observed" if the diff stays inside scope.)_
+
+### Stubs / TODOs introduced
+
+- \`src/api/controllers.ts:104\` — \`// TODO: handle pagination\` left undeclared in closeout audit
+
+_(or "None observed".)_
+
+### Notes for the gatekeeper
+
+<2–4 sentences max. Describe WHAT is broken or out of scope, not HOW to fix it.
+Example: "Endpoint is wired up but the empty-body error path is unhandled.
+Recommend FAIL and return to Builder. The logger refactor and the new lodash
+dependency should be split into their own slices.">
+
+---
+
+_Verifier rules: read only the diff and HANDOFF.md, return a verdict with
+evidence, do not propose code changes, do not refactor, do not write code._
+`;
