@@ -9,15 +9,14 @@ import { SECTIONS } from "@/lib/content";
 
 // Compact labels swap in below xl. Number prefix carries the wayfinding;
 // the short text is enough to disambiguate at a glance.
+// 6-section IA. Short labels swap in below 2xl. Long labels on widest screens.
 const SHORT_LABEL: Record<string, string> = {
   overview: "Overview",
   diagnosis: "Diagnosis",
   schema: "Schema",
   install: "Install",
   prompts: "Prompts",
-  "build-verify": "Verify",
-  practices: "Practices",
-  moonshots: "Moonshots",
+  "build-verify": "Build & Verify",
 };
 
 export function SiteHeader() {

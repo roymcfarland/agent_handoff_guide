@@ -1,7 +1,9 @@
-# Install-on-existing-repo section — Todo
+# Missing install prompts — Todo
 
-- [ ] Author INSTALL_STEPS, INVENTORY_PROMPT, and INSTALL_ANTI_PATTERNS in `lib/content.ts`
-- [ ] Add new SECTIONS entry "Install" (slot 04, between Document Schema and Core Prompts), renumber the rest
-- [ ] Render the new section in Home.tsx with the five-step flow, the Inventory prompt copy card, and the anti-patterns block
-- [ ] Verify the build (typecheck + visual)
-- [ ] Save checkpoint and deliver
+- Draft HUMAN_EDIT_CHECKLIST (Step 02) — a human-facing checklist, not an LLM prompt
+- Draft VERIFIER_SANITY_PROMPT (Step 03) — LLM Verifier prompt for PROJECT.md audit
+- Draft FIRST_HANDOFF_PROMPT (Step 04) — LLM prompt to help you write the first HANDOFF.md
+- Draft CALIBRATION_DEBRIEF_PROMPT (Step 05) — prompt the Builder runs at end of first cycle to update PROJECT.md
+- Append all four to `client/src/lib/content.ts`
+- Render the four new cards in the Install section of `Home.tsx`
+- Verify build, save checkpoint, deliver

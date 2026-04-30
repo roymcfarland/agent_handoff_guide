@@ -2,12 +2,21 @@
  * Home.tsx — Single-page Agent Handoff Framework guide.
  * Design philosophy: "The Engineer's Notebook" — graph-paper background, paper cards,
  * mono stamps, serif display titles, drafting-red accent.
- * Layout principle: asymmetric, NOT centered. Most content sits in a left-anchored
- * column with stamp labels in the right margin (above mobile breakpoint).
+ *
+ * IA (6 sections):
+ *   01 Overview
+ *   02 Diagnosis
+ *   03 Document Schema
+ *   04 Install on Existing Repo
+ *   05 Prompt Library  (consolidated; scenario-ordered)
+ *   06 Build & Verify
+ *
+ * Prompts are all rendered from PROMPT_LIBRARY inside the Prompt Library section,
+ * grouped by scenario (Fresh Install / Recurring Loop / Recovery) in execution order.
  */
 
 import { useState } from "react";
-import { ArrowDown, Check, Copy } from "lucide-react";
+import { ArrowDown, Check, Copy, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { BuildVerifyDiagram } from "@/components/BuildVerifyDiagram";
 import { MarkdownBlock } from "@/components/MarkdownBlock";
@@ -16,24 +25,19 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import {
-  BUILDER_PROMPT,
-  BUILDER_PR_DESCRIPTION,
   BUILD_VERIFY_MARKDOWN,
   BUILD_VERIFY_PRINCIPLES,
   BUILD_VERIFY_STAGES,
-  CLOSEOUT_PROMPT,
   ESCALATION_RULE,
   FAILURE_MODES,
   HANDOFF_TEMPLATE,
   INSTALL_ANTI_PATTERNS,
   INSTALL_STEPS,
-  INVENTORY_PROMPT,
   MODEL_PAIRINGS,
   MODEL_PAIRINGS_FRESHNESS,
-  PRACTICES,
+  PROMPT_LIBRARY,
   SCHEMA_FILES,
-  VERIFIER_PR_COMMENT,
-  VERIFIER_PROMPT,
+  type LibraryPrompt,
 } from "@/lib/content";
 
 export default function Home() {
@@ -47,8 +51,6 @@ export default function Home() {
         <Install />
         <Prompts />
         <BuildAndVerify />
-        <Practices />
-        <Moonshots />
       </main>
       <SiteFooter />
     </div>
@@ -61,7 +63,6 @@ function Hero() {
   return (
     <section id="overview" className="relative">
       <div className="container grid gap-10 py-20 sm:py-24 lg:grid-cols-12 lg:gap-12 lg:py-28">
-        {/* Left rail — stamp + meta */}
         <aside className="lg:col-span-3">
           <div className="stamp">FILE 00 / OVERVIEW</div>
           <dl className="mt-6 space-y-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
@@ -80,7 +81,6 @@ function Hero() {
           </dl>
         </aside>
 
-        {/* Main hero column */}
         <div className="lg:col-span-9">
           <h1 className="font-display text-5xl font-bold leading-[0.98] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
             A working guide for{" "}
@@ -90,8 +90,8 @@ function Hero() {
             Most agent workflows fail not because the model is weak, but because the{" "}
             <em>document the agent works against</em> is doing too many jobs at once.
             This guide replaces the single bloated handoff file with three disciplined
-            artifacts and three constrained prompts — designed to keep agents{" "}
-            <span className="font-semibold">building</span>, not planning.
+            artifacts and a small set of constrained prompts — organized in the order
+            your team actually runs them.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -99,7 +99,7 @@ function Hero() {
               href="#prompts"
               className="inline-flex items-center gap-2 border border-foreground bg-foreground px-5 py-3 font-mono text-xs font-bold uppercase tracking-widest text-background transition-colors duration-150 hover:bg-primary hover:border-primary hover:text-primary-foreground"
             >
-              Jump to the prompts
+              Jump to the Prompt Library
               <ArrowDown className="h-4 w-4" strokeWidth={2.5} />
             </a>
             <a
@@ -114,7 +114,7 @@ function Hero() {
           <div className="mt-16 grid grid-cols-1 border-t border-border sm:grid-cols-3">
             {[
               { k: "3", v: "Document files instead of one bloated doc" },
-              { k: "3", v: "Constrained prompts for each stage of the loop" },
+              { k: "8", v: "Constrained prompts covering install, loop, and recovery" },
               { k: "0", v: "Direct commits to main without a PR review surface" },
             ].map((item) => (
               <div
@@ -272,7 +272,7 @@ function TemplateBlock() {
           The HANDOFF.md the agent works against.
         </h3>
         <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-          Drop this into the root of your repo. Overwrite it at every handoff. Keep
+          This is the template the Closeout agent fills in for the next Builder. Keep
           the Acceptance Criteria literal and the Constraints aggressive — they are
           the only things stopping the agent from drifting.
         </p>
@@ -338,8 +338,12 @@ function Install() {
               The 90-minute install.
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              Each step has a single owner and a single output. Step 02 — your
-              edit pass on{" "}
+              Each step has a single owner, a single output, and a corresponding
+              prompt or checklist in the{" "}
+              <a href="#prompts" className="underline decoration-primary underline-offset-4 hover:text-foreground">
+                Prompt Library below
+              </a>
+              . Step 02 — your edit pass on{" "}
               <code className="font-mono text-foreground">PROJECT.md</code> — is
               the highest-leverage 30 minutes you will spend on this project.
               Don&apos;t skip it.
@@ -358,8 +362,19 @@ function Install() {
                     </div>
                   </div>
                   <div className="col-span-12 sm:col-span-10">
-                    <div className="font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
-                      {step.actor}
+                    <div className="flex flex-wrap items-center gap-3">
+                      <span className="font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
+                        {step.actor}
+                      </span>
+                      {step.promptRef && (
+                        <a
+                          href={`#prompt-${step.promptRef}`}
+                          className="inline-flex items-center gap-1 border border-border bg-background px-2 py-0.5 font-mono text-[10px] font-bold uppercase tracking-widest text-foreground transition-colors hover:border-primary hover:bg-primary hover:text-primary-foreground"
+                        >
+                          <FileText className="h-3 w-3" strokeWidth={2.5} />
+                          See prompt
+                        </a>
+                      )}
                     </div>
                     <h4 className="mt-1 font-display text-xl font-bold leading-snug text-foreground">
                       {step.title}
@@ -371,32 +386,6 @@ function Install() {
                 </li>
               ))}
             </ol>
-          </div>
-        </div>
-
-        {/* Inventory prompt copy card */}
-        <div className="mt-16 grid gap-8 lg:grid-cols-12">
-          <div className="lg:col-span-4">
-            <div className="stamp">PROMPT 00 · INVENTORY</div>
-            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
-              The one-off prompt that bootstraps PROJECT.md.
-            </h3>
-            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              A strict read-only Builder run. The agent reads the repo and
-              writes a single draft{" "}
-              <code className="font-mono text-foreground">PROJECT.md</code> with
-              evidence pointers. Anywhere it cannot ground a claim in code, it
-              is required to write &ldquo;INSUFFICIENT EVIDENCE&rdquo; instead
-              of guessing. Drop into Codex or Cursor at the start of install.
-            </p>
-          </div>
-          <div className="lg:col-span-8">
-            <PromptCard
-              label="PROMPT 00 / INVENTORY"
-              title="Reverse-engineers PROJECT.md from an existing repo."
-              subtitle="Read-only. The agent must not modify any code in this run."
-              body={INVENTORY_PROMPT}
-            />
           </div>
         </div>
 
@@ -449,6 +438,8 @@ function Install() {
 }
 
 /* ───────────────────────────────────────────────────────────────────────── */
+/* PROMPT LIBRARY — consolidated, grouped by execution scenario.             */
+/* ───────────────────────────────────────────────────────────────────────── */
 
 function Prompts() {
   return (
@@ -456,149 +447,190 @@ function Prompts() {
       <div className="container py-20 lg:py-24">
         <SectionHeader
           number="05"
-          label="CORE PROMPTS"
-          title="Three prompts. Three roles. Each one constrains the next."
+          label="PROMPT LIBRARY"
+          title="Every prompt in one place — organized in the order you run them."
           kicker={
             <>
-              Persona priming alone does nothing. These prompts work because they tell
-              the agent <em>what not to do</em>: do not plan, do not expand scope, do
-              not silently skip a criterion, do not write code during closeout.
+              Three scenarios, execution-ordered. Click a card to copy the prompt
+              or template to your clipboard. Every item is named after the file
+              your team would save it as in <code className="font-mono text-foreground">docs/prompts/</code>.
             </>
           }
         />
 
-        <div className="mt-14 space-y-8">
-          <PromptCard
-            label="PROMPT 01 / BUILDER"
-            title="Boots the agent that does the work."
-            subtitle="Forces execution-only behavior against HANDOFF.md."
-            body={BUILDER_PROMPT}
-          />
-          <PromptCard
-            label="PROMPT 02 / CLOSEOUT"
-            title="Closes out the slice and writes the next handoff."
-            subtitle="Forces honesty about stubs, debt, and skipped criteria."
-            body={CLOSEOUT_PROMPT}
-          />
-          <PromptCard
-            label="PROMPT 03 / VERIFIER · OPTIONAL"
-            title="Independent check before the next builder starts."
-            subtitle="Reads only the diff. Returns PASS / CONDITIONAL PASS / FAIL with evidence."
-            body={VERIFIER_PROMPT}
-          />
+        {/* Scenario index — small horizontal navigator */}
+        <nav
+          aria-label="Prompt scenarios"
+          className="mt-10 grid gap-3 border-y border-border py-4 sm:grid-cols-3"
+        >
+          {PROMPT_LIBRARY.map((group) => (
+            <a
+              key={group.scenarioTag}
+              href={`#scenario-${group.scenarioTag.toLowerCase()}`}
+              className="flex items-baseline gap-3 px-2 py-1 transition-colors hover:text-foreground"
+            >
+              <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-primary">
+                {group.scenarioTag}
+              </span>
+              <span className="font-display text-[15px] font-semibold text-foreground/90">
+                {group.scenario}
+              </span>
+              <span className="ml-auto font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
+                {group.items.length}
+              </span>
+            </a>
+          ))}
+        </nav>
+
+        {/* The groups */}
+        <div className="mt-12 space-y-20">
+          {PROMPT_LIBRARY.map((group) => (
+            <PromptGroup key={group.scenarioTag} group={group} />
+          ))}
         </div>
       </div>
     </section>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
-
-function Practices() {
+function PromptGroup({
+  group,
+}: {
+  group: {
+    scenario: string;
+    scenarioTag: string;
+    cadence: string;
+    intro: string;
+    items: LibraryPrompt[];
+  };
+}) {
   return (
-    <section id="practices" className="border-t border-border">
-      <div className="container grid gap-12 py-20 lg:grid-cols-12 lg:py-24">
+    <div id={`scenario-${group.scenarioTag.toLowerCase()}`}>
+      <div className="grid gap-8 lg:grid-cols-12">
         <div className="lg:col-span-4">
-          <SectionHeader
-            number="07"
-            label="BEST PRACTICES"
-            title="Habits that keep the loop honest."
-            kicker={
-              <>
-                None of these are exotic. They are small disciplines that compound —
-                and that most teams skip because they feel like overhead until the
-                first time an agent silently breaks main.
-              </>
-            }
-          />
+          <div className="stamp">SCENARIO · {group.scenarioTag}</div>
+          <h3 className="mt-3 font-display text-3xl font-bold leading-tight text-foreground">
+            {group.scenario}
+          </h3>
+          <p className="mt-4 text-[14px] leading-relaxed text-muted-foreground">
+            <span className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+              Cadence —
+            </span>{" "}
+            {group.cadence}
+          </p>
+          <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
+            {group.intro}
+          </p>
         </div>
+
         <div className="lg:col-span-8">
-          <ul className="divide-y divide-border border-y border-border">
-            {PRACTICES.map((p, i) => (
-              <li key={p.title} className="grid grid-cols-12 gap-6 py-6">
-                <div className="col-span-12 sm:col-span-2">
-                  <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
-                </div>
-                <div className="col-span-12 sm:col-span-10">
-                  <h3 className="font-display text-2xl font-bold leading-tight text-foreground">
-                    {p.title}
-                  </h3>
-                  <p className="mt-2 text-[15px] leading-relaxed text-foreground/80">
-                    {p.body}
-                  </p>
-                </div>
+          <ol className="space-y-6">
+            {group.items.map((item) => (
+              <li
+                key={item.id}
+                id={`prompt-${item.id}`}
+                className="scroll-mt-28"
+              >
+                <PromptLibraryItem item={item} />
               </li>
             ))}
-          </ul>
+          </ol>
         </div>
       </div>
-    </section>
+    </div>
   );
 }
 
-/* ─────────────────────────────────────────────────────────────────────────── */
+function PromptLibraryItem({ item }: { item: LibraryPrompt }) {
+  const label = `${item.kind === "template" ? "TEMPLATE" : item.kind === "checklist" ? "CHECKLIST" : "PROMPT"} ${item.order}`;
+  const actorLabel =
+    item.actor === "builder"
+      ? "Builder LLM"
+      : item.actor === "verifier"
+        ? "Verifier LLM · clean context"
+        : "Human";
 
-function Moonshots() {
-  return (
-    <section id="moonshots" className="border-t border-border bg-background/60">
-      <div className="container py-20 lg:py-24">
-        <div className="grid gap-12 lg:grid-cols-12">
-          <div className="lg:col-span-5">
-            <SectionHeader
-              number="08"
-              label="MOONSHOTS"
-              title="If you want to go further."
-              kicker={
-                <>
-                  Lower-probability ideas that meaningfully change the ceiling on what
-                  this loop can do. Try one at a time and measure whether your slice
-                  failure rate actually drops.
-                </>
-              }
-            />
-          </div>
-
-          <div className="lg:col-span-7">
-            <div className="space-y-6">
-              <MoonshotCard
-                tag="A"
-                title="A dedicated Verifier agent in a clean context."
-                body="The Builder is biased to claim success. A Verifier in a fresh window, reading only the diff and the Acceptance Criteria, catches stubs and out-of-scope changes that the Builder will never report on itself. Add it as a required PR check."
-              />
-              <MoonshotCard
-                tag="B"
-                title="Slice budgets, not just context budgets."
-                body="Cap the number of files an agent may modify per slice (start at three). When the cap is hit, the agent must stop and request that the slice be re-scoped. This converts scope creep into a visible, blockable event instead of a silent one."
-              />
-              <MoonshotCard
-                tag="C"
-                title="Architecture Decision Records as immutable citations."
-                body="Tiny docs/adr/0001-*.md files for every frozen technical choice. The Builder prompt is amended to: 'You may cite ADRs but you may not propose changes to them.' This stops the agent from relitigating settled questions every time it boots."
-              />
-              <MoonshotCard
-                tag="D"
-                title="Two agents, two models, one slice."
-                body="Use a different model for the Verifier than for the Builder. Different training distributions catch different failure modes. The marginal cost is small; the marginal signal is high."
-              />
+  if (item.kind === "template" || item.body.length > 1800) {
+    // Long content → MarkdownBlock for a scrollable viewer
+    return (
+      <article className="paper-card p-6">
+        <header className="mb-5 flex flex-wrap items-baseline justify-between gap-3 border-b border-border pb-4">
+          <div>
+            <div className="font-mono text-[11px] font-bold uppercase tracking-widest text-primary">
+              {label}
             </div>
+            <h4 className="mt-1 font-display text-xl font-bold leading-tight text-foreground">
+              {item.title}
+            </h4>
+            <p className="mt-1 font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
+              Actor — {actorLabel}
+            </p>
           </div>
+        </header>
+        <p className="mb-3 text-[14px] leading-relaxed text-foreground/85">
+          <span className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+            When —
+          </span>{" "}
+          {item.whenToUse}
+        </p>
+        <p className="mb-5 text-[14px] leading-relaxed text-muted-foreground">
+          <span className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-foreground/70">
+            Context —
+          </span>{" "}
+          {item.context}
+        </p>
+        <MarkdownBlock
+          filename={item.filename}
+          description={label}
+          body={item.body}
+          toastLabel={item.toastLabel}
+        />
+      </article>
+    );
+  }
+
+  return (
+    <article className="paper-card p-6">
+      <header className="mb-5 border-b border-border pb-4">
+        <div className="font-mono text-[11px] font-bold uppercase tracking-widest text-primary">
+          {label}
         </div>
-      </div>
-    </section>
+        <h4 className="mt-1 font-display text-xl font-bold leading-tight text-foreground">
+          {item.title}
+        </h4>
+        <p className="mt-1 font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
+          Actor — {actorLabel} · File — <code className="font-mono">{item.filename}</code>
+        </p>
+      </header>
+      <p className="mb-3 text-[14px] leading-relaxed text-foreground/85">
+        <span className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+          When —
+        </span>{" "}
+        {item.whenToUse}
+      </p>
+      <p className="mb-5 text-[14px] leading-relaxed text-muted-foreground">
+        <span className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-foreground/70">
+          Context —
+        </span>{" "}
+        {item.context}
+      </p>
+      <PromptCard
+        label={label}
+        title={item.title}
+        subtitle={item.whenToUse}
+        body={item.body}
+      />
+    </article>
   );
 }
 
 /* ─────────────────────────────────────────────────────────────────────────── */
-/* BUILD & VERIFY                                                              */
-/* Two-LLM workflow: Builder ships the slice; a different LLM (clean context)  */
-/* verifies the diff against HANDOFF.md before the gatekeeper merges.          */
+/* BUILD & VERIFY — two-LLM concept section (prompts live in the Library).    */
 /* ─────────────────────────────────────────────────────────────────────────── */
 
 function BuildAndVerify() {
   return (
-    <section id="build-verify" className="border-t border-border bg-background/60">
+    <section id="build-verify" className="border-t border-border">
       <div className="container py-20 lg:py-24">
         <SectionHeader
           number="06"
@@ -609,13 +641,17 @@ function BuildAndVerify() {
               The Builder is biased to claim success on its own work. A second LLM in
               a clean context, reading only the diff and{" "}
               <code className="font-mono text-foreground">HANDOFF.md</code>, catches
-              what the Builder will never report on itself. Drop the markdown spec
-              below into your repo as a single source of truth.
+              what the Builder will never report on itself. The prompts and PR
+              templates for this loop live in the{" "}
+              <a href="#scenario-loop" className="underline decoration-primary underline-offset-4 hover:text-foreground">
+                Recurring Loop
+              </a>{" "}
+              scenario of the Prompt Library.
             </>
           }
         />
 
-        {/* Stages: A → B → C */}
+        {/* Stages A → B → C */}
         <div className="mt-14 grid gap-px bg-border md:grid-cols-3">
           {BUILD_VERIFY_STAGES.map((stage) => (
             <article
@@ -649,75 +685,9 @@ function BuildAndVerify() {
           ))}
         </div>
 
-        {/* The visual loop */}
+        {/* Loop diagram */}
         <div className="mt-12">
           <BuildVerifyDiagram />
-        </div>
-
-        {/* PR templates — Builder PR body and Verifier PR comment, paired side-by-side */}
-        <div className="mt-16">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <div className="stamp">PR TEMPLATES · BOTH SIDES</div>
-              <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
-                Two templates. One PR. A clean audit trail.
-              </h3>
-            </div>
-            <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
-              The Builder posts the left-hand body when it opens the PR. The
-              Verifier posts the right-hand comment as the first review. The two
-              are mirrors so a human can compare claim against verdict in one
-              scan.
-            </p>
-          </div>
-
-          <div className="mt-10 grid gap-8 lg:grid-cols-2">
-            {/* Builder PR description */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-baseline justify-between gap-3">
-                <div className="font-mono text-[11px] font-bold uppercase tracking-widest text-primary">
-                  Stage A · Builder posts this as the PR body
-                </div>
-                <code className="font-mono text-[11px] text-muted-foreground">
-                  feature/&lt;slice&gt;
-                </code>
-              </div>
-              <MarkdownBlock
-                filename="builder-pr-description.md"
-                description="Builder PR body"
-                body={BUILDER_PR_DESCRIPTION}
-                toastLabel="Builder PR description copied"
-              />
-              <ul className="mt-1 space-y-1.5 font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
-                <li>· Self-audit against every Acceptance Criterion</li>
-                <li>· Scope-of-change table tied to criteria</li>
-                <li>· Declared stubs — silent debt is forbidden</li>
-              </ul>
-            </div>
-
-            {/* Verifier PR comment */}
-            <div className="flex flex-col gap-4">
-              <div className="flex items-baseline justify-between gap-3">
-                <div className="font-mono text-[11px] font-bold uppercase tracking-widest text-primary">
-                  Stage B · Verifier posts this as the first comment
-                </div>
-                <code className="font-mono text-[11px] text-muted-foreground">
-                  clean context
-                </code>
-              </div>
-              <MarkdownBlock
-                filename="verifier-report.md"
-                description="Verifier PR comment"
-                body={VERIFIER_PR_COMMENT}
-                toastLabel="Verifier PR-comment template copied"
-              />
-              <ul className="mt-1 space-y-1.5 font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
-                <li>· Verdict line first — PASS / COND. PASS / FAIL</li>
-                <li>· One evidence pointer per criterion</li>
-                <li>· No fixes, no refactors, no new code</li>
-              </ul>
-            </div>
-          </div>
         </div>
 
         {/* Non-negotiable principles */}
@@ -755,7 +725,7 @@ function BuildAndVerify() {
           </div>
         </div>
 
-        {/* Model pairings — starter matrix of Builder ↔ Verifier combinations */}
+        {/* Model pairings */}
         <div className="mt-16">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -770,47 +740,21 @@ function BuildAndVerify() {
                 cross-distribution
               </span>
               , not specific brands. Pair a Builder with a Verifier from a
-              different lab and a different reasoning style so their failure
-              modes are uncorrelated. Re-evaluate every quarter.
+              different lab so their failure modes are uncorrelated. Re-evaluate
+              every quarter.
             </p>
           </div>
 
-          {/* Notebook-style table. Horizontal scroll on small screens. */}
           <div className="mt-8 paper-card overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full border-collapse text-left">
                 <thead>
                   <tr className="border-b border-border bg-secondary/40">
-                    <th
-                      scope="col"
-                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
-                    >
-                      Tier
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
-                    >
-                      Builder (writes code)
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
-                    >
-                      Verifier (clean context)
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
-                    >
-                      Why this pairing
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-5 py-3 text-right font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
-                    >
-                      Cost
-                    </th>
+                    <th scope="col" className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">Tier</th>
+                    <th scope="col" className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">Builder (writes code)</th>
+                    <th scope="col" className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">Verifier (clean context)</th>
+                    <th scope="col" className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">Why this pairing</th>
+                    <th scope="col" className="px-5 py-3 text-right font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">Cost</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -819,16 +763,10 @@ function BuildAndVerify() {
                     return (
                       <tr
                         key={row.tier}
-                        className={`border-b border-border last:border-b-0 align-top ${
-                          isAnti ? "bg-primary/5" : ""
-                        }`}
+                        className={`border-b border-border last:border-b-0 align-top ${isAnti ? "bg-primary/5" : ""}`}
                       >
                         <td className="px-5 py-5 align-top">
-                          <div
-                            className={`font-mono text-[11px] font-bold uppercase tracking-widest ${
-                              isAnti ? "text-primary" : "text-foreground"
-                            }`}
-                          >
+                          <div className={`font-mono text-[11px] font-bold uppercase tracking-widest ${isAnti ? "text-primary" : "text-foreground"}`}>
                             {row.tier}
                           </div>
                         </td>
@@ -848,13 +786,7 @@ function BuildAndVerify() {
                           </p>
                         </td>
                         <td className="px-5 py-5 text-right align-top">
-                          <span
-                            className={`inline-block border px-2 py-0.5 font-mono text-[10.5px] font-bold uppercase tracking-widest ${
-                              isAnti
-                                ? "border-primary text-primary"
-                                : "border-border text-muted-foreground"
-                            }`}
-                          >
+                          <span className={`inline-block border px-2 py-0.5 font-mono text-[10.5px] font-bold uppercase tracking-widest ${isAnti ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>
                             {row.cost}
                           </span>
                         </td>
@@ -873,20 +805,9 @@ function BuildAndVerify() {
               </span>
             </div>
           </div>
-
-          <p className="mt-6 max-w-3xl text-[14px] leading-relaxed text-muted-foreground">
-            <span className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
-              Note —
-            </span>{" "}
-            Brand names will date this table. The principle that won't date is
-            the bottom row: never pair a model with itself. If you can only
-            afford one frontier seat, run the Verifier on a smaller model from a
-            different lab — that captures most of the independence benefit at
-            a fraction of the cost.
-          </p>
         </div>
 
-        {/* Escalation rule — what to do when a slice gets two consecutive Verifier FAILs */}
+        {/* Escalation rule */}
         <div className="mt-16">
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
@@ -904,7 +825,6 @@ function BuildAndVerify() {
           </div>
 
           <div className="mt-8 paper-card overflow-hidden">
-            {/* The rule, stamped at the top */}
             <div className="border-b border-border bg-primary/5 px-6 py-5">
               <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
                 The Rule
@@ -917,13 +837,9 @@ function BuildAndVerify() {
               </p>
             </div>
 
-            {/* The four steps */}
             <ol className="divide-y divide-border">
               {ESCALATION_RULE.steps.map((step) => (
-                <li
-                  key={step.n}
-                  className="grid grid-cols-12 gap-6 px-6 py-6"
-                >
+                <li key={step.n} className="grid grid-cols-12 gap-6 px-6 py-6">
                   <div className="col-span-12 sm:col-span-2">
                     <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
                       Step {step.n}
@@ -941,21 +857,14 @@ function BuildAndVerify() {
               ))}
             </ol>
 
-            {/* Anti-patterns footer */}
             <div className="border-t border-border bg-secondary/40 px-6 py-5">
               <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
                 Anti-patterns · Do not do these
               </div>
               <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">
                 {ESCALATION_RULE.antiPatterns.map((p, i) => (
-                  <li
-                    key={i}
-                    className="flex gap-2 text-[14px] leading-relaxed text-foreground/85"
-                  >
-                    <span
-                      aria-hidden
-                      className="mt-1 font-mono text-[11px] font-bold text-primary"
-                    >
+                  <li key={i} className="flex gap-2 text-[14px] leading-relaxed text-foreground/85">
+                    <span aria-hidden className="mt-1 font-mono text-[11px] font-bold text-primary">
                       ✕
                     </span>
                     <span>{p}</span>
@@ -966,7 +875,7 @@ function BuildAndVerify() {
           </div>
         </div>
 
-        {/* The drop-in markdown spec */}
+        {/* Drop-in markdown spec */}
         <div className="mt-16 grid gap-8 lg:grid-cols-12">
           <div className="lg:col-span-4">
             <div className="stamp">SPEC · DROP-IN</div>
@@ -975,8 +884,7 @@ function BuildAndVerify() {
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
               Self-contained: explains the loop, lists the non-negotiables, and
-              embeds the Builder, Closeout, and Verifier prompts inline so a reader
-              never has to bounce between files. Save it as{" "}
+              documents the operating cadence. Save it as{" "}
               <code className="font-mono text-foreground">docs/build-and-verify.md</code>.
             </p>
           </div>
@@ -991,34 +899,5 @@ function BuildAndVerify() {
         </div>
       </div>
     </section>
-  );
-}
-
-function MoonshotCard({
-  tag,
-  title,
-  body,
-}: {
-  tag: string;
-  title: string;
-  body: string;
-}) {
-  return (
-    <article className="paper-card flex gap-5 p-6">
-      <div
-        aria-hidden
-        className="flex h-12 w-12 shrink-0 items-center justify-center border border-foreground bg-background font-display text-2xl font-black text-primary"
-      >
-        {tag}
-      </div>
-      <div className="min-w-0">
-        <h3 className="font-display text-xl font-bold leading-snug text-foreground">
-          {title}
-        </h3>
-        <p className="mt-2 text-[15px] leading-relaxed text-foreground/80">
-          {body}
-        </p>
-      </div>
-    </article>
   );
 }
