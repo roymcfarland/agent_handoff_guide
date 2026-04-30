@@ -10,6 +10,7 @@
  *   04 Install on Existing Repo
  *   05 Prompt Library  (consolidated; scenario-ordered)
  *   06 Build & Verify
+ *   07 After the Install (Phase 2 operation)
  *
  * Prompts are all rendered from PROMPT_LIBRARY inside the Prompt Library section,
  * grouped by scenario (Fresh Install / Recurring Loop / Recovery) in execution order.
@@ -35,6 +36,16 @@ import {
   INSTALL_STEPS,
   MODEL_PAIRINGS,
   MODEL_PAIRINGS_FRESHNESS,
+  PHASE_TWO_CALIBRATION,
+  PHASE_TWO_DORMANT,
+  PHASE_TWO_FINDINGS,
+  PHASE_TWO_INSTALL_COMPLETE,
+  PHASE_TWO_INTRO,
+  PHASE_TWO_LEVERAGE,
+  PHASE_TWO_PHASES,
+  PHASE_TWO_PROMPT,
+  PHASE_TWO_TRIAGE,
+  PHASE_TWO_WIRING,
   PROMPT_LIBRARY,
   SCHEMA_FILES,
   type LibraryPrompt,
@@ -51,6 +62,7 @@ export default function Home() {
         <Install />
         <Prompts />
         <BuildAndVerify />
+        <PhaseTwo />
       </main>
       <SiteFooter />
     </div>
@@ -72,7 +84,9 @@ function Hero() {
             </div>
             <div>
               <dt className="text-foreground/60">Audience</dt>
-              <dd className="mt-1 text-foreground">Engineering teams shipping with AI agents</dd>
+              <dd className="mt-1 text-foreground">
+                Engineering teams shipping with AI agents
+              </dd>
             </div>
             <div>
               <dt className="text-foreground/60">Goal</dt>
@@ -83,15 +97,15 @@ function Hero() {
 
         <div className="lg:col-span-9">
           <h1 className="font-display text-5xl font-bold leading-[0.98] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
-            A working guide for{" "}
-            <span className="pen-circle">handing off</span> work between AI agents.
+            A working guide for <span className="pen-circle">handing off</span>{" "}
+            work between AI agents.
           </h1>
           <p className="mt-8 max-w-2xl text-lg leading-relaxed text-foreground/80 sm:text-xl">
-            Most agent workflows fail not because the model is weak, but because the{" "}
-            <em>document the agent works against</em> is doing too many jobs at once.
-            This guide replaces the single bloated handoff file with three disciplined
-            artifacts and a small set of constrained prompts — organized in the order
-            your team actually runs them.
+            Most agent workflows fail not because the model is weak, but because
+            the <em>document the agent works against</em> is doing too many jobs
+            at once. This guide replaces the single bloated handoff file with
+            three disciplined artifacts and a small set of constrained prompts —
+            organized in the order your team actually runs them.
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -114,9 +128,15 @@ function Hero() {
           <div className="mt-16 grid grid-cols-1 border-t border-border sm:grid-cols-3">
             {[
               { k: "3", v: "Document files instead of one bloated doc" },
-              { k: "8", v: "Constrained prompts covering install, loop, and recovery" },
-              { k: "0", v: "Direct commits to main without a PR review surface" },
-            ].map((item) => (
+              {
+                k: "8",
+                v: "Constrained prompts covering install, loop, and recovery",
+              },
+              {
+                k: "0",
+                v: "Direct commits to main without a PR review surface",
+              },
+            ].map(item => (
               <div
                 key={item.v}
                 className="border-b border-border px-5 py-6 sm:border-b-0 sm:border-r last:sm:border-r-0"
@@ -149,9 +169,10 @@ function Diagnosis() {
             title="Where agent handoffs actually break down."
             kicker={
               <>
-                These are the failure modes that show up over and over when teams try to
-                chain agents together. Most are <em>not</em> a model problem — they are
-                a <span className="pen-circle">workflow</span> problem.
+                These are the failure modes that show up over and over when
+                teams try to chain agents together. Most are <em>not</em> a
+                model problem — they are a{" "}
+                <span className="pen-circle">workflow</span> problem.
               </>
             }
           />
@@ -197,9 +218,10 @@ function Schema() {
           title="Stop using one handoff document. Use three."
           kicker={
             <>
-              The single highest-leverage change you can make. Splitting the doc into
-              three artifacts — each with a strict role — directly attacks context rot
-              and stops agents from re-reading settled history every time they boot.
+              The single highest-leverage change you can make. Splitting the doc
+              into three artifacts — each with a strict role — directly attacks
+              context rot and stops agents from re-reading settled history every
+              time they boot.
             </>
           }
         />
@@ -228,7 +250,7 @@ function Schema() {
                 {f.description}
               </p>
               <ul className="mt-5 space-y-2 border-t border-border pt-4">
-                {f.contains.map((line) => (
+                {f.contains.map(line => (
                   <li
                     key={line}
                     className="flex gap-3 text-sm leading-relaxed text-foreground/85"
@@ -272,9 +294,9 @@ function TemplateBlock() {
           The HANDOFF.md the agent works against.
         </h3>
         <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-          This is the template the Closeout agent fills in for the next Builder. Keep
-          the Acceptance Criteria literal and the Constraints aggressive — they are
-          the only things stopping the agent from drifting.
+          This is the template the Closeout agent fills in for the next Builder.
+          Keep the Acceptance Criteria literal and the Constraints aggressive —
+          they are the only things stopping the agent from drifting.
         </p>
       </div>
       <div className="paper-card overflow-hidden lg:col-span-8">
@@ -301,7 +323,7 @@ function TemplateBlock() {
           </button>
         </div>
         <pre className="graph-paper-dense overflow-x-auto px-5 py-5 font-mono text-[13px] leading-relaxed">
-{HANDOFF_TEMPLATE}
+          {HANDOFF_TEMPLATE}
         </pre>
       </div>
     </div>
@@ -322,10 +344,10 @@ function Install() {
             <>
               Most teams fail at install, not at workflow. The honest order:
               reverse-engineer{" "}
-              <code className="font-mono text-foreground">PROJECT.md</code> from the
-              code, edit it with the human-only context, sanity-check it with the
-              Verifier, write a tiny first slice, then run a calibration cycle and
-              update the doc based on what surfaced.
+              <code className="font-mono text-foreground">PROJECT.md</code> from
+              the code, edit it with the human-only context, sanity-check it
+              with the Verifier, write a tiny first slice, then run a
+              calibration cycle and update the doc based on what surfaced.
             </>
           }
         />
@@ -340,7 +362,10 @@ function Install() {
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
               Each step has a single owner, a single output, and a corresponding
               prompt or checklist in the{" "}
-              <a href="#prompts" className="underline decoration-primary underline-offset-4 hover:text-foreground">
+              <a
+                href="#prompts"
+                className="underline decoration-primary underline-offset-4 hover:text-foreground"
+              >
                 Prompt Library below
               </a>
               . Step 02 — your edit pass on{" "}
@@ -351,7 +376,7 @@ function Install() {
           </div>
           <div className="lg:col-span-8">
             <ol className="divide-y divide-border border-y border-border">
-              {INSTALL_STEPS.map((step) => (
+              {INSTALL_STEPS.map(step => (
                 <li key={step.n} className="grid grid-cols-12 gap-6 py-6">
                   <div className="col-span-12 sm:col-span-2">
                     <div className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
@@ -396,7 +421,7 @@ function Install() {
             Two install mistakes that look productive and poison the loop.
           </h3>
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
-            {INSTALL_ANTI_PATTERNS.map((p) => (
+            {INSTALL_ANTI_PATTERNS.map(p => (
               <article
                 key={p.title}
                 className="paper-card flex flex-col gap-4 border-l-4 border-l-primary p-6"
@@ -451,9 +476,10 @@ function Prompts() {
           title="Every prompt in one place — organized in the order you run them."
           kicker={
             <>
-              Three scenarios, execution-ordered. Click a card to copy the prompt
-              or template to your clipboard. Every item is named after the file
-              your team would save it as in <code className="font-mono text-foreground">docs/prompts/</code>.
+              Three scenarios, execution-ordered. Click a card to copy the
+              prompt or template to your clipboard. Every item is named after
+              the file your team would save it as in{" "}
+              <code className="font-mono text-foreground">docs/prompts/</code>.
             </>
           }
         />
@@ -463,7 +489,7 @@ function Prompts() {
           aria-label="Prompt scenarios"
           className="mt-10 grid gap-3 border-y border-border py-4 sm:grid-cols-3"
         >
-          {PROMPT_LIBRARY.map((group) => (
+          {PROMPT_LIBRARY.map(group => (
             <a
               key={group.scenarioTag}
               href={`#scenario-${group.scenarioTag.toLowerCase()}`}
@@ -484,7 +510,7 @@ function Prompts() {
 
         {/* The groups */}
         <div className="mt-12 space-y-20">
-          {PROMPT_LIBRARY.map((group) => (
+          {PROMPT_LIBRARY.map(group => (
             <PromptGroup key={group.scenarioTag} group={group} />
           ))}
         </div>
@@ -525,7 +551,7 @@ function PromptGroup({
 
         <div className="lg:col-span-8">
           <ol className="space-y-6">
-            {group.items.map((item) => (
+            {group.items.map(item => (
               <li
                 key={item.id}
                 id={`prompt-${item.id}`}
@@ -599,7 +625,8 @@ function PromptLibraryItem({ item }: { item: LibraryPrompt }) {
           {item.title}
         </h4>
         <p className="mt-1 font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
-          Actor — {actorLabel} · File — <code className="font-mono">{item.filename}</code>
+          Actor — {actorLabel} · File —{" "}
+          <code className="font-mono">{item.filename}</code>
         </p>
       </header>
       <p className="mb-3 text-[14px] leading-relaxed text-foreground/85">
@@ -638,12 +665,15 @@ function BuildAndVerify() {
           title="One LLM builds. A different LLM verifies. You merge."
           kicker={
             <>
-              The Builder is biased to claim success on its own work. A second LLM in
-              a clean context, reading only the diff and{" "}
-              <code className="font-mono text-foreground">HANDOFF.md</code>, catches
-              what the Builder will never report on itself. The prompts and PR
-              templates for this loop live in the{" "}
-              <a href="#scenario-loop" className="underline decoration-primary underline-offset-4 hover:text-foreground">
+              The Builder is biased to claim success on its own work. A second
+              LLM in a clean context, reading only the diff and{" "}
+              <code className="font-mono text-foreground">HANDOFF.md</code>,
+              catches what the Builder will never report on itself. The prompts
+              and PR templates for this loop live in the{" "}
+              <a
+                href="#scenario-loop"
+                className="underline decoration-primary underline-offset-4 hover:text-foreground"
+              >
                 Recurring Loop
               </a>{" "}
               scenario of the Prompt Library.
@@ -653,7 +683,7 @@ function BuildAndVerify() {
 
         {/* Stages A → B → C */}
         <div className="mt-14 grid gap-px bg-border md:grid-cols-3">
-          {BUILD_VERIFY_STAGES.map((stage) => (
+          {BUILD_VERIFY_STAGES.map(stage => (
             <article
               key={stage.tag}
               className="paper-card flex flex-col gap-4 p-6"
@@ -698,8 +728,9 @@ function BuildAndVerify() {
               Four rules that make the loop actually work.
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              Skip any of these and you will get a Verifier that rubber-stamps the
-              Builder. The independence between the two LLMs is the entire point.
+              Skip any of these and you will get a Verifier that rubber-stamps
+              the Builder. The independence between the two LLMs is the entire
+              point.
             </p>
           </div>
           <div className="lg:col-span-8">
@@ -750,15 +781,40 @@ function BuildAndVerify() {
               <table className="w-full border-collapse text-left">
                 <thead>
                   <tr className="border-b border-border bg-secondary/40">
-                    <th scope="col" className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">Tier</th>
-                    <th scope="col" className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">Builder (writes code)</th>
-                    <th scope="col" className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">Verifier (clean context)</th>
-                    <th scope="col" className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">Why this pairing</th>
-                    <th scope="col" className="px-5 py-3 text-right font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">Cost</th>
+                    <th
+                      scope="col"
+                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
+                    >
+                      Tier
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
+                    >
+                      Builder (writes code)
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
+                    >
+                      Verifier (clean context)
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
+                    >
+                      Why this pairing
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-5 py-3 text-right font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
+                    >
+                      Cost
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
-                  {MODEL_PAIRINGS.map((row) => {
+                  {MODEL_PAIRINGS.map(row => {
                     const isAnti = "isAntiPattern" in row && row.isAntiPattern;
                     return (
                       <tr
@@ -766,7 +822,9 @@ function BuildAndVerify() {
                         className={`border-b border-border last:border-b-0 align-top ${isAnti ? "bg-primary/5" : ""}`}
                       >
                         <td className="px-5 py-5 align-top">
-                          <div className={`font-mono text-[11px] font-bold uppercase tracking-widest ${isAnti ? "text-primary" : "text-foreground"}`}>
+                          <div
+                            className={`font-mono text-[11px] font-bold uppercase tracking-widest ${isAnti ? "text-primary" : "text-foreground"}`}
+                          >
                             {row.tier}
                           </div>
                         </td>
@@ -786,7 +844,9 @@ function BuildAndVerify() {
                           </p>
                         </td>
                         <td className="px-5 py-5 text-right align-top">
-                          <span className={`inline-block border px-2 py-0.5 font-mono text-[10.5px] font-bold uppercase tracking-widest ${isAnti ? "border-primary text-primary" : "border-border text-muted-foreground"}`}>
+                          <span
+                            className={`inline-block border px-2 py-0.5 font-mono text-[10.5px] font-bold uppercase tracking-widest ${isAnti ? "border-primary text-primary" : "border-border text-muted-foreground"}`}
+                          >
                             {row.cost}
                           </span>
                         </td>
@@ -819,8 +879,8 @@ function BuildAndVerify() {
             <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
               The reflex is to swap the Builder model. The right move is to
               freeze the slice, read both Verifier reports, and re-scope the
-              <code className="mx-1 font-mono text-foreground">HANDOFF.md</code>.
-              Two FAILs is a slice problem, not a Builder problem.
+              <code className="mx-1 font-mono text-foreground">HANDOFF.md</code>
+              . Two FAILs is a slice problem, not a Builder problem.
             </p>
           </div>
 
@@ -838,7 +898,7 @@ function BuildAndVerify() {
             </div>
 
             <ol className="divide-y divide-border">
-              {ESCALATION_RULE.steps.map((step) => (
+              {ESCALATION_RULE.steps.map(step => (
                 <li key={step.n} className="grid grid-cols-12 gap-6 px-6 py-6">
                   <div className="col-span-12 sm:col-span-2">
                     <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
@@ -863,8 +923,14 @@ function BuildAndVerify() {
               </div>
               <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">
                 {ESCALATION_RULE.antiPatterns.map((p, i) => (
-                  <li key={i} className="flex gap-2 text-[14px] leading-relaxed text-foreground/85">
-                    <span aria-hidden className="mt-1 font-mono text-[11px] font-bold text-primary">
+                  <li
+                    key={i}
+                    className="flex gap-2 text-[14px] leading-relaxed text-foreground/85"
+                  >
+                    <span
+                      aria-hidden
+                      className="mt-1 font-mono text-[11px] font-bold text-primary"
+                    >
                       ✕
                     </span>
                     <span>{p}</span>
@@ -885,7 +951,10 @@ function BuildAndVerify() {
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
               Self-contained: explains the loop, lists the non-negotiables, and
               documents the operating cadence. Save it as{" "}
-              <code className="font-mono text-foreground">docs/build-and-verify.md</code>.
+              <code className="font-mono text-foreground">
+                docs/build-and-verify.md
+              </code>
+              .
             </p>
           </div>
           <div className="lg:col-span-8">
@@ -895,6 +964,413 @@ function BuildAndVerify() {
               body={BUILD_VERIFY_MARKDOWN}
               toastLabel="Build & Verify spec copied"
             />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────────────────────────────────────────────────────── */
+/* SECTION 07 — AFTER THE INSTALL (PHASE 2 OPERATION)                        */
+/* ───────────────────────────────────────────────────────────────────────── */
+
+function PhaseTwo() {
+  return (
+    <section id="phase-2" className="border-t border-border bg-background/60">
+      <div className="container py-20 lg:py-24">
+        <SectionHeader
+          number="07"
+          label="AFTER THE INSTALL"
+          title="Closing the install does not end the Verifier. It graduates it into its real job."
+          kicker={
+            <>
+              {PHASE_TWO_INTRO.body} The most common failure mode of dual-agent
+              systems is treating{" "}
+              <code className="font-mono text-foreground">VERDICT: CLOSE</code>{" "}
+              as the finish line. It is the{" "}
+              <span className="pen-circle">starting line</span> of Phase 2 —
+              where the framework's leverage actually compounds.
+            </>
+          }
+        />
+
+        {/* Two-phase comparison */}
+        <div className="mt-14 grid gap-px bg-border md:grid-cols-2">
+          {PHASE_TWO_PHASES.map(phase => (
+            <article
+              key={phase.tag}
+              className="paper-card flex flex-col gap-4 p-6"
+              style={{ boxShadow: "none" }}
+            >
+              <div className="flex items-center gap-4">
+                <div
+                  aria-hidden
+                  className="flex h-12 w-12 shrink-0 items-center justify-center border border-foreground bg-background font-display text-base font-black text-primary"
+                >
+                  {phase.tag.replace("Phase ", "P")}
+                </div>
+                <div className="min-w-0">
+                  <div className="font-mono text-[11px] font-bold uppercase tracking-widest text-primary">
+                    {phase.tag}
+                  </div>
+                  <h3 className="font-display text-xl font-bold leading-tight">
+                    {phase.name}
+                  </h3>
+                </div>
+              </div>
+              <dl className="mt-2 grid gap-3 text-[14px] leading-relaxed text-foreground/85">
+                <div>
+                  <dt className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Trigger
+                  </dt>
+                  <dd className="mt-1">{phase.trigger}</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Builder's job
+                  </dt>
+                  <dd className="mt-1">{phase.builderJob}</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Verifier's job
+                  </dt>
+                  <dd className="mt-1">{phase.verifierJob}</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Exit condition
+                  </dt>
+                  <dd className="mt-1">{phase.exit}</dd>
+                </div>
+                <div>
+                  <dt className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">
+                    Duration
+                  </dt>
+                  <dd className="mt-1">{phase.duration}</dd>
+                </div>
+              </dl>
+            </article>
+          ))}
+        </div>
+
+        {/* Leverage math callout */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">
+              {PHASE_TWO_LEVERAGE.headline.toUpperCase()}
+            </div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              Front-loaded effort, back-loaded payoff.
+            </h3>
+          </div>
+          <div className="lg:col-span-8">
+            <p className="text-[15px] leading-relaxed text-foreground/85">
+              {PHASE_TWO_LEVERAGE.body}
+            </p>
+            <blockquote className="mt-6 border-l-4 border-l-primary bg-background px-6 py-5">
+              <p className="font-display text-xl font-semibold leading-snug text-foreground">
+                {PHASE_TWO_LEVERAGE.callout}
+              </p>
+            </blockquote>
+          </div>
+        </div>
+
+        {/* What Phase 2 catches — table */}
+        <div className="mt-16">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="stamp">
+                FIVE FINDING TYPES · ONLY PHASE 2 CATCHES
+              </div>
+              <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+                What other checks miss.
+              </h3>
+            </div>
+            <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
+              Linters, type-checkers, dependency scanners, and ordinary code
+              review do not catch any of these reliably, because none of them
+              have a model of the project's intent. Only{" "}
+              <code className="font-mono text-foreground">PROJECT.md</code>{" "}
+              does.
+            </p>
+          </div>
+
+          <div className="mt-8 paper-card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-left">
+                <thead>
+                  <tr className="border-b border-border bg-secondary/40">
+                    <th
+                      scope="col"
+                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
+                    >
+                      Finding type
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
+                    >
+                      Example
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
+                    >
+                      Why other checks miss it
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {PHASE_TWO_FINDINGS.map(row => (
+                    <tr
+                      key={row.type}
+                      className="border-b border-border last:border-b-0 align-top"
+                    >
+                      <td className="px-5 py-5 align-top">
+                        <div className="font-display text-[15px] font-bold leading-snug text-foreground">
+                          {row.type}
+                        </div>
+                      </td>
+                      <td className="px-5 py-5 align-top">
+                        <p className="max-w-prose text-[14px] leading-relaxed text-foreground/85">
+                          {row.example}
+                        </p>
+                      </td>
+                      <td className="px-5 py-5 align-top">
+                        <p className="max-w-prose text-[14px] leading-relaxed text-foreground/85">
+                          {row.miss}
+                        </p>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        {/* Phase 2 prompt — copyable */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">PROMPT · PHASE 2 AUDIT</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              The Verifier prompt for code-PR review.
+            </h3>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              Phase 1 audited the spec. Phase 2 audits each PR <em>against</em>{" "}
+              the spec. Use this as your starting template and tune the
+              strictness over the first few PRs.
+            </p>
+            <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
+              Three verdicts:{" "}
+              <code className="font-mono text-foreground">APPROVE</code>,{" "}
+              <code className="font-mono text-foreground">REQUEST-CHANGES</code>
+              , and{" "}
+              <code className="font-mono text-foreground">
+                SPEC-UPDATE-REQUIRED
+              </code>
+              . The third covers PRs that obsolete part of{" "}
+              <code className="font-mono text-foreground">PROJECT.md</code> and
+              must amend it in the same PR.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <PromptCard
+              label="PROMPT · PHASE 2 AUDIT"
+              title="Verifier audits a code PR against PROJECT.md"
+              subtitle="Actor — Verifier LLM · clean context · per PR"
+              body={PHASE_TWO_PROMPT}
+            />
+          </div>
+        </div>
+
+        {/* How to wire Phase 2 into PR flow */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">FOUR STEPS · PER PR</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              Wiring Phase 2 into normal PR flow.
+            </h3>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              The discipline is one Verifier run per PR, before merge. Skipping
+              the Verifier on "small" PRs is how the spec drifts back into
+              irrelevance over time.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <ol className="divide-y divide-border border-y border-border">
+              {PHASE_TWO_WIRING.map(step => (
+                <li key={step.n} className="grid grid-cols-12 gap-6 py-6">
+                  <div className="col-span-12 sm:col-span-2">
+                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+                      Step {step.n}
+                    </span>
+                  </div>
+                  <div className="col-span-12 sm:col-span-10">
+                    <h4 className="font-display text-xl font-bold leading-snug text-foreground">
+                      {step.title}
+                    </h4>
+                    <p className="mt-2 max-w-prose text-[15px] leading-relaxed text-foreground/85">
+                      {step.body}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        {/* Triage: amend vs reject */}
+        <div className="mt-16">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="stamp">TRIAGE · AMEND VS REJECT</div>
+              <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+                {PHASE_TWO_TRIAGE.headline}
+              </h3>
+            </div>
+            <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
+              {PHASE_TWO_TRIAGE.intro}
+            </p>
+          </div>
+
+          <div className="mt-8 paper-card overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full border-collapse text-left">
+                <thead>
+                  <tr className="border-b border-border bg-secondary/40">
+                    <th
+                      scope="col"
+                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
+                    >
+                      If…
+                    </th>
+                    <th
+                      scope="col"
+                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
+                    >
+                      Then…
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {PHASE_TWO_TRIAGE.rows.map((row, i) => (
+                    <tr
+                      key={i}
+                      className="border-b border-border last:border-b-0 align-top"
+                    >
+                      <td className="px-5 py-5 align-top">
+                        <p className="max-w-prose text-[14px] leading-relaxed text-foreground/85">
+                          {row.condition}
+                        </p>
+                      </td>
+                      <td className="px-5 py-5 align-top">
+                        <p className="max-w-prose text-[14px] leading-relaxed text-foreground/85">
+                          {row.action}
+                        </p>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+            <div className="border-t border-border bg-primary/5 px-6 py-5">
+              <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+                The trap
+              </div>
+              <p className="mt-2 text-[14px] leading-relaxed text-foreground/85">
+                {PHASE_TWO_TRIAGE.warning}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Calibration warning */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">CALIBRATION · FIRST 5–10 PRS</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              {PHASE_TWO_CALIBRATION.headline}
+            </h3>
+          </div>
+          <div className="lg:col-span-8">
+            <p className="text-[15px] leading-relaxed text-foreground/85">
+              {PHASE_TWO_CALIBRATION.body}
+            </p>
+            <p className="mt-4 text-[15px] leading-relaxed text-foreground/85">
+              {PHASE_TWO_CALIBRATION.conclusion}
+            </p>
+          </div>
+        </div>
+
+        {/* What "install complete" actually means */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">DEFINITION · INSTALL COMPLETE</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              When the install is actually done.
+            </h3>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              Stopping at item 1 is stopping at the artifact. Items 2 and 3
+              convert the artifact into a system.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <ol className="divide-y divide-border border-y border-border">
+              {PHASE_TWO_INSTALL_COMPLETE.map((item, i) => (
+                <li key={i} className="grid grid-cols-12 gap-6 py-6">
+                  <div className="col-span-12 sm:col-span-2">
+                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                  </div>
+                  <div className="col-span-12 sm:col-span-10">
+                    <p className="text-[15px] leading-relaxed text-foreground/85">
+                      {item}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        {/* Counter-pattern: dormant Verifier */}
+        <div className="mt-16">
+          <div className="stamp">COUNTER-PATTERN · DORMANT VERIFIER</div>
+          <h3 className="mt-3 max-w-3xl font-display text-3xl font-bold leading-tight">
+            {PHASE_TWO_DORMANT.headline}
+          </h3>
+          <div className="mt-8 paper-card border-l-4 border-l-primary p-6">
+            <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+              Symptoms
+            </div>
+            <ul className="mt-3 grid gap-2.5">
+              {PHASE_TWO_DORMANT.symptoms.map((s, i) => (
+                <li
+                  key={i}
+                  className="flex gap-3 text-[14px] leading-relaxed text-foreground/85"
+                >
+                  <span
+                    aria-hidden
+                    className="mt-1 font-mono text-[11px] font-bold text-primary"
+                  >
+                    ✕
+                  </span>
+                  <span>{s}</span>
+                </li>
+              ))}
+            </ul>
+            <div className="mt-5 border-t border-border pt-4">
+              <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-foreground/70">
+                The fix
+              </div>
+              <p className="mt-2 text-[14px] leading-relaxed text-foreground/85">
+                {PHASE_TWO_DORMANT.intro}
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -9,7 +9,7 @@ import { SECTIONS } from "@/lib/content";
 
 // Compact labels swap in below xl. Number prefix carries the wayfinding;
 // the short text is enough to disambiguate at a glance.
-// 6-section IA. Short labels swap in below 2xl. Long labels on widest screens.
+// 7-section IA. Short labels swap in below 2xl. Long labels on widest screens.
 const SHORT_LABEL: Record<string, string> = {
   overview: "Overview",
   diagnosis: "Diagnosis",
@@ -17,6 +17,7 @@ const SHORT_LABEL: Record<string, string> = {
   install: "Install",
   prompts: "Prompts",
   "build-verify": "Build & Verify",
+  "phase-2": "Phase 2",
 };
 
 export function SiteHeader() {
@@ -24,10 +25,10 @@ export function SiteHeader() {
 
   useEffect(() => {
     const observer = new IntersectionObserver(
-      (entries) => {
+      entries => {
         // Pick the entry closest to the top that is intersecting
         const visible = entries
-          .filter((e) => e.isIntersecting)
+          .filter(e => e.isIntersecting)
           .sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top);
         if (visible[0]) setActive(visible[0].target.id);
       },
