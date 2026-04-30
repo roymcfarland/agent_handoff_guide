@@ -1338,6 +1338,54 @@ out-of-scope refactors, no silent debt, no quiet PROJECT.md amendments.
 All non-goals are respected unless explicitly amended in a separate PR
 first._
 `;
+export const PHASE_TWO_VERIFIER_PR_COMMENT = `## Phase 2 Verifier Report
+**Model:** <name + version, e.g. gpt-5-thinking-2026-04>
+**Context:** clean — no prior PRs loaded
+**Builder model:** <name + version, e.g. claude-sonnet-4.5-2026-03 — or "human">
+**PR:** #<N> — <title>
+**PROJECT.md ref:** <commit SHA the audit was run against>
+**Verdict:** <APPROVE | REQUEST-CHANGES | SPEC-UPDATE-REQUIRED>
+---
+### Findings
+- [MAJOR] <finding> — evidence: \`src/...:line\`. Violates PROJECT.md
+  § <section, e.g. "Non-goals — not multi-tenant above the org level">.
+- [MINOR] <finding> — evidence: \`src/...:line\`. Inconsistent with the
+  declared convention <name>; document the exception or fix.
+- [INFO] <finding> — evidence: \`src/...:line\`. Stylistic; not blocking.
+_(Order by severity: MAJOR → MINOR → INFO. Write "None observed" only if
+you genuinely found none. A clean PR with no findings is rare and worth
+flagging back to the Gatekeeper as evidence the spec is mature.)_
+### Non-goal violations
+- <Non-goal name from PROJECT.md> — violated by \`src/...:line\`.
+_(or "None observed". Non-goals are the bright lines the project owner
+explicitly drew. Treat them as non-negotiable unless the PR description
+argues for moving the line and amending PROJECT.md in the same PR.)_
+### Out-of-scope changes
+- \`src/utils/logger.ts\` — refactored unrelated helper, not justified by
+  the requested task.
+- \`package.json\` — added a new dependency not declared in the PR
+  description.
+_(or "None observed". Out-of-scope changes are the most common MAJOR
+finding in Phase 2. Flag them even if they look harmless.)_
+### Spec-update signal
+- <If the PR appears to obsolete part of PROJECT.md, describe which
+  section and why. The Builder should open a separate spec-amendment PR
+  before this one merges.>
+_(or "None — PR is consistent with PROJECT.md as written.". Use this
+section only when the verdict is SPEC-UPDATE-REQUIRED, or when you want
+to preemptively flag drift the Gatekeeper should track.)_
+### Notes for the Gatekeeper
+<2–4 sentences max. Describe WHAT is wrong or out of scope, not HOW to
+fix it. Example: "PR adds a second-organization concept in line 88, which
+violates the explicit non-goal in PROJECT.md § Non-goals #1. Recommend
+REQUEST-CHANGES and surface to the Gatekeeper to decide whether the
+non-goal should be amended in a separate PR.">
+---
+_Phase 2 Verifier rules: read only the diff and PROJECT.md, return a
+verdict with evidence, do not propose code changes, do not refactor, do
+not write code. The Verifier reports drift; the Gatekeeper decides what
+to do about it._
+`;
 export const PHASE_TWO_PROMPT = `PHASE 2 AUDIT — <repo name>
 
 Context:

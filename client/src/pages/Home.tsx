@@ -41,6 +41,7 @@ import {
   PHASE_TWO_FINDINGS,
   PHASE_TWO_BUILDER_PR_DESCRIPTION,
   PHASE_TWO_BUILDER_PROMPT,
+  PHASE_TWO_VERIFIER_PR_COMMENT,
   PHASE_TWO_INSTALL_COMPLETE,
   PHASE_TWO_INTRO,
   PHASE_TWO_LEVERAGE,
@@ -1257,6 +1258,51 @@ function PhaseTwo() {
               title="Builder fills in this template before opening the PR"
               subtitle="Actor — Builder LLM (or human) · per PR"
               body={PHASE_TWO_BUILDER_PR_DESCRIPTION}
+            />
+          </div>
+        </div>
+        {/* Phase 2 Verifier PR comment template — copyable */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">TEMPLATE · PHASE 2 VERDICT</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              The Verifier PR comment — fill-in template.
+            </h3>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              The Verifier posts this as the first comment on the PR, with
+              the verdict line at the top. Mirrors the Builder PR
+              description above so a human can compare claim against verdict
+              in one scan.
+            </p>
+            <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
+              Three verdicts:{" "}
+              <code className="font-mono text-foreground">APPROVE</code>,{" "}
+              <code className="font-mono text-foreground">
+                REQUEST-CHANGES
+              </code>, and{" "}
+              <code className="font-mono text-foreground">
+                SPEC-UPDATE-REQUIRED
+              </code>
+              . Always evidence-backed (file:line). The Verifier reports
+              drift; it does not propose fixes.
+            </p>
+            <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
+              Mirrors the Phase 1{" "}
+              <code className="font-mono text-foreground">
+                verifier-report.md
+              </code>{" "}
+              template in section 06, with{" "}
+              <em>Acceptance Criteria</em> swapped for{" "}
+              <em>Non-goal violations</em> and a new{" "}
+              <em>Spec-update signal</em> field for the third verdict.
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <PromptCard
+              label="TEMPLATE · PHASE 2 VERDICT"
+              title="Verifier posts this as the first comment on the PR"
+              subtitle="Actor — Verifier LLM · clean context · per PR"
+              body={PHASE_TWO_VERIFIER_PR_COMMENT}
             />
           </div>
         </div>
