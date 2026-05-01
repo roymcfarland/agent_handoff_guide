@@ -432,6 +432,29 @@
     box-shadow: var(--card-shadow);
   }
 
+  /* Interactive cards: deliberate lift on hover (respects reduced motion). */
+  .paper-card-lift {
+    transition:
+      box-shadow 180ms ease-out,
+      transform 180ms ease-out,
+      border-color 180ms ease-out;
+  }
+  @media (prefers-reduced-motion: no-preference) {
+    .paper-card-lift:hover {
+      transform: translateY(-2px);
+      border-color: color-mix(in oklch, var(--border) 72%, var(--primary) 28%);
+      box-shadow:
+        0 1px 0 color-mix(in oklch, var(--foreground) 8%, transparent),
+        0 18px 42px -18px color-mix(in oklch, var(--foreground) 28%, transparent);
+    }
+    .dark .paper-card-lift:hover {
+      box-shadow:
+        inset 0 0 0 1px color-mix(in oklch, var(--primary) 28%, transparent),
+        0 1px 0 oklch(0 0 0 / 0.45),
+        0 22px 48px -18px oklch(0 0 0 / 0.75);
+    }
+  }
+
   .ink-link {
     color: var(--ink);
     text-decoration: underline;

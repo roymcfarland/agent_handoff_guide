@@ -19,7 +19,7 @@
  */
 
 import { useState } from "react";
-import { ArrowDown, Check, Copy, ExternalLink, FileText } from "lucide-react";
+import { ArrowDown, Check, ChevronRight, Copy, ExternalLink, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { BuildVerifyDiagram } from "@/components/BuildVerifyDiagram";
 import {
@@ -70,6 +70,8 @@ import {
   META_VERIFIER_PR_COMMENT,
   PROMPT_LIBRARY,
   REFERENCES,
+  REFERENCE_READING_ORDER,
+  REFERENCE_READING_ORDER_INTRO,
   REFERENCE_NOTE,
   SCHEMA_FILES,
   type LibraryPrompt,
@@ -108,7 +110,7 @@ function Hero() {
       className="relative"
     >
       <div className="container grid gap-10 py-20 sm:py-24 lg:grid-cols-12 lg:gap-12 lg:py-28">
-        <aside className="lg:col-span-3">
+        <aside className="lg:col-span-3 lg:border lg:border-border lg:bg-background/80 lg:p-5 lg:shadow-[var(--card-shadow)]">
           <div className="stamp">FILE 00 / OVERVIEW</div>
           <dl className="mt-6 space-y-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
             <div>
@@ -128,7 +130,7 @@ function Hero() {
           </dl>
         </aside>
 
-        <div className="lg:col-span-9">
+        <div className="lg:col-span-9 lg:border lg:border-border lg:bg-card/35 lg:p-8 lg:shadow-[var(--card-shadow)] xl:p-10">
           <h1
             id="overview-heading"
             className="text-balance font-display text-5xl font-bold leading-[0.98] tracking-tight text-foreground sm:text-6xl lg:text-7xl"
@@ -140,8 +142,16 @@ function Hero() {
             The recurring failure pattern is not just model weakness; it is that
             the <em>document the agent works against</em> is doing too many jobs
             at once. This guide replaces the single bloated handoff file with
-            three disciplined artifacts and a small set of constrained prompts —
-            organized in the order your team actually runs them.
+            three disciplined artifacts and a copy-paste prompt library —
+            organized in the order your team actually runs them. Citations for
+            the workflow&apos;s empirical hooks live in{" "}
+            <a
+              href="#references"
+              className="ink-link font-medium text-foreground"
+            >
+              References
+            </a>
+            .
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
@@ -163,14 +173,17 @@ function Hero() {
           {/* Quick stats / principles strip */}
           <div className="mt-16 grid grid-cols-1 border-t border-border sm:grid-cols-3">
             {[
-              { k: "3", v: "Document files instead of one bloated doc" },
               {
-                k: "8",
-                v: "Constrained prompts covering install, loop, and recovery",
+                k: "3",
+                v: "Artifacts — PROJECT.md, CHANGELOG.md, HANDOFF.md (each with one job)",
               },
               {
-                k: "0",
-                v: "Direct commits to main without a PR review surface",
+                k: "11",
+                v: "Library prompts & templates — install, recurring loop, recovery",
+              },
+              {
+                k: "2",
+                v: "Models per slice — Builder session, then independent Verifier",
               },
             ].map(item => (
               <div
@@ -1817,9 +1830,10 @@ function References() {
           kicker={
             <>
               The framework is intentionally opinionated. These references
-              anchor the parts that should be anchored: prompt structure,
-              evaluation discipline, PR review surfaces, and LLM-as-judge
-              limitations.
+              anchor concrete claims on this page: prompt structure, evaluation
+              discipline, PR review surfaces, merge protections, long-context
+              effects, LLM-as-judge caveats, and governance vocabulary — not a
+              vendor roadmap.
             </>
           }
         />
@@ -1853,6 +1867,56 @@ function References() {
               </p>
             </article>
           ))}
+        </div>
+
+        <div className="mt-12 paper-card border-l-4 border-l-primary p-6 sm:p-7">
+          <div className="stamp">READING ORDER · THREE-STOP SPINE</div>
+          <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-muted-foreground sm:text-[15px]">
+            {REFERENCE_READING_ORDER_INTRO}
+          </p>
+          <nav
+            className="mt-6"
+            aria-label="Suggested reference reading order"
+          >
+            <ol className="m-0 flex list-none flex-col p-0 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2 sm:gap-y-2">
+              {REFERENCE_READING_ORDER.flatMap((item, index) => {
+                const row = (
+                  <li key={item.href} className="flex min-w-0 items-center gap-2">
+                    <span className="font-mono text-[11px] font-bold tabular-nums tracking-widest text-primary">
+                      {item.step}
+                    </span>
+                    <a
+                      href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="group inline-flex min-w-0 items-center gap-1.5 font-display text-[17px] font-bold leading-snug text-foreground underline decoration-primary underline-offset-[5px] transition-colors hover:text-primary sm:text-[18px]"
+                    >
+                      <span className="min-w-0">{item.short}</span>
+                      <ExternalLink
+                        aria-hidden
+                        className="h-3.5 w-3.5 shrink-0 text-primary opacity-80 transition-transform group-hover:-translate-y-px group-hover:translate-x-px sm:h-4 sm:w-4"
+                        strokeWidth={2.25}
+                      />
+                    </a>
+                  </li>
+                );
+                if (index === 0) return [row];
+                return [
+                  <li
+                    key={`sep-${item.href}`}
+                    aria-hidden
+                    className="flex justify-center py-2 sm:flex sm:items-center sm:justify-center sm:py-0"
+                  >
+                    <ChevronRight
+                      className="h-4 w-4 shrink-0 rotate-90 text-primary/65 sm:rotate-0 sm:text-primary/70"
+                      strokeWidth={2.5}
+                    />
+                  </li>,
+                  row,
+                ];
+              })}
+            </ol>
+          </nav>
         </div>
 
         <p className="mt-8 max-w-4xl border-l-4 border-l-primary pl-5 text-[14px] leading-relaxed text-muted-foreground">

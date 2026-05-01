@@ -36,7 +36,7 @@ export function MarkdownBlock({
   };
 
   return (
-    <article className="paper-card overflow-hidden">
+    <article className="paper-card paper-card-lift overflow-hidden">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3">
         <div className="flex items-center gap-3 min-w-0">
           <FileText className="h-4 w-4 shrink-0 text-primary" strokeWidth={2} />

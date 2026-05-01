@@ -7,7 +7,11 @@ export function SiteFooter() {
   return (
     <footer className="border-t border-border bg-background">
       <div className="container py-12">
-        <div className="ruled mb-8" />
+        <div className="mb-8 flex items-center gap-3">
+          <div className="h-px flex-1 bg-border" />
+          <div className="h-1 w-16 bg-primary/35" aria-hidden />
+          <div className="h-px flex-1 bg-border" />
+        </div>
         <div className="flex flex-col items-start justify-between gap-6 sm:flex-row sm:items-end">
           <div>
             <div className="stamp">END OF DOCUMENT</div>
@@ -23,7 +27,8 @@ export function SiteFooter() {
                 className="text-foreground underline decoration-muted-foreground/60 underline-offset-4 hover:decoration-foreground"
                 href="https://github.com/roymcfarland/agent_handoff_guide"
                 rel="noopener noreferrer"
-                target="_blank">
+                target="_blank"
+              >
                 Source on GitHub
               </a>
             </p>
@@ -36,11 +41,14 @@ export function SiteFooter() {
             className="font-semibold text-foreground underline decoration-muted-foreground/60 underline-offset-4 hover:decoration-foreground"
             href="https://brightline.io/"
             rel="noopener noreferrer"
-            target="_blank">
+            target="_blank"
+          >
             Brightline Labs
           </a>
           <span className="mx-2 text-border">·</span>
-          <span className="text-foreground/90">© {new Date().getFullYear()} Roy McFarland</span>
+          <span className="text-foreground/90">
+            © {new Date().getFullYear()} Roy McFarland
+          </span>
         </p>
       </div>
     </footer>

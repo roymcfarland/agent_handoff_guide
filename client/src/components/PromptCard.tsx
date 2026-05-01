@@ -31,7 +31,7 @@ export function PromptCard({ label, title, subtitle, body }: PromptCardProps) {
 
   return (
     <article
-      className="paper-card relative ink-in"
+      className="paper-card paper-card-lift relative ink-in"
       aria-label={`${label} — ${title}`}
     >
       {/* Header strip with stamp label and copy button */}

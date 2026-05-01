@@ -25,22 +25,22 @@ export const SECTIONS = [
 ] as const;
 
 export const REFERENCE_NOTE =
-  "These sources support the framework's design principles; they do not prove that a prompt will work in every repository. Treat prompt changes like code changes: run them against explicit acceptance criteria, review the diff, and tighten the workflow when real failures surface.";
+  "These sources support specific claims on this page (prompt structure, evaluation hygiene, PR surfaces, LLM-as-judge limits, long-context behavior). They do not guarantee that any fixed prompt will work in every repository, stack, or policy environment. Treat prompt changes like code changes: run them against explicit acceptance criteria, review the diffs, measure failure modes on your repo, and tighten the workflow when real incidents surface.";
 
 export const REFERENCES = [
   {
     category: "Prompt design",
-    source: "OpenAI API docs",
+    source: "OpenAI Developer Docs",
     title: "Prompt engineering",
     href: "https://developers.openai.com/api/docs/guides/prompt-engineering",
-    note: "Useful support for role/workflow specificity, structured examples, context management, and test-oriented coding-agent prompts.",
+    note: "Official guidance on instruction structure, specificity, examples, and controlling model behavior — aligned with this site's emphasis on scoped roles and explicit contracts.",
   },
   {
     category: "Evaluation",
-    source: "OpenAI API docs",
+    source: "OpenAI Developer Docs",
     title: "Working with evals",
     href: "https://developers.openai.com/api/docs/guides/evals",
-    note: "Grounds the guide's bias toward explicit criteria, repeatable checks, and prompt iteration based on observed outputs rather than vibes.",
+    note: "Grounds the framework's bias toward explicit criteria, repeatable checks, and iterating prompts from measured failures rather than subjective impressions.",
   },
   {
     category: "Prompt design",
@@ -75,7 +75,53 @@ export const REFERENCES = [
     source: "Zheng et al., arXiv",
     title: "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
     href: "https://arxiv.org/abs/2306.05685",
-    note: "Background for LLM judge workflows and their limits, which is why this framework keeps verifier findings evidence-backed and human-gated.",
+    note: "Empirical background on LLM-as-judge reliability and failure modes — motivation for keeping Verifier outputs evidence-grounded (diff, file:line, quoted claims) and merging only under human gatekeeping.",
+  },
+  {
+    category: "Context windows",
+    source: "Liu et al., arXiv",
+    title: "Lost in the Middle: How Language Models Use Long Context",
+    href: "https://arxiv.org/abs/2307.03172",
+    note: "Shows retrieval and ordering effects in long contexts — supporting the site's insistence on a narrow Verifier input set (PR body, diff, scope doc) and a fresh context window rather than an endless chat transcript.",
+  },
+  {
+    category: "Merge hygiene",
+    source: "GitHub Docs",
+    title: "About protected branches",
+    href: "https://docs.github.com/en/repositories/configuring-branches-and-merges-in-your-repository/managing-protected-branches/about-protected-branches",
+    note: 'Platform-level counterpart to "no direct commits to main": required reviews and checks enforce the PR surface this framework assumes.',
+  },
+  {
+    category: "Human oversight",
+    source: "NIST",
+    title: "Artificial Intelligence Risk Management Framework (AI RMF 1.0)",
+    href: "https://www.nist.gov/itl/ai-risk-management-framework",
+    note: "Non-prescriptive governance vocabulary for AI-assisted workflows — maps to human gatekeeping, documented acceptance criteria, and traceability across agent steps.",
+  },
+] as const;
+
+/**
+ * Short “spine” through empirical + governance anchors for the framework’s
+ * Verifier design. Rendered as a single strip under the reference cards.
+ */
+export const REFERENCE_READING_ORDER_INTRO =
+  "If you only follow three external links from this page, use this order: why second-model checks are slippery, why Verifier inputs should stay narrow and fresh, then how to talk about oversight without turning it into slogans.";
+
+export const REFERENCE_READING_ORDER = [
+  {
+    step: "01",
+    short: "MT-Bench / LLM-as-judge",
+    href: "https://arxiv.org/abs/2306.05685",
+  },
+  {
+    step: "02",
+    short: "Lost in the Middle",
+    href: "https://arxiv.org/abs/2307.03172",
+  },
+  {
+    step: "03",
+    short: "NIST AI RMF",
+    href: "https://www.nist.gov/itl/ai-risk-management-framework",
   },
 ] as const;
 
@@ -98,7 +144,7 @@ export const FAILURE_MODES = [
   },
   {
     title: "Self-graded handoffs",
-    body: "LLMs are prone to presenting plausible completion summaries for their own work. Without a forced honesty step, the next agent inherits silent debt — stubs, hacks, and skipped criteria that were never declared.",
+    body: "Models can produce plausible completion narratives for code they authored; LLM-as-judge setups exhibit documented biases and variance (e.g., Zheng et al., https://arxiv.org/abs/2306.05685). Without an explicit self-audit tied to Acceptance Criteria plus an independent Verifier pass, the next agent inherits silent debt — stubs, hacks, and skipped criteria that were never declared.",
   },
   {
     title: "Planning vs. building drift",
@@ -297,8 +343,9 @@ Produce a single PROJECT.md with these sections, and ONLY these sections:
   intentional or legacy?" not "tell me more about the project."
 
 Rules:
-- Cite a file path, and a line number when available, for every claim in
-  Conventions and Architecture.
+- Cite a file path, and a line number when your tooling exposes stable line
+  numbers, for every claim in Conventions and Architecture. If line numbers are
+  unavailable, cite a short verbatim quoted span from the file instead.
 - For Stack, copy package names and versions from the repo manifest exactly.
   Do not infer versions from memory.
 - Separate observed facts from inferences. If a claim is inferred, label it
@@ -847,7 +894,7 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
     scenarioTag: "INSTALL",
     cadence: "Run once, in order, when bringing a repo into the framework.",
     intro:
-      "These four prompts walk you through a compact install of the framework onto a codebase that already exists. Execute them top-to-bottom; do not skip the human Edit Pass — it is the step that turns repo observations into project intent.",
+      "These walk through a compact install onto a codebase that already exists: Inventory → human Edit Pass checklist → PROJECT.md sanity audit → optional first-HANDOFF scoping. Execute them top-to-bottom; do not skip the human Edit Pass — it is the step that converts inferred repo facts into declared intent (including Non-goals and human-only constraints code cannot infer).",
     items: [
       {
         id: "inventory",
@@ -913,7 +960,7 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
     cadence:
       "Run in order for each slice. Same Builder session for 04 and 05; different LLM, fresh context, for 06.",
     intro:
-      "These are the three prompts your team uses on every slice once the install is complete. The Builder and Closeout are the same session. The Verifier is a separate model in a clean context window.",
+      "These are the prompts your team uses on every slice once install is complete: Builder execution → Closeout (same session) → Verifier (different model, clean context window, narrow inputs). PR-body templates mirror what the Verifier grades so claims stay comparable to the diff.",
     items: [
       {
         id: "builder",
@@ -993,7 +1040,7 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
     cadence:
       "Run at the end of the first install cycle, or any time PROJECT.md has drifted from reality.",
     intro:
-      "These prompts close the loop back to PROJECT.md. The Calibration Debrief runs at the end of the first full cycle — its output is the second, smaller PROJECT.md commit that reflects what you learned in cycle #1.",
+      "These prompts close the loop back to PROJECT.md. The Calibration Debrief runs at the end of the first full slice cycle — producing a structured proposal you review before merging doc updates (typically via a META-PR against PROJECT.md so the Verifier grades intent vs diff).",
     items: [
       {
         id: "calibration",
@@ -1042,7 +1089,7 @@ export const BUILD_VERIFY_STAGES = [
 export const BUILD_VERIFY_PRINCIPLES = [
   {
     title: "Different model, not just different context",
-    body: "Prefer a different model family or provider for the Verifier than the Builder. Different model lineages, tooling behavior, and post-training priors reduce correlated failure modes; they do not eliminate them.",
+    body: "Prefer a different model family or provider for the Verifier than the Builder. Divergent training distributions and tool behaviors tend to reduce correlated errors versus same-model replay; correlation can remain (especially on systematic misunderstandings of your codebase), which is why evidence-linked verdicts and human merge gates stay mandatory.",
   },
   {
     title: "Clean context window — always",
@@ -1058,7 +1105,8 @@ export const BUILD_VERIFY_PRINCIPLES = [
   },
 ] as const;
 
-export const MODEL_PAIRINGS_FRESHNESS = "May 2026 · model-agnostic guidance";
+export const MODEL_PAIRINGS_FRESHNESS =
+  "May 2026 · heuristic matrix (not vendor endorsement)";
 
 export const MODEL_PAIRINGS = [
   {
@@ -1161,13 +1209,17 @@ slice runs.
 
 ## Why two LLMs?
 
-A Builder LLM can overstate completion on its own work. A Verifier LLM in
-a fresh context, reading the PR description, diff, and scope document,
-catches stubs, hallucinated calls, out-of-scope changes, and silently
-skipped Acceptance Criteria that the Builder may under-report.
+Code-capable models can produce persuasive summaries of work they authored.
+Empirical LLM-as-judge work shows judges vary by prompt, model, and task (e.g.,
+Zheng et al., https://arxiv.org/abs/2306.05685). A Verifier LLM in a fresh context,
+reading only the PR description,
+diff, and scope document, is a structured second reader that can surface stubs,
+speculative APIs, out-of-scope edits, and silently skipped Acceptance Criteria
+that the Builder may under-report — especially when verdicts must cite evidence.
 
-The marginal cost is bounded. The marginal signal is high when the review
-input is narrow and evidence-backed.
+Two-model separation does **not** guarantee independence; it raises the odds
+that blind spots differ from the Builder's. Narrow inputs and explicit verdict
+formats keep that signal usable.
 
 ---
 
@@ -1248,6 +1300,21 @@ input is narrow and evidence-backed.
 If the Verifier returns FAIL twice in a row on the same slice, escalate to
 the gatekeeper for re-scoping. The slice itself may be wrong, not the
 Builder's execution.
+
+---
+
+## Further reading (external)
+
+- Prompt engineering — OpenAI Developer Docs:
+  https://developers.openai.com/api/docs/guides/prompt-engineering
+- Evaluation workflow — OpenAI Developer Docs:
+  https://developers.openai.com/api/docs/guides/evals
+- Pull requests & GitHub Flow — GitHub Docs:
+  https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests
+  · https://docs.github.com/en/get-started/using-github/github-flow
+- LLM-as-judge caveats — Zheng et al. (2023): https://arxiv.org/abs/2306.05685
+- Long-context / input ordering effects — Liu et al. (2023):
+  https://arxiv.org/abs/2307.03172
 `;
 
 /* ─────────────────────────────────────────────────────────────────────────── */
@@ -1623,13 +1690,13 @@ export const META_WHEN_TO_USE = [
   },
   {
     n: "02",
-    label: "Calibration Debrief output (Phase 2)",
-    body: "The first full slice surfaced gaps in PROJECT.md. The Calibration Debrief Builder produces a diff-style proposal that becomes a META-PR. Use the Phase 2 META-PR Builder prompt to write the proposal, and the Phase 2 META-PR Verifier prompt to grade it.",
+    label: "Calibration → PROJECT.md META-PR",
+    body: "After the first full slice (install / calibration cycle), gaps in PROJECT.md often surface. The Calibration Debrief produces a structured proposal; turning that into a PR that edits PROJECT.md is a META-PR. Use the Spec-Editor Builder prompt to draft the Spec Update Proposal when needed, then the PROJECT.md META-PR Verifier prompt to grade the diff against the pasted Proposal — not against the edited file alone.",
   },
   {
     n: "03",
-    label: "Spec evolution (Phase 2)",
-    body: "Six months in, your team's conventions or non-goals have drifted. A PR amends PROJECT.md to reflect the new reality. Use the Phase 2 META-PR Verifier prompt with the Spec Update Proposal in the PR description as the scope.",
+    label: "Spec evolution (steady state)",
+    body: "After the framework is wired in, conventions and non-goals still evolve. A PR amends PROJECT.md to reflect the new reality. Use the PROJECT.md META-PR Verifier prompt with the Spec Update Proposal pasted into the PR description as the authoritative scope.",
   },
 ];
 
