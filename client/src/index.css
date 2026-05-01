@@ -59,7 +59,7 @@
 }
 
 :root {
-  /* Paper + ink palette */
+  /* PAPER + INK palette (light / day mode) — Engineer's notebook on cream stock. */
   --paper: oklch(0.955 0.018 80);          /* warm cream #F4EFE6-ish */
   --paper-deep: oklch(0.925 0.022 80);     /* slightly darker fold */
   --ink: oklch(0.235 0.045 250);           /* deep navy ink */
@@ -69,6 +69,11 @@
   --grid-strong: oklch(0.68 0.06 230);     /* every 5th line */
   --red: oklch(0.55 0.18 28);              /* drafting red */
   --red-deep: oklch(0.46 0.18 28);
+  /* Card depth shadow — color-aware so it can flip in dark mode without
+     reading as a foreign black halo on a deep navy background. */
+  --card-shadow:
+    0 1px 0 oklch(0.235 0.045 250 / 0.04),
+    0 8px 24px -16px oklch(0.235 0.045 250 / 0.18);
 
   --radius: 0.125rem; /* sharp, drafted corners */
 
@@ -111,6 +116,79 @@
   --sidebar-accent: var(--paper-deep);
   --sidebar-accent-foreground: var(--ink);
   --sidebar-border: oklch(0.82 0.025 80);
+  --sidebar-ring: var(--red);
+}
+
+/*
+ * BLUEPRINT palette (dark / night mode) — same engineer's notebook, redrawn at
+ * night on architectural blueprint paper. Deep navy stock with bright cyan
+ * grid lines and warm-white ink. The drafting red stays red but is brightened
+ * slightly so it carries on dark.
+ *
+ * Applied via the `.dark` class which is added to <html> by a tiny script in
+ * index.html (see that file) — the script reads prefers-color-scheme and
+ * a localStorage override, so the device controls the default but a manual
+ * override is still possible.
+ */
+.dark {
+  /* Re-skin the foundational tokens — every other variable below derives from these.
+     Tuned values after first dark-mode preview: bumped --paper-deep so cards lift
+     visibly off the page (was too close to --paper), kept the cyan grid bright but
+     legible, and added a 1px inner ring on cards via --card-shadow so they read
+     as physical surfaces rather than ghost panels. */
+  --paper: oklch(0.195 0.04 245);           /* deep blueprint navy (page) */
+  --paper-deep: oklch(0.31 0.05 245);       /* elevated panel surface — distinct from page */
+  --ink: oklch(0.96 0.018 80);              /* warm off-white text */
+  --ink-soft: oklch(0.82 0.022 80);         /* secondary text */
+  --ink-faint: oklch(0.66 0.022 80);        /* tertiary */
+  --grid: oklch(0.74 0.06 215);             /* cyan grid line */
+  --grid-strong: oklch(0.84 0.08 210);      /* every 5th line, brighter */
+  --red: oklch(0.68 0.18 28);               /* drafting red carries on dark */
+  --red-deep: oklch(0.58 0.18 28);
+  --card-shadow:
+    inset 0 0 0 1px oklch(0.5 0.04 240 / 0.35),
+    0 1px 0 oklch(0 0 0 / 0.4),
+    0 12px 32px -16px oklch(0 0 0 / 0.7);
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: var(--paper-deep);
+  --card-foreground: var(--ink);
+  --popover: var(--paper-deep);
+  --popover-foreground: var(--ink);
+
+  --primary: var(--red);
+  --primary-foreground: oklch(0.97 0.005 80);
+
+  --secondary: oklch(0.36 0.05 245);
+  --secondary-foreground: var(--ink);
+
+  --muted: oklch(0.36 0.05 245);
+  --muted-foreground: var(--ink-soft);
+
+  --accent: var(--red);
+  --accent-foreground: oklch(0.97 0.005 80);
+
+  --destructive: oklch(0.66 0.22 25);
+  --destructive-foreground: oklch(0.97 0 0);
+
+  --border: oklch(0.5 0.05 240);
+  --input: oklch(0.42 0.05 240);
+  --ring: var(--red);
+
+  --chart-1: var(--ink);
+  --chart-2: var(--red);
+  --chart-3: var(--ink-soft);
+  --chart-4: var(--grid-strong);
+  --chart-5: var(--ink-faint);
+
+  --sidebar: var(--paper);
+  --sidebar-foreground: var(--ink);
+  --sidebar-primary: var(--red);
+  --sidebar-primary-foreground: oklch(0.97 0.005 80);
+  --sidebar-accent: var(--paper-deep);
+  --sidebar-accent-foreground: var(--ink);
+  --sidebar-border: oklch(0.5 0.05 240);
   --sidebar-ring: var(--red);
 }
 
@@ -211,14 +289,16 @@
   .flex { min-height: 0; min-width: 0; }
 
   /* The signature graph-paper background.
-     Two layered linear-gradients give a 24px grid with a stronger every-5th line. */
+     Two layered linear-gradients give a 24px grid with a stronger every-5th line.
+     Routed through CSS variables so the grid lines flip from cyan-on-cream to
+     bright-cyan-on-navy when .dark is active. */
   .graph-paper {
     background-color: var(--paper);
     background-image:
-      linear-gradient(to right,  oklch(0.78 0.04 230 / 0.35) 1px, transparent 1px),
-      linear-gradient(to bottom, oklch(0.78 0.04 230 / 0.35) 1px, transparent 1px),
-      linear-gradient(to right,  oklch(0.68 0.06 230 / 0.45) 1px, transparent 1px),
-      linear-gradient(to bottom, oklch(0.68 0.06 230 / 0.45) 1px, transparent 1px);
+      linear-gradient(to right,  color-mix(in oklch, var(--grid) 35%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 35%, transparent) 1px, transparent 1px),
+      linear-gradient(to right,  color-mix(in oklch, var(--grid-strong) 45%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--grid-strong) 45%, transparent) 1px, transparent 1px);
     background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
     background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
   }
@@ -226,8 +306,8 @@
   .graph-paper-dense {
     background-color: var(--paper);
     background-image:
-      linear-gradient(to right,  oklch(0.78 0.04 230 / 0.5) 1px, transparent 1px),
-      linear-gradient(to bottom, oklch(0.78 0.04 230 / 0.5) 1px, transparent 1px);
+      linear-gradient(to right,  color-mix(in oklch, var(--grid) 50%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 50%, transparent) 1px, transparent 1px);
     background-size: 16px 16px;
   }
 
@@ -281,9 +361,7 @@
   .paper-card {
     background: var(--card);
     border: 1px solid var(--border);
-    box-shadow:
-      0 1px 0 rgba(14, 42, 71, 0.04),
-      0 8px 24px -16px rgba(14, 42, 71, 0.18);
+    box-shadow: var(--card-shadow);
   }
 
   .ink-link {
