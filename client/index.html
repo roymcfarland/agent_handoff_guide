@@ -11,6 +11,30 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,700;9..144,900&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <!--
+      Theme auto-detect: runs synchronously in <head> BEFORE the document body
+      paints, so the user never sees a flash of light theme on a dark device.
+      Order of precedence: explicit user override in localStorage > device
+      prefers-color-scheme. The override key is intentionally readable so a
+      future toggle UI can write to it. The class is added to <html> so
+      Tailwind's dark variant (`@custom-variant dark (&:is(.dark *))`) and
+      the .dark token block in index.css both activate.
+    -->
+    <script>
+      // Set the .dark class BEFORE React hydrates so the very first paint matches
+      // the user's preference. The React ThemeProvider (contexts/ThemeContext.tsx)
+      // takes over after mount and uses the same localStorage key + media query,
+      // so the two stay in agreement. localStorage values: 'light' | 'dark' | absent.
+      // Absent means follow prefers-color-scheme.
+      (function () {
+        try {
+          var stored = localStorage.getItem('theme');
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var dark = stored === 'dark' || (!stored && prefersDark) || (stored === 'system' && prefersDark);
+          if (dark) document.documentElement.classList.add('dark');
+        } catch (_) { /* localStorage may be disabled; fall back to no class (light) */ }
+      })();
+    </script>
   </head>
 
   <body>

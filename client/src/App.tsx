@@ -19,17 +19,15 @@ function Router() {
 }
 
 // NOTE: About Theme
-// - First choose a default theme according to your design style (dark or light bg), than change color palette in index.css
-//   to keep consistent foreground/background color across components
-// - If you want to make theme switchable, pass `switchable` ThemeProvider and use `useTheme` hook
+// - The site has two coordinated palettes (cream/navy paper + blueprint navy/cyan).
+//   The choice is driven by the device's prefers-color-scheme by default. If a user
+//   explicitly toggles, their choice is persisted in localStorage.theme and overrides
+//   the system pref until they cycle back to "system".
 
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider
-        defaultTheme="light"
-        // switchable
-      >
+      <ThemeProvider defaultTheme="system">
         <TooltipProvider>
           <Toaster />
           <Router />

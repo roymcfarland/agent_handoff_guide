@@ -6,12 +6,14 @@
  */
 
 export function BuildVerifyDiagram() {
-  // Single source of truth for the palette so the component matches the rest of the page.
-  const ink = "#1f2a44";        // body text / boxes
-  const inkSoft = "#5b6884";    // secondary
-  const red = "#b9382e";        // sole accent — arrows, FAIL paths, emphasis
-  const paper = "#F4EFE6";      // page bg
-  const grid = "#A8C5DA";       // faint grid
+  // Reference the page-level CSS variables so the diagram themes with the
+  // rest of the site (cream + navy by day, navy + cyan-on-blueprint by night).
+  // SVG fill/stroke accept var(--token) the same way CSS properties do.
+  const ink = "var(--ink)";          // body text / box outlines
+  const inkSoft = "var(--ink-soft)"; // secondary text
+  const red = "var(--red)";          // sole accent
+  const paper = "var(--paper)";      // page bg behind the diagram
+  const grid = "var(--grid-strong)"; // faint grid (uses the bolder variant for visibility)
 
   return (
     <div className="paper-card overflow-hidden">
