@@ -42,7 +42,7 @@ The **local server** entry point is `server/index.ts`. It initializes a minimal 
 - **Design Language ("The Engineer's Notebook"):** The site uses a strict graph-paper aesthetic. Warm paper background (`#F4EFE6`), deep ink navy text (`#0E2A47`), and drafting red (`#C8362D`) as the sole accent color. The grid is literal (24px cells). No gradients, no glassmorphism, no glow effects.
 - **Typography Hierarchy:** Section labels use monospace caps (stamped effect); titles use Fraunces (variable serif); body copy uses Inter; prompts and code blocks use JetBrains Mono.
 - **Component Pruning:** The shadcn/ui installation is strictly pruned. Components are only added to `client/src/components/ui/` if they have an active call site in the application. Speculative "for completeness" components are rejected.
-- **File Size Cap:** Files in `client/src/pages/`, `client/src/lib/`, and `client/src/components/` should aim for **under 800 lines**. Two files currently exceed this and are known violations: `client/src/pages/Home.tsx` and `client/src/lib/content.ts`. A planned refactor will split each into per-section modules in a follow-up PR.
+- **File Size Cap:** Files in `client/src/pages/`, `client/src/lib/`, and `client/src/components/` (top level) must stay **under 800 lines**. See Q1 below for explicit exemptions and Verifier enforcement rules.
 
 ---
 
@@ -68,15 +68,19 @@ The following are explicitly **out of scope** for this product. Agents should re
 
 The following questions were raised by static analysis of the repository and have been answered here. Agents should treat these answers as durable unless this document is updated.
 
-### Q1. The two primary files (`Home.tsx` and `content.ts`) violate the 800-line cap. Intentional or debt?
+### Q1. The 800-line cap and its exemptions
 
-**Answer: Legacy debt — warn, don't block.**
+**Answer: Hard-fail on violations, with two explicit exemptions.**
 
-The files are ~1,800 lines each, which consumes excessive agent context window. However, splitting the page layer during active feature expansion is high-risk. The split is planned as a dedicated follow-up PR (likely the first Slice 01 of the next Build/Verify cycle).
+The 800-line cap is enforced to prevent context-window exhaustion for agents working in this repository. The legacy debt in `Home.tsx` was resolved in PR #13 (Slice 01).
+
+**Exemptions:**
+1. `client/src/lib/content.ts` — This file is ~1,800 lines but is explicitly exempted because it is a single-responsibility, data-only module. Splitting it provides no runtime benefit and fragments the prompt library.
+2. `client/src/components/diagrams/**` — Diagram components may be intentionally large by design.
 
 **Verifier behavior:**
-- Until the split PR lands: Verifier **warns** on any PR that adds to either file and recommends waiting.
-- Once the split PR lands: the 800-line cap becomes a **hard failure** for all files in the listed directories.
+- **Hard-fail** any PR that introduces a new file, or expands an existing file, beyond 800 lines in `client/src/pages/`, `client/src/lib/`, or `client/src/components/` (top level).
+- The two exemptions above are permitted to exceed the cap.
 
 ### Q2. The repository contains unused shadcn components and vestigial dependencies. Keep for expansion or prune?
 
