@@ -33,6 +33,7 @@ Copy `.env.example` to `.env` in the **repository root** (Vite reads from the ro
 
 | Variable | Used by | Description |
 | --- | --- | --- |
+| `VITE_SITE_URL` | `index.html` (build) | Public origin **without** trailing slash (e.g. `https://example.com`). Drives `rel="canonical"`, Open Graph / Twitter image URLs, and JSON-LD. If unset, relative paths like `/og.jpg` are emitted so crawlers still resolve images against the shared link; set this in production for the strongest previews. |
 | `VITE_ANALYTICS_ENDPOINT` | Client | Base URL of an [Umami](https://umami.is/) (or compatible) instance, without trailing slash. |
 | `VITE_ANALYTICS_WEBSITE_ID` | Client | Umami website ID. Both analytics vars must be set for the script to load. |
 | `PORT` | `server/index.ts` | HTTP port (default `3000`). |
@@ -43,7 +44,7 @@ Copy `.env.example` to `.env` in the **repository root** (Vite reads from the ro
 
 ## Deploying (Vercel)
 
-`vercel.json` sets `buildCommand`, `installCommand`, `outputDirectory` to `dist/public`, and SPA rewrites to `index.html`. Run `pnpm run build` so the client output exists at that path. Production analytics, if used, must be configured as Vercel project environment variables with the `VITE_` prefix.
+`vercel.json` sets `buildCommand`, `installCommand`, `outputDirectory` to `dist/public`, and SPA rewrites to `index.html`. Run `pnpm run build` so the client output exists at that path. Set **`VITE_SITE_URL`** to your production origin (no trailing slash) so Open Graph, Twitter Cards, and the canonical URL use absolute links in previews and search. Production analytics, if used, must be configured as Vercel project environment variables with the `VITE_` prefix.
 
 ## Project layout
 
@@ -52,6 +53,7 @@ Copy `.env.example` to `.env` in the **repository root** (Vite reads from the ro
 | `client/src/` | React app, routes, UI |
 | `client/src/lib/content.ts` | Long-form guide copy and structured sections |
 | `client/src/components/diagrams/` | SVG figures and shared diagram shell |
+| `client/public/og.jpg` | Social preview image (Open Graph / Twitter, 1200×630) |
 | `server/index.ts` | Static file + SPA fallback server |
 | `shared/` | Shared types or modules (if present) |
 | `dist/public/` | Vite build output (gitignored) |

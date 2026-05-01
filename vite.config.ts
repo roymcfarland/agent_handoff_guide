@@ -3,7 +3,7 @@ import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import fs from "node:fs";
 import path from "node:path";
-import { defineConfig, type Plugin, type ViteDevServer } from "vite";
+import { defineConfig, loadEnv, type Plugin, type ViteDevServer } from "vite";
 import { vitePluginManusRuntime } from "vite-plugin-manus-runtime";
 
 // =============================================================================
@@ -203,11 +203,25 @@ function vitePluginStorageProxy(): Plugin {
   };
 }
 
+/** Replaces `__SITE_URL__` in `client/index.html` (avoids Vite `%ENV%` warnings when the var is unset). */
+function htmlSiteUrlPlugin(siteUrl: string): Plugin {
+  return {
+    name: "html-site-url",
+    transformIndexHtml(html) {
+      return html.replaceAll("__SITE_URL__", siteUrl);
+    },
+  };
+}
+
 const plugins = [react(), tailwindcss(), jsxLocPlugin(), vitePluginManusRuntime(), vitePluginManusDebugCollector(), vitePluginStorageProxy()];
 
-export default defineConfig({
-  plugins,
-  resolve: {
+export default defineConfig(({ mode }) => {
+  const env = loadEnv(mode, path.resolve(import.meta.dirname), "VITE_");
+  const siteUrl = (env.VITE_SITE_URL ?? "").replace(/\/+$/, "");
+
+  return {
+    plugins: [...plugins, htmlSiteUrlPlugin(siteUrl)],
+    resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "client", "src"),
       "@shared": path.resolve(import.meta.dirname, "shared"),
@@ -238,4 +252,5 @@ export default defineConfig({
       deny: ["**/.*"],
     },
   },
+  };
 });
