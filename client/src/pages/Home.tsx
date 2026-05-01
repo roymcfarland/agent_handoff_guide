@@ -21,6 +21,15 @@ import { useState } from "react";
 import { ArrowDown, Check, Copy, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { BuildVerifyDiagram } from "@/components/BuildVerifyDiagram";
+import {
+  DocumentCadenceDiagram,
+  FailureModesMatrixDiagram,
+  InstallPipelineDiagram,
+  MetaPRScopeDiagram,
+  PhaseModelDiagram,
+  PromptScenariosDiagram,
+  ReferenceArchitectureDiagram,
+} from "@/components/diagrams";
 import { MarkdownBlock } from "@/components/MarkdownBlock";
 import { PromptCard } from "@/components/PromptCard";
 import { SectionHeader } from "@/components/SectionHeader";
@@ -167,6 +176,9 @@ function Hero() {
           </div>
         </div>
       </div>
+      <div className="container mt-14 lg:mt-20">
+        <ReferenceArchitectureDiagram />
+      </div>
     </section>
   );
 }
@@ -195,6 +207,10 @@ function Diagnosis() {
         </div>
 
         <div className="lg:col-span-8">
+          <FailureModesMatrixDiagram />
+        </div>
+
+        <div className="lg:col-span-12">
           <ol className="grid grid-cols-1 gap-px bg-border sm:grid-cols-2">
             {FAILURE_MODES.map((mode, i) => (
               <li
@@ -284,6 +300,10 @@ function Schema() {
           ))}
         </div>
 
+        <div className="mt-16">
+          <DocumentCadenceDiagram />
+        </div>
+
         <TemplateBlock />
       </div>
     </section>
@@ -369,6 +389,10 @@ function Install() {
             </>
           }
         />
+
+        <div className="mt-12 overflow-x-auto">
+          <InstallPipelineDiagram />
+        </div>
 
         {/* The five steps */}
         <div className="mt-14 grid gap-8 lg:grid-cols-12">
@@ -526,6 +550,10 @@ function Prompts() {
             </a>
           ))}
         </nav>
+
+        <div className="mt-12">
+          <PromptScenariosDiagram />
+        </div>
 
         {/* The groups */}
         <div className="mt-12 space-y-20">
@@ -1076,6 +1104,10 @@ function PhaseTwo() {
           ))}
         </div>
 
+        <div className="mt-16">
+          <PhaseModelDiagram />
+        </div>
+
         {/* Leverage math callout */}
         <div className="mt-16 grid gap-8 lg:grid-cols-12">
           <div className="lg:col-span-4">
@@ -1556,6 +1588,10 @@ function MetaPRs() {
               </p>
             </article>
           ))}
+        </div>
+
+        <div className="mt-14">
+          <MetaPRScopeDiagram />
         </div>
 
         {/* Phase 1 META-PR Verifier prompt */}
