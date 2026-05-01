@@ -12,7 +12,7 @@ export function ReferenceArchitectureDiagram() {
       figure="Fig. 1"
       title="Reference architecture"
       legend="Documents · models · human"
-      caption="The three files split memory by cadence. The Builder loads context from the docs; the Verifier always starts in a fresh session."
+      caption="The three files split memory by cadence. The Builder loads context from the docs; the Verifier starts fresh and checks the PR against the scope document."
     >
       <svg
         viewBox="0 0 840 454"
@@ -73,7 +73,13 @@ export function ReferenceArchitectureDiagram() {
             stroke={D.ink}
             strokeWidth="1.5"
           />
-          <text x="160" y="68" textAnchor="middle" fontWeight="700" fontSize="13">
+          <text
+            x="160"
+            y="68"
+            textAnchor="middle"
+            fontWeight="700"
+            fontSize="13"
+          >
             PROJECT.md
           </text>
           <text
@@ -83,9 +89,15 @@ export function ReferenceArchitectureDiagram() {
             fill={D.inkSoft}
             fontSize="11"
           >
-            immutable core
+            stable core
           </text>
-          <text x="160" y="108" textAnchor="middle" fill={D.inkSoft} fontSize="10">
+          <text
+            x="160"
+            y="108"
+            textAnchor="middle"
+            fill={D.inkSoft}
+            fontSize="10"
+          >
             read-mostly
           </text>
 
@@ -99,13 +111,31 @@ export function ReferenceArchitectureDiagram() {
             stroke={D.ink}
             strokeWidth="1.5"
           />
-          <text x="420" y="68" textAnchor="middle" fontWeight="700" fontSize="13">
+          <text
+            x="420"
+            y="68"
+            textAnchor="middle"
+            fontWeight="700"
+            fontSize="13"
+          >
             CHANGELOG.md
           </text>
-          <text x="420" y="92" textAnchor="middle" fill={D.inkSoft} fontSize="11">
+          <text
+            x="420"
+            y="92"
+            textAnchor="middle"
+            fill={D.inkSoft}
+            fontSize="11"
+          >
             append-only
           </text>
-          <text x="420" y="108" textAnchor="middle" fill={D.inkSoft} fontSize="10">
+          <text
+            x="420"
+            y="108"
+            textAnchor="middle"
+            fill={D.inkSoft}
+            fontSize="10"
+          >
             long memory
           </text>
 
@@ -119,13 +149,31 @@ export function ReferenceArchitectureDiagram() {
             stroke={D.red}
             strokeWidth="2"
           />
-          <text x="680" y="68" textAnchor="middle" fontWeight="700" fontSize="13">
+          <text
+            x="680"
+            y="68"
+            textAnchor="middle"
+            fontWeight="700"
+            fontSize="13"
+          >
             HANDOFF.md
           </text>
-          <text x="680" y="92" textAnchor="middle" fill={D.inkSoft} fontSize="11">
+          <text
+            x="680"
+            y="92"
+            textAnchor="middle"
+            fill={D.inkSoft}
+            fontSize="11"
+          >
             current slice
           </text>
-          <text x="680" y="108" textAnchor="middle" fill={D.inkSoft} fontSize="10">
+          <text
+            x="680"
+            y="108"
+            textAnchor="middle"
+            fill={D.inkSoft}
+            fontSize="10"
+          >
             overwritten each handoff
           </text>
         </g>
@@ -232,7 +280,7 @@ export function ReferenceArchitectureDiagram() {
             fontSize="11"
             fill={D.inkSoft}
           >
-            · Reads diff + HANDOFF.md only
+            · Reads PR diff + scope doc
           </text>
         </g>
 

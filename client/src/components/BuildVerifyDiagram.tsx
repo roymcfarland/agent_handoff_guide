@@ -22,11 +22,11 @@ export function BuildVerifyDiagram() {
       legend="Builder → Verifier → Gatekeeper"
       footer={
         <>
-          The Verifier is a different model in a clean context. It reads only the
-          diff and{" "}
-          <code className="font-mono text-foreground">HANDOFF.md</code>,
-          returns a verdict with evidence, and never writes code. The human
-          gatekeeper makes the final merge call.
+          The Verifier is a different model in a clean context. It reads the PR
+          body, diff, and{" "}
+          <code className="font-mono text-foreground">HANDOFF.md</code>, returns
+          a verdict with evidence, and never writes code. The human gatekeeper
+          makes the final merge call.
         </>
       }
       contentClassName="overflow-x-auto"
@@ -36,7 +36,7 @@ export function BuildVerifyDiagram() {
         xmlns="http://www.w3.org/2000/svg"
         className="mx-auto block h-auto min-w-[680px] w-full max-w-5xl"
         role="img"
-        aria-label="Diagram of the two-LLM build-and-verify loop: HANDOFF.md feeds the Builder LLM, which opens a PR. A different Verifier LLM in a clean context returns PASS, CONDITIONAL PASS, or FAIL, and the human gatekeeper decides whether to merge."
+        aria-label="Diagram of the two-LLM build-and-verify loop: HANDOFF.md feeds the Builder LLM, which opens a PR. A different Verifier LLM in a clean context reads the PR body, diff, and HANDOFF.md, returns PASS, CONDITIONAL PASS, or FAIL, and the human gatekeeper decides whether to merge."
       >
         <defs>
           <pattern
@@ -96,10 +96,22 @@ export function BuildVerifyDiagram() {
               stroke={ink}
               strokeWidth="1.5"
             />
-            <text x="460" y="52" textAnchor="middle" fontWeight="700" fontSize="14">
+            <text
+              x="460"
+              y="52"
+              textAnchor="middle"
+              fontWeight="700"
+              fontSize="14"
+            >
               HANDOFF.md
             </text>
-            <text x="460" y="72" textAnchor="middle" fill={inkSoft} fontSize="11">
+            <text
+              x="460"
+              y="72"
+              textAnchor="middle"
+              fill={inkSoft}
+              fontSize="11"
+            >
               current slice
             </text>
           </g>
@@ -125,7 +137,14 @@ export function BuildVerifyDiagram() {
               stroke={ink}
               strokeWidth="1.5"
             />
-            <text x="120" y="148" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>
+            <text
+              x="120"
+              y="148"
+              fontWeight="700"
+              fontSize="11"
+              letterSpacing="2"
+              fill={red}
+            >
               STAGE A
             </text>
             <text
@@ -171,7 +190,14 @@ export function BuildVerifyDiagram() {
               strokeWidth="2"
               markerEnd={`url(#${pid}-arrow)`}
             />
-            <text x="490" y="190" textAnchor="middle" fontSize="11" fill={red} fontWeight="700">
+            <text
+              x="490"
+              y="190"
+              textAnchor="middle"
+              fontSize="11"
+              fill={red}
+              fontWeight="700"
+            >
               PR opened
             </text>
           </g>
@@ -187,7 +213,14 @@ export function BuildVerifyDiagram() {
               stroke={ink}
               strokeWidth="1.5"
             />
-            <text x="500" y="148" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>
+            <text
+              x="500"
+              y="148"
+              fontWeight="700"
+              fontSize="11"
+              letterSpacing="2"
+              fill={red}
+            >
               STAGE B
             </text>
             <text
@@ -213,7 +246,7 @@ export function BuildVerifyDiagram() {
               strokeWidth="1"
             />
             <text x="500" y="230" fontSize="12">
-              · reads ONLY the PR diff + HANDOFF.md
+              · reads PR body + diff + HANDOFF.md
             </text>
             <text x="500" y="248" fontSize="12">
               · checks each Acceptance Criterion
@@ -245,7 +278,14 @@ export function BuildVerifyDiagram() {
               strokeWidth="1.5"
               strokeDasharray="4 4"
             />
-            <text x="492" y="342" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>
+            <text
+              x="492"
+              y="342"
+              fontWeight="700"
+              fontSize="11"
+              letterSpacing="2"
+              fill={red}
+            >
               STAGE C
             </text>
             <text
@@ -294,7 +334,14 @@ export function BuildVerifyDiagram() {
               stroke={ink}
               strokeWidth="1.5"
             />
-            <text x="540" y="482" textAnchor="middle" fontWeight="700" fontSize="11" fill={red}>
+            <text
+              x="540"
+              y="482"
+              textAnchor="middle"
+              fontWeight="700"
+              fontSize="11"
+              fill={red}
+            >
               PASS
             </text>
             <text x="540" y="500" textAnchor="middle" fontSize="11">
@@ -322,7 +369,14 @@ export function BuildVerifyDiagram() {
               stroke={ink}
               strokeWidth="1.5"
             />
-            <text x="770" y="482" textAnchor="middle" fontWeight="700" fontSize="11" fill={red}>
+            <text
+              x="770"
+              y="482"
+              textAnchor="middle"
+              fontWeight="700"
+              fontSize="11"
+              fill={red}
+            >
               COND. PASS
             </text>
             <text x="770" y="500" textAnchor="middle" fontSize="11">

@@ -4,7 +4,7 @@
  * Responsive strategy:
  *   - md+ (≥ 768px): inline nav, no horizontal scroll. Short labels swap in
  *     for full labels below 2xl. Brand wordmark hidden when the nav is densest
- *     (md → lg) so all 7 items fit a half-laptop window.
+ *     (md → lg) so the full nav fits a half-laptop window.
  *   - < md (≤ 767px, includes phones and narrow split windows): hamburger
  *     button on the right opens a slide-in Sheet. Active section is mirrored
  *     in both the inline nav and the sheet menu via IntersectionObserver.
@@ -35,6 +35,7 @@ const SHORT_LABEL: Record<string, string> = {
   "build-verify": "Build & Verify",
   "phase-2": "Operate",
   "meta-prs": "META-PRs",
+  references: "Refs",
 };
 
 export function SiteHeader() {

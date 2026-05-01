@@ -3,7 +3,7 @@
  * Design philosophy: "The Engineer's Notebook" — graph-paper background, paper cards,
  * mono stamps, IBM Plex Serif display titles, drafting-red accent.
  *
- * IA (6 sections):
+ * IA (9 sections):
  *   01 Overview
  *   02 Diagnosis
  *   03 Document Schema
@@ -12,13 +12,14 @@
  *   06 Build & Verify
  *   07 After the Install (Phase 2 operation)
  *   08 META-PRs (PRs that change the spec itself)
+ *   09 References
  *
  * Prompts are all rendered from PROMPT_LIBRARY inside the Prompt Library section,
  * grouped by scenario (Fresh Install / Recurring Loop / Recovery) in execution order.
  */
 
 import { useState } from "react";
-import { ArrowDown, Check, Copy, FileText } from "lucide-react";
+import { ArrowDown, Check, Copy, ExternalLink, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { BuildVerifyDiagram } from "@/components/BuildVerifyDiagram";
 import {
@@ -68,6 +69,8 @@ import {
   META_BUILDER_PR_DESCRIPTION,
   META_VERIFIER_PR_COMMENT,
   PROMPT_LIBRARY,
+  REFERENCES,
+  REFERENCE_NOTE,
   SCHEMA_FILES,
   type LibraryPrompt,
 } from "@/lib/content";
@@ -88,6 +91,7 @@ export default function Home() {
         <BuildAndVerify />
         <PhaseTwo />
         <MetaPRs />
+        <References />
       </main>
       <SiteFooter />
     </div>
@@ -98,7 +102,11 @@ export default function Home() {
 
 function Hero() {
   return (
-    <section id="overview" aria-labelledby="overview-heading" className="relative">
+    <section
+      id="overview"
+      aria-labelledby="overview-heading"
+      className="relative"
+    >
       <div className="container grid gap-10 py-20 sm:py-24 lg:grid-cols-12 lg:gap-12 lg:py-28">
         <aside className="lg:col-span-3">
           <div className="stamp">FILE 00 / OVERVIEW</div>
@@ -121,12 +129,15 @@ function Hero() {
         </aside>
 
         <div className="lg:col-span-9">
-          <h1 id="overview-heading" className="text-balance font-display text-5xl font-bold leading-[0.98] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+          <h1
+            id="overview-heading"
+            className="text-balance font-display text-5xl font-bold leading-[0.98] tracking-tight text-foreground sm:text-6xl lg:text-7xl"
+          >
             A working guide for <span className="pen-circle">handing off</span>{" "}
             work between AI agents.
           </h1>
           <p className="mt-8 max-w-2xl text-lg leading-relaxed text-foreground/80 sm:text-xl">
-            Most agent workflows fail not because the model is weak, but because
+            The recurring failure pattern is not just model weakness; it is that
             the <em>document the agent works against</em> is doing too many jobs
             at once. This guide replaces the single bloated handoff file with
             three disciplined artifacts and a small set of constrained prompts —
@@ -189,7 +200,11 @@ function Hero() {
 
 function Diagnosis() {
   return (
-    <section id="diagnosis" aria-labelledby="diagnosis-heading" className="border-t border-border bg-background/60">
+    <section
+      id="diagnosis"
+      aria-labelledby="diagnosis-heading"
+      className="border-t border-border bg-background/60"
+    >
       <div className="container grid gap-12 py-20 lg:grid-cols-12 lg:py-24">
         <div className="lg:col-span-4">
           <SectionHeader
@@ -200,8 +215,8 @@ function Diagnosis() {
             kicker={
               <>
                 These are the failure modes that show up over and over when
-                teams try to chain agents together. Most are <em>not</em> a
-                model problem — they are a{" "}
+                teams try to chain agents together. They are usually{" "}
+                <em>not</em> a model problem — they are a{" "}
                 <span className="pen-circle">workflow</span> problem.
               </>
             }
@@ -244,7 +259,11 @@ function Diagnosis() {
 
 function Schema() {
   return (
-    <section id="schema" aria-labelledby="schema-heading" className="border-t border-border">
+    <section
+      id="schema"
+      aria-labelledby="schema-heading"
+      className="border-t border-border"
+    >
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="schema-heading"
@@ -255,8 +274,8 @@ function Schema() {
             <>
               The single highest-leverage change you can make. Splitting the doc
               into three artifacts — each with a strict role — directly attacks
-              context rot and stops agents from re-reading settled history every
-              time they boot.
+              context rot and reduces the chance that agents re-read settled
+              history every time they boot.
             </>
           }
         />
@@ -335,7 +354,7 @@ function TemplateBlock() {
         <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
           This is the template the Closeout agent fills in for the next Builder.
           Keep the Acceptance Criteria literal and the Constraints aggressive —
-          they are the only things stopping the agent from drifting.
+          they are the guardrails that keep the agent from drifting.
         </p>
       </div>
       <div className="paper-card overflow-hidden lg:col-span-8">
@@ -373,7 +392,11 @@ function TemplateBlock() {
 
 function Install() {
   return (
-    <section id="install" aria-labelledby="install-heading" className="border-t border-border">
+    <section
+      id="install"
+      aria-labelledby="install-heading"
+      className="border-t border-border"
+    >
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="install-heading"
@@ -382,8 +405,8 @@ function Install() {
           title="How to bootstrap the loop on a codebase that already exists."
           kicker={
             <>
-              Most teams fail at install, not at workflow. The honest order:
-              reverse-engineer{" "}
+              The brittle part is the install, not the diagram. The honest
+              order: reverse-engineer{" "}
               <code className="font-mono text-foreground">PROJECT.md</code> from
               the code, edit it with the human-only context, sanity-check it
               with the Verifier, write a tiny first slice, then run a
@@ -401,7 +424,7 @@ function Install() {
           <div className="lg:col-span-4">
             <div className="stamp">FIVE STEPS · ~90 MIN</div>
             <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
-              The 90-minute install.
+              The ~90-minute install.
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
               Each step has a single owner, a single output, and a corresponding
@@ -462,7 +485,7 @@ function Install() {
         <div className="mt-16">
           <div className="stamp">ANTI-PATTERNS · DO NOT DO THESE</div>
           <h3 className="mt-3 max-w-3xl font-display text-3xl font-bold leading-tight">
-            Two install mistakes that look productive and poison the loop.
+            Two install mistakes that look productive and weaken the loop.
           </h3>
           <div className="mt-8 grid gap-6 lg:grid-cols-2">
             {INSTALL_ANTI_PATTERNS.map(p => (
@@ -512,7 +535,11 @@ function Install() {
 
 function Prompts() {
   return (
-    <section id="prompts" aria-labelledby="prompts-heading" className="border-t border-border bg-background/60">
+    <section
+      id="prompts"
+      aria-labelledby="prompts-heading"
+      className="border-t border-border bg-background/60"
+    >
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="prompts-heading"
@@ -706,7 +733,11 @@ function PromptLibraryItem({ item }: { item: LibraryPrompt }) {
 
 function BuildAndVerify() {
   return (
-    <section id="build-verify" aria-labelledby="build-verify-heading" className="border-t border-border">
+    <section
+      id="build-verify"
+      aria-labelledby="build-verify-heading"
+      className="border-t border-border"
+    >
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="build-verify-heading"
@@ -715,11 +746,11 @@ function BuildAndVerify() {
           title="One LLM builds. A different LLM verifies. You merge."
           kicker={
             <>
-              The Builder is biased to claim success on its own work. A second
-              LLM in a clean context, reading only the diff and{" "}
+              The Builder can overstate completion on its own work. A second LLM
+              in a clean context, reading the PR description, diff, and{" "}
               <code className="font-mono text-foreground">HANDOFF.md</code>,
-              catches what the Builder will never report on itself. The prompts
-              and PR templates for this loop live in the{" "}
+              catches what the Builder may miss or under-report. The prompts and
+              PR templates for this loop live in the{" "}
               <a
                 href="#scenario-loop"
                 className="underline decoration-primary underline-offset-4 hover:text-foreground"
@@ -778,9 +809,9 @@ function BuildAndVerify() {
               Four rules that make the loop actually work.
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              Skip any of these and you will get a Verifier that rubber-stamps
-              the Builder. The independence between the two LLMs is the entire
-              point.
+              Skip these and the Verifier stops being independent. The
+              separation between Builder, review inputs, and human merge
+              decision is the entire point.
             </p>
           </div>
           <div className="lg:col-span-8">
@@ -821,8 +852,8 @@ function BuildAndVerify() {
                 cross-distribution
               </span>
               , not specific brands. Pair a Builder with a Verifier from a
-              different lab so their failure modes are uncorrelated. Re-evaluate
-              every quarter.
+              different provider or model family so their failure modes are less
+              correlated. Re-evaluate every quarter.
             </p>
           </div>
 
@@ -930,7 +961,8 @@ function BuildAndVerify() {
               The reflex is to swap the Builder model. The right move is to
               freeze the slice, read both Verifier reports, and re-scope the
               <code className="mx-1 font-mono text-foreground">HANDOFF.md</code>
-              . Two FAILs is a slice problem, not a Builder problem.
+              . Treat two FAILs as a slice-definition problem until proven
+              otherwise.
             </p>
           </div>
 
@@ -1027,7 +1059,11 @@ function BuildAndVerify() {
 
 function PhaseTwo() {
   return (
-    <section id="phase-2" aria-labelledby="phase-2-heading" className="border-t border-border bg-background/60">
+    <section
+      id="phase-2"
+      aria-labelledby="phase-2-heading"
+      className="border-t border-border bg-background/60"
+    >
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="phase-2-heading"
@@ -1137,7 +1173,7 @@ function PhaseTwo() {
           <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
               <div className="stamp">
-                FIVE FINDING TYPES · ONLY PHASE 2 CATCHES
+                FIVE FINDING TYPES · INTENT-AWARE REVIEW
               </div>
               <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
                 What other checks miss.
@@ -1145,10 +1181,10 @@ function PhaseTwo() {
             </div>
             <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
               Linters, type-checkers, dependency scanners, and ordinary code
-              review do not catch any of these reliably, because none of them
-              have a model of the project's intent. Only{" "}
+              review can miss these because they rarely carry an explicit model
+              of the project&apos;s intent.{" "}
               <code className="font-mono text-foreground">PROJECT.md</code>{" "}
-              does.
+              gives the Verifier that model in reviewable form.
             </p>
           </div>
 
@@ -1218,16 +1254,17 @@ function PhaseTwo() {
               against the spec; the Verifier audits them. Pair them every PR.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
-              Six rules, but the spine is two: <em>read PROJECT.md before
-              writing code</em>, and <em>write the PR description so the
-              Verifier's job is easy</em>. Both rules trade a few seconds of
-              Builder discipline for a Verifier pass on the first try.
+              Six rules, but the spine is two:{" "}
+              <em>read PROJECT.md before writing code</em>, and{" "}
+              <em>write the PR description so the Verifier's job is easy</em>.
+              Both rules trade a few seconds of Builder discipline for a
+              Verifier pass on the first try.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
               Self-flagged{" "}
               <code className="font-mono text-foreground">SPEC-CONFLICT</code>{" "}
-              notes are a feature, not a failure. They surface drift before
-              code is written instead of after the Verifier rejects the PR.
+              notes are a feature, not a failure. They surface drift before code
+              is written instead of after the Verifier rejects the PR.
             </p>
           </div>
           <div className="lg:col-span-8">
@@ -1259,9 +1296,10 @@ function PhaseTwo() {
               <code className="font-mono text-foreground">
                 SPEC-UPDATE-REQUIRED
               </code>
-              . The third covers PRs that obsolete part of{" "}
+              . The third covers PRs that may obsolete part of{" "}
               <code className="font-mono text-foreground">PROJECT.md</code> and
-              must amend it in the same PR.
+              must pause until a META-PR or explicitly scoped combined spec
+              update resolves the mismatch.
             </p>
           </div>
           <div className="lg:col-span-8">
@@ -1281,17 +1319,16 @@ function PhaseTwo() {
               The Builder PR description — fill-in template.
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              The PR body the Builder writes is what the Verifier compares
-              the diff against. Silent debt left out of this template is the
-              most expensive kind.
+              The PR body the Builder writes gives the Verifier a declared
+              scope, self-audit, and debt ledger to compare against the diff.
+              Silent debt left out of this template is the expensive kind.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
-              Three fields do most of the work:{" "}
-              <em>Non-goals respected</em> (forces a re-read of
-              PROJECT.md before the PR ships),{" "}
-              <em>SPEC-CONFLICT notes</em> (surface drift before merge
-              instead of after), and <em>Out-of-scope changes</em> (the
-              most common MAJOR finding).
+              Three fields do most of the work: <em>Non-goals respected</em>{" "}
+              (forces a re-read of PROJECT.md before the PR ships),{" "}
+              <em>SPEC-CONFLICT notes</em> (surface drift before merge instead
+              of after), and <em>Out-of-scope changes</em> (the most common
+              MAJOR finding).
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
               Mirrors the Phase 1{" "}
@@ -1300,8 +1337,9 @@ function PhaseTwo() {
               </code>{" "}
               template in section 06, with the{" "}
               <em>Acceptance Criteria self-audit</em> swapped for{" "}
-              <em>Non-goals respected</em> — because Phase 2 has no
-              HANDOFF.md, only PROJECT.md.
+              <em>Non-goals respected</em> — because Phase 2 reviews a code PR
+              against PROJECT.md and the requested task, not a disposable
+              HANDOFF.md.
             </p>
           </div>
           <div className="lg:col-span-8">
@@ -1321,31 +1359,28 @@ function PhaseTwo() {
               The Verifier PR comment — fill-in template.
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              The Verifier posts this as the first comment on the PR, with
-              the verdict line at the top. Mirrors the Builder PR
-              description above so a human can compare claim against verdict
-              in one scan.
+              The Verifier posts this as the first comment on the PR, with the
+              verdict line at the top. Mirrors the Builder PR description above
+              so a human can compare claim against verdict in one scan.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
               Three verdicts:{" "}
               <code className="font-mono text-foreground">APPROVE</code>,{" "}
-              <code className="font-mono text-foreground">
-                REQUEST-CHANGES
-              </code>, and{" "}
+              <code className="font-mono text-foreground">REQUEST-CHANGES</code>
+              , and{" "}
               <code className="font-mono text-foreground">
                 SPEC-UPDATE-REQUIRED
               </code>
-              . Always evidence-backed (file:line). The Verifier reports
-              drift; it does not propose fixes.
+              . Always evidence-backed (file:line). The Verifier reports drift;
+              it does not propose fixes.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
               Mirrors the Phase 1{" "}
               <code className="font-mono text-foreground">
                 verifier-report.md
               </code>{" "}
-              template in section 06, with{" "}
-              <em>Acceptance Criteria</em> swapped for{" "}
-              <em>Non-goal violations</em> and a new{" "}
+              template in section 06, with <em>Acceptance Criteria</em> swapped
+              for <em>Non-goal violations</em> and a new{" "}
               <em>Spec-update signal</em> field for the third verdict.
             </p>
           </div>
@@ -1367,7 +1402,7 @@ function PhaseTwo() {
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
               The discipline is one Verifier run per PR, before merge. Skipping
-              the Verifier on "small" PRs is how the spec drifts back into
+              the Verifier on "small" PRs is one way the spec drifts back into
               irrelevance over time.
             </p>
           </div>
@@ -1550,13 +1585,16 @@ function PhaseTwo() {
   );
 }
 
-
 /* ───────────────────────────────────────────────────────────────────────── */
 /* SECTION 08 — META-PRs                                                     */
 /* ───────────────────────────────────────────────────────────────────────── */
 function MetaPRs() {
   return (
-    <section id="meta-prs" aria-labelledby="meta-prs-heading" className="border-t border-border">
+    <section
+      id="meta-prs"
+      aria-labelledby="meta-prs-heading"
+      className="border-t border-border"
+    >
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="meta-prs-heading"
@@ -1606,14 +1644,14 @@ function MetaPRs() {
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
               When the slice itself revealed that HANDOFF.md was wrong, the PR
               amends the spec. The Verifier cannot use the changed file as
-              ground truth — that is circular. Use the Builder Brief pasted
-              into the PR description as the scope.
+              ground truth — that is circular. Use the Builder Brief pasted into
+              the PR description as the scope.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
-              The normal Phase 1 Verifier prompt now contains an inline
-              META-PR safety-net clause that detects this case and switches
-              the Verifier into the prompt below. You can paste this prompt
-              directly when you know up front the PR is a META-PR.
+              The normal Phase 1 Verifier prompt now contains an inline META-PR
+              safety-net clause that detects this case and switches the Verifier
+              into the prompt below. You can paste this prompt directly when you
+              know up front the PR is a META-PR.
             </p>
           </div>
           <div className="lg:col-span-8">
@@ -1635,14 +1673,14 @@ function MetaPRs() {
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
               When the first slice (or any later slice) surfaces gaps in
-              PROJECT.md, the Calibration Debrief Builder produces a
-              structured Spec Update Proposal — before/after diffs with
-              rationale per edit — that becomes a META-PR.
+              PROJECT.md, the Calibration Debrief Builder produces a structured
+              Spec Update Proposal — before/after diffs with rationale per edit
+              — that becomes a META-PR.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
               The Proposal is the contract. The eventual PR diff against
-              PROJECT.md is graded against the Proposal, not against the
-              changed PROJECT.md itself. This is what closes the loop.
+              PROJECT.md is graded against the Proposal, not against the changed
+              PROJECT.md itself. This is what closes the loop.
             </p>
           </div>
           <div className="lg:col-span-8">
@@ -1675,10 +1713,10 @@ function MetaPRs() {
               under-specified. That kicks back to the human.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
-              The most common failure mode this prompt catches: a META-PR
-              that silently edits sections of PROJECT.md the Spec Update
-              Proposal did not name. Scope creep on the spec doc itself is
-              the worst possible scope creep.
+              The most common failure mode this prompt catches: a META-PR that
+              silently edits sections of PROJECT.md the Spec Update Proposal did
+              not name. Scope creep on the spec doc itself is the most damaging
+              form of scope creep in this framework.
             </p>
           </div>
           <div className="lg:col-span-8">
@@ -1699,17 +1737,17 @@ function MetaPRs() {
               The META-PR description — fill-in template.
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              The single most important field is the inline scope document —
-              the Builder Brief (Phase 1) or the Spec Update Proposal (Phase
-              2). Without it pasted into the PR body, the Verifier has
-              nothing to grade against, because the changed spec file in the
-              diff is exactly what's being audited.
+              The single most important field is the inline scope document — the
+              Builder Brief (Phase 1) or the Spec Update Proposal (Phase 2).
+              Without it pasted into the PR body, the Verifier has nothing to
+              grade against, because the changed spec file in the diff is
+              exactly what's being audited.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
-              Sections deliberately NOT changed are listed explicitly. That
-              is the META-PR's equivalent of declared stubs in a normal PR —
-              it converts an absence into an intentional absence the
-              Verifier can grade.
+              Sections deliberately NOT changed are listed explicitly. That is
+              the META-PR's equivalent of declared stubs in a normal PR — it
+              converts an absence into an intentional absence the Verifier can
+              grade.
             </p>
           </div>
           <div className="lg:col-span-8">
@@ -1730,19 +1768,19 @@ function MetaPRs() {
               The META-PR Verifier report — copy-pasteable.
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              Same shape as the Phase 2 Verifier comment, with two
-              additions: the verdict line records which scope document was
-              used (Builder Brief or Spec Update Proposal), and there's a
-              dedicated section for "spec doc sections changed but not in
-              the Proposal" — the silent-scope-creep catcher.
+              Same shape as the Phase 2 Verifier comment, with two additions:
+              the verdict line records which scope document was used (Builder
+              Brief or Spec Update Proposal), and there's a dedicated section
+              for "spec doc sections changed but not in the Proposal" — the
+              silent-scope-creep catcher.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
               The Verifier still proposes no fixes. The
               <code className="ml-1 font-mono text-foreground">
                 PROPOSAL-INSUFFICIENT
               </code>{" "}
-              verdict is the explicit "throw it back to the human" path —
-              never to the Builder. The human owns the Proposal; the Builder
+              verdict is the explicit "throw it back to the human" path — never
+              to the Builder. The human owns the Proposal; the Builder
               implements it.
             </p>
           </div>
@@ -1755,6 +1793,71 @@ function MetaPRs() {
             />
           </div>
         </div>
+      </div>
+    </section>
+  );
+}
+
+/* ───────────────────────────────────────────────────────────────────────── */
+/* SECTION 09 — REFERENCES                                                   */
+/* ───────────────────────────────────────────────────────────────────────── */
+function References() {
+  return (
+    <section
+      id="references"
+      aria-labelledby="references-heading"
+      className="border-t border-border bg-background/60"
+    >
+      <div className="container py-20 lg:py-24">
+        <SectionHeader
+          id="references-heading"
+          number="09"
+          label="REFERENCES"
+          title="References and source notes."
+          kicker={
+            <>
+              The framework is intentionally opinionated. These references
+              anchor the parts that should be anchored: prompt structure,
+              evaluation discipline, PR review surfaces, and LLM-as-judge
+              limitations.
+            </>
+          }
+        />
+
+        <div className="mt-14 grid gap-px bg-border md:grid-cols-2 xl:grid-cols-3">
+          {REFERENCES.map(reference => (
+            <article
+              key={reference.href}
+              className="paper-card flex min-h-[230px] flex-col p-6"
+              style={{ boxShadow: "none" }}
+            >
+              <div className="flex items-center justify-between gap-4 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">
+                <span>{reference.category}</span>
+                <span>{reference.source}</span>
+              </div>
+              <a
+                href={reference.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group mt-5 inline-flex items-start gap-2 font-display text-[22px] font-bold leading-tight text-foreground transition-colors hover:text-primary"
+              >
+                <span>{reference.title}</span>
+                <ExternalLink
+                  aria-hidden
+                  className="mt-1 h-4 w-4 shrink-0 text-primary transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  strokeWidth={2.25}
+                />
+              </a>
+              <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
+                {reference.note}
+              </p>
+            </article>
+          ))}
+        </div>
+
+        <p className="mt-8 max-w-4xl border-l-4 border-l-primary pl-5 text-[14px] leading-relaxed text-muted-foreground">
+          {REFERENCE_NOTE}
+        </p>
       </div>
     </section>
   );

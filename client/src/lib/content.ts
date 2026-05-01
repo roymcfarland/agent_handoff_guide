@@ -7,7 +7,7 @@
  */
 
 /* ─────────────────────────────────────────────────────────────────────────── */
-/* SITE STRUCTURE — 6 sections                                                 */
+/* SITE STRUCTURE                                                              */
 /* Best Practices and Moonshots have been cut as standalone sections.          */
 /* Prompts are consolidated into a single library organized by scenario.       */
 /* ─────────────────────────────────────────────────────────────────────────── */
@@ -21,20 +21,76 @@ export const SECTIONS = [
   { id: "build-verify", label: "Build & Verify", number: "06" },
   { id: "phase-2", label: "Operate the framework", number: "07" },
   { id: "meta-prs", label: "META-PRs", number: "08" },
+  { id: "references", label: "References", number: "09" },
+] as const;
+
+export const REFERENCE_NOTE =
+  "These sources support the framework's design principles; they do not prove that a prompt will work in every repository. Treat prompt changes like code changes: run them against explicit acceptance criteria, review the diff, and tighten the workflow when real failures surface.";
+
+export const REFERENCES = [
+  {
+    category: "Prompt design",
+    source: "OpenAI API docs",
+    title: "Prompt engineering",
+    href: "https://developers.openai.com/api/docs/guides/prompt-engineering",
+    note: "Useful support for role/workflow specificity, structured examples, context management, and test-oriented coding-agent prompts.",
+  },
+  {
+    category: "Evaluation",
+    source: "OpenAI API docs",
+    title: "Working with evals",
+    href: "https://developers.openai.com/api/docs/guides/evals",
+    note: "Grounds the guide's bias toward explicit criteria, repeatable checks, and prompt iteration based on observed outputs rather than vibes.",
+  },
+  {
+    category: "Prompt design",
+    source: "Anthropic docs",
+    title: "Prompt engineering overview",
+    href: "https://docs.anthropic.com/en/docs/build-with-claude/prompt-engineering/overview",
+    note: "Reinforces the need to define success criteria and empirical tests before tuning the prompt itself.",
+  },
+  {
+    category: "Prompt design",
+    source: "Google Cloud docs",
+    title: "Introduction to prompting",
+    href: "https://docs.cloud.google.com/vertex-ai/generative-ai/docs/learn/prompts/introduction-prompt-design",
+    note: "A vendor-neutral anchor for prompt components: task, system instructions, examples, and contextual information.",
+  },
+  {
+    category: "Review workflow",
+    source: "GitHub Docs",
+    title: "About pull requests",
+    href: "https://docs.github.com/en/pull-requests/collaborating-with-pull-requests/proposing-changes-to-your-work-with-pull-requests/about-pull-requests",
+    note: "Supports the PR-as-review-surface framing: discussion, commits, checks, and file diffs before merge.",
+  },
+  {
+    category: "Review workflow",
+    source: "GitHub Docs",
+    title: "GitHub flow",
+    href: "https://docs.github.com/en/get-started/using-github/github-flow",
+    note: "Maps directly to the framework's branch, build, PR, review, and merge cadence.",
+  },
+  {
+    category: "Verifier design",
+    source: "Zheng et al., arXiv",
+    title: "Judging LLM-as-a-Judge with MT-Bench and Chatbot Arena",
+    href: "https://arxiv.org/abs/2306.05685",
+    note: "Background for LLM judge workflows and their limits, which is why this framework keeps verifier findings evidence-backed and human-gated.",
+  },
 ] as const;
 
 export const FAILURE_MODES = [
   {
     title: "Committing directly to main",
-    body: "Every handoff lands unreviewed code on main. No diff surface, no CI gate, no easy revert. The agent is incentivized to make it pass locally rather than make it correct, because there is no PR conversation.",
+    body: "If handoffs land directly on main, the workflow loses its review surface: no isolated diff, no CI gate, no easy revert. The agent is rewarded for making the local run look complete instead of proving the change against an explicit contract.",
   },
   {
     title: "One document doing five jobs",
-    body: "When the handoff doc is roadmap, task list, status log, architectural notes, and next-builder briefing all at once, every new agent re-reads the entire history and wastes context relitigating decisions that are already settled.",
+    body: "When the handoff doc is roadmap, task list, status log, architectural notes, and next-builder briefing all at once, each new agent spends context sorting history from instructions and may relitigate decisions that should already be settled.",
   },
   {
     title: "Weak persona priming",
-    body: "Telling an agent it is a 'professional software engineer' does not constrain behavior. A useful prompt tells the agent what NOT to do — do not refactor outside scope, do not add dependencies, do not expand the plan.",
+    body: "Telling an agent it is a 'professional software engineer' does not meaningfully constrain behavior. A useful prompt defines the operating envelope — no unrelated refactors, no new dependencies, no scope expansion without an explicit stop-and-report.",
   },
   {
     title: "No definition of done",
@@ -42,11 +98,11 @@ export const FAILURE_MODES = [
   },
   {
     title: "Self-graded handoffs",
-    body: "Agents are biased to claim success on their own work. Without a forced honesty step, the next agent inherits silent debt — stubs, hacks, and skipped criteria that were never declared.",
+    body: "LLMs are prone to presenting plausible completion summaries for their own work. Without a forced honesty step, the next agent inherits silent debt — stubs, hacks, and skipped criteria that were never declared.",
   },
   {
     title: "Planning vs. building drift",
-    body: "Agents drift into planning mode when the task is ambiguous, the doc reads like a brainstorm, or there is no explicit BUILD-ONLY framing with a stop condition.",
+    body: "Agents drift into planning mode when the task is ambiguous, the doc reads like a brainstorm, or there is no explicit build-only framing with a stop condition.",
   },
 ] as const;
 
@@ -57,10 +113,10 @@ export const FAILURE_MODES = [
 export const SCHEMA_FILES = [
   {
     file: "PROJECT.md",
-    role: "The immutable core",
+    role: "The stable core",
     cadence: "Rarely changes",
     description:
-      "The why, the architecture, and the non-negotiables. Agents read this for context but do not edit it unless explicitly instructed.",
+      "The why, the architecture, and the non-negotiables. Agents read this for context but treat it as read-mostly; changes require explicit spec-edit scope.",
     contains: [
       "Goal — the ultimate purpose of this software",
       "Architecture — tech stack, key patterns, hard constraints",
@@ -84,7 +140,7 @@ export const SCHEMA_FILES = [
     role: "The current slice",
     cadence: "Overwritten each handoff",
     description:
-      "The only document the active agent works against. Strict, scoped, and disposable. Contains an explicit definition of done that the agent must satisfy literally before committing.",
+      "The slice-level scope document. Strict, scoped, and disposable. Contains an explicit definition of done that the agent must satisfy before claiming the slice is complete.",
     contains: [
       "Context — one or two sentences on the slice",
       "Acceptance Criteria — the definition of done",
@@ -125,7 +181,7 @@ export const INSTALL_STEPS = [
     duration: "~15 min",
     actor: "Builder model · read-only",
     title: "Inventory pass — reverse-engineer PROJECT.md from the code",
-    body: "Drop the Inventory prompt into your Builder tool (Codex/Cursor) and let it read the repo without writing any code. It produces a draft PROJECT.md grounded in what is actually in the repo — stack, architecture, conventions it can point to with file paths, and an explicit list of open questions for you. The output is a draft, not a finished document.",
+    body: "Drop the Inventory prompt into your Builder tool (Codex/Cursor) and let it read the repo without writing code. It produces a draft PROJECT.md grounded in the repository: stack, architecture, conventions with file evidence, and an explicit list of open questions for you. The output is a draft, not an authority.",
     promptRef: "inventory",
   },
   {
@@ -134,7 +190,7 @@ export const INSTALL_STEPS = [
     actor: "You — the highest-leverage step",
     title:
       "Edit PROJECT.md — fix Conventions, fill in Non-goals and Human-only context",
-    body: "The draft will be ~70% right. You fix the Conventions section (the Builder spots patterns; only you know which ones are intentional vs. tech debt), fill in Non-goals (what the project deliberately does NOT do — the most important section and the one the Builder cannot infer), answer the Open Questions, and add a Human-only context section for business or regulatory constraints the code does not encode. Commit as `docs: bootstrap PROJECT.md`.",
+    body: "The draft is a map, not ground truth. You fix the Conventions section (the Builder spots repeated patterns; only you know which ones are intentional vs. tech debt), fill in Non-goals (what the project deliberately does NOT do — the section the Builder is least able to infer), answer the Open Questions, and add a Human-only context section for business or regulatory constraints the code does not encode. Commit as `docs: bootstrap PROJECT.md`.",
     promptRef: "edit-pass",
   },
   {
@@ -158,7 +214,7 @@ export const INSTALL_STEPS = [
     duration: "~25 min",
     actor: "Full loop · calibration",
     title: "Run the first cycle — and treat it as a calibration run",
-    body: "The first cycle will reveal everything you got wrong in PROJECT.md. The Builder will hit a convention you forgot to document; the Verifier will FAIL because of an Acceptance Criterion you wrote too loosely. That is the install working. Run the Calibration Debrief prompt at the end to capture the doc deltas cleanly.",
+    body: "The first cycle is designed to reveal what PROJECT.md still fails to say. The Builder may hit an undocumented convention; the Verifier may FAIL because an Acceptance Criterion was too loose. That is useful signal, not a broken install. Run the Calibration Debrief prompt at the end to capture the doc deltas cleanly.",
     promptRef: "calibration",
   },
 ] as const;
@@ -167,12 +223,12 @@ export const INSTALL_ANTI_PATTERNS = [
   {
     title: "Generate PROJECT.md, then immediately start shipping features",
     why: "Looks productive. Skips the boring step.",
-    cost: "The undocumented conventions silently leak into Builder hallucinations from cycle 2 onward. Compounds badly across slices.",
+    cost: "Undocumented conventions become implicit prompt defaults. That creates avoidable variance from cycle 2 onward and compounds badly across slices.",
   },
   {
     title: "Have the Builder fix code while it is writing PROJECT.md",
     why: "Why do two passes when you could do one?",
-    cost: "The Builder will start refactoring opportunistically and you lose the ability to review the doc separately from the code changes. Two commits, two PRs, always.",
+    cost: "The Builder can start refactoring opportunistically and you lose the ability to review the doc separately from the code changes. Two commits, two PRs, always.",
   },
 ] as const;
 
@@ -241,11 +297,17 @@ Produce a single PROJECT.md with these sections, and ONLY these sections:
   intentional or legacy?" not "tell me more about the project."
 
 Rules:
-- Cite a file path for every claim in Conventions and Architecture.
+- Cite a file path, and a line number when available, for every claim in
+  Conventions and Architecture.
+- For Stack, copy package names and versions from the repo manifest exactly.
+  Do not infer versions from memory.
+- Separate observed facts from inferences. If a claim is inferred, label it
+  as an inference and cite the evidence that supports it.
 - If you cannot find evidence for a section, write "INSUFFICIENT EVIDENCE
   — human to fill in." Do not guess.
 - Do not invent features, roadmaps, or future plans.
-- Do not modify any file other than creating PROJECT.md.
+- Do not modify source, config, test, or dependency files. The only allowed
+  write is creating PROJECT.md.
 
 Stop when PROJECT.md is written. Do not start any other work.
 `;
@@ -256,8 +318,8 @@ You are the only person who can turn the Inventory draft into a real
 PROJECT.md. This is not an LLM prompt — it is the checklist you run
 against the draft before you commit it. Budget ~30 minutes.
 
-The draft will be roughly 70% right. The remaining 30% is the content
-only a human can supply or validate.
+The draft is a map, not authority. Your job is to validate the technical
+claims and add the intent that code cannot reveal.
 
 ---
 
@@ -280,8 +342,8 @@ file path" constraint.
 
 Open \`package.json\` (or equivalent) and confirm that three randomly-
 picked dependencies in the draft's Stack section match the versions the
-repo actually pins. Version hallucination is the single most common
-Inventory failure mode.
+repo actually pins. Version hallucination is a common Inventory failure
+mode.
 
   [ ] Dependency 1 matches.
   [ ] Dependency 2 matches.
@@ -292,7 +354,8 @@ Inventory failure mode.
 ## 3. Non-goals — fill in at least three
 
 Non-goals are what the project deliberately does NOT do. The Inventory
-agent almost never writes these — it cannot infer them from code.
+agent usually cannot write these well because absence in code is not the
+same thing as an intentional boundary.
 
 Fill in at least three real non-goals, even as one-liners. Candidates:
 
@@ -349,9 +412,10 @@ them there makes the next Builder uncertain about which are current.
   [ ] Commit body summarizes what you added in the edit pass —
       specifically Non-goals, Human-only context, and any resolved
       open questions.
-  [ ] Open a PR to \`main\`, merge yourself. No Verifier needed — this
-      is a human-authored doc.
-  [ ] Tag the merge commit \`install-v1\`.
+  [ ] Open a PR to \`main\` and merge through your normal repository
+      policy. No Builder pass needed — this is a human-authored doc.
+  [ ] Optional: tag the merge commit \`install-v1\` if this repo uses
+      release or audit tags.
 
 ---
 
@@ -372,8 +436,9 @@ document. You diagnose; you do not fix.
 Inputs you will read:
 1. The full current contents of PROJECT.md (attached or pasted below).
 2. The repository directory listing (top 2 levels of src/ plus the root).
-3. Up to 5 source files you may request by name if a specific claim
-   needs to be checked against code.
+3. The smallest set of source files needed to verify specific claims.
+   Start with up to 5 files; request more only if a claim cannot be
+   evaluated without them.
 
 ---
 
@@ -414,6 +479,8 @@ Rules:
   report.
 - If you cannot find evidence for a PROJECT.md claim, say
   "no evidence found in repo" — do not speculate.
+- If the evidence is too broad to support the exact wording of the claim,
+  mark the claim unsupported or over-specified.
 - You have a clean context window. If you do not know something, say
   so; do not guess from training data.
 
@@ -469,7 +536,8 @@ The agent MUST complete ALL of the following before committing:
 - [ ] <observable, testable criterion 1>
 - [ ] <observable, testable criterion 2>
 - [ ] <observable, testable criterion 3>
-  (Max 5 criteria. Each must be checkable from the diff + repo.)
+  (Max 5 criteria. Each must be checkable from the diff, a command,
+  an HTTP/UI behavior, or repo evidence.)
 
 ## Constraints & Anti-Goals
 - DO NOT touch <explicit paths or systems>
@@ -496,45 +564,62 @@ Rules:
 The first slice exists to prove the loop runs. Tiny is correct.
 `;
 
-export const BUILDER_PROMPT = `You are an execution-focused software engineer. Your sole objective is to complete the specific slice of work defined in HANDOFF.md.
+export const BUILDER_PROMPT = `You are an execution-focused senior software engineer. Your sole objective is to complete the specific slice of work defined in HANDOFF.md.
 
-CRITICAL RULES:
-1. No Planning. The planning phase is over. Do not suggest architectural changes, do not expand the scope, and do not write roadmaps. Your job is to write code that satisfies the Acceptance Criteria.
-2. Strict Boundaries. Adhere strictly to the "Constraints & Anti-Goals" in HANDOFF.md. Do not touch files outside the scope of your current task.
-3. Definition of Done. You are not finished until every item in the Acceptance Criteria is met. If you are blocked and cannot meet a criterion, you must stop and report the blockage; do not silently skip it or fake it.
-4. Context Budget. Read only the files you need. If you find yourself reading more than five files to complete this task, stop and justify why before continuing.
+Operating contract:
+1. Read PROJECT.md for the project-level rules, then read HANDOFF.md for the slice-level scope.
+2. Treat the Acceptance Criteria in HANDOFF.md as the contract. Do not add features, broaden the task, or reinterpret the criteria.
+3. A short implementation checklist is allowed. Roadmaps, architecture proposals, and "while I am here" refactors are not.
+4. Use the existing stack, patterns, and helper APIs documented in PROJECT.md and visible in the relevant files.
+5. If you need to touch files outside the stated scope, add a dependency, change a convention, or leave a criterion unmet, STOP and report BLOCKED with the exact reason. Do not quietly work around the constraint.
+6. Read only the files needed to complete and verify the slice. If you need more than five additional source files beyond the ones named in HANDOFF.md, state why before continuing.
+7. Before closeout, verify each Acceptance Criterion item by item and run the narrowest relevant checks.
+
+Output when implementation is done:
+- Per-criterion status: MET / BLOCKED, with evidence.
+- Files changed and why.
+- Checks run and results.
+- Any declared stubs, hacks, or debt. Write "None" only if true.`;
+
+export const CLOSEOUT_PROMPT = `You have finished the implementation pass for the current slice. Your task now is to close it out cleanly, create the review surface, and prepare the next handoff.
+
+Precondition:
+Do not start closeout until you have verified the current diff against every Acceptance Criterion in HANDOFF.md. If any criterion is unmet, mark the work BLOCKED and do not claim the slice is complete.
 
 Instructions:
-1. Read PROJECT.md for high-level context.
-2. Read HANDOFF.md to understand your specific task.
-3. Execute the work.
-4. When you believe you are done, verify your work against the Acceptance Criteria item by item.`;
+1. Audit the slice. Re-read HANDOFF.md and compare each Acceptance Criterion against the diff. Identify stubs, hacks, skipped checks, or technical debt you introduced. Be explicit; silent debt is the expensive kind.
+2. Update CHANGELOG.md. Append one concise paragraph summarizing what was built in this slice and naming any unresolved issues or stubs.
+3. Draft the next HANDOFF.md. Overwrite HANDOFF.md with the next logical slice only if the next step is clear from the current work. Include context, Acceptance Criteria, constraints, starting files, and warnings. If the next slice is ambiguous, write a small "Needs human decision" handoff instead of inventing roadmap.
+4. Run the relevant checks again after the markdown updates if they can affect generated artifacts, type imports, or docs validation.
+5. Commit on a feature branch named \`feature/<slice-name>\` unless the repo already has an active branch convention. The commit message must be concise and reference the completed slice.
+6. Push the branch and open a Pull Request to \`main\` using the Builder PR description template. The PR body must include the audit, touched-file table, declared stubs, out-of-scope changes, and checks run.
 
-export const CLOSEOUT_PROMPT = `You have just completed a slice of work. Your task now is to cleanly close out this slice, commit the code, and prepare the environment for the next engineer.
+Rules:
+- Do not write new feature code during closeout except for minimal fixes required to satisfy the current Acceptance Criteria.
+- Do not edit PROJECT.md in this phase unless HANDOFF.md explicitly scoped a META-PR.
+- Do not hide blocked criteria in the changelog or PR body. If blocked, say blocked.`;
+
+export const VERIFIER_PROMPT = `You are a Verifier. You did not write this code. Your job is to check whether the Pull Request actually satisfies the Acceptance Criteria in HANDOFF.md — nothing more, nothing less.
+
+Authoritative inputs:
+1. The PR description, only for the Builder's self-audit, declared stubs, declared out-of-scope changes, and any pasted Builder Brief.
+2. The base-version HANDOFF.md for the slice's Acceptance Criteria.
+3. The PR diff.
+
+META-PR EXCEPTION: If HANDOFF.md itself is changed by this PR, do NOT use the changed HANDOFF.md as the scope document. Treat the Builder Brief / Acceptance Criteria pasted into the PR description as the authoritative scope. If the PR description does not contain a Builder Brief, switch to the dedicated META-PR Verifier prompt and stop here.
 
 Instructions:
-1. Audit. Review the Acceptance Criteria in HANDOFF.md. Did you complete all of them? Identify any stubs, hacks, or technical debt you introduced. Be honest — silent debt is the most expensive kind.
-2. Commit. Commit your changes on a feature branch named feature/<slice-name>. The commit message must be concise and reference the completed slice. Push the branch to the remote and open a Pull Request to main with a body generated from this audit.
-3. Update Changelog. Append a single, concise paragraph to CHANGELOG.md summarizing what was built in this slice and noting any unresolved issues or stubs you left behind.
-4. Draft Next Handoff. Overwrite HANDOFF.md for the next engineer. You must include:
-   - The goal for the next logical slice of work.
-   - Clear Acceptance Criteria for that next slice.
-   - Any context or warnings the next engineer needs based on the work you just completed (for example, "I left a stub in auth.ts that you will need to implement").
+1. Read the PR description, the base-version HANDOFF.md, and the PR diff. Do not read the rest of the codebase unless a specific Acceptance Criterion cannot be evaluated from those inputs.
+2. For each Acceptance Criterion, return PASS or FAIL with one sentence of evidence pointing to a file and line number. If the criterion is untestable from the diff and available evidence, mark it FAIL as "unverifiable".
+3. Flag changes that are OUT OF SCOPE relative to the slice: unrelated refactors, dependency changes, formatting churn, new files, or edits outside the stated paths.
+4. Compare declared stubs / TODOs in the PR description against the diff. Undeclared stubs or skipped checks are findings.
+5. Return a final verdict: PASS (all criteria met, no out-of-scope changes), CONDITIONAL PASS (criteria met but minor declared or low-risk out-of-scope changes), or FAIL (one or more criteria unmet, unverifiable, or materially out of scope).
 
-Do not write feature code during this phase. Your only outputs are git commands, the PR body, and the updated markdown files.`;
-
-export const VERIFIER_PROMPT = `You are a Verifier. You did not write this code. Your job is to check whether the diff in this Pull Request actually satisfies the Acceptance Criteria in HANDOFF.md — nothing more, nothing less.
-META-PR EXCEPTION: If HANDOFF.md itself is one of the files being changed by this PR, do NOT use the changed HANDOFF.md as the scope document. Instead, treat the Builder Brief / Acceptance Criteria pasted into the PR description as the authoritative scope. If the PR description does not contain a Builder Brief, switch to the dedicated META-PR Verifier prompt and stop here.
-Instructions:
-1. Read ONLY the PR diff and HANDOFF.md. Do not read the rest of the codebase unless absolutely necessary to evaluate a criterion.
-2. For each item in the Acceptance Criteria, return PASS or FAIL with one sentence of evidence pointing to a file and line number.
-3. Flag any change in the diff that is OUT OF SCOPE relative to the slice (refactors, new dependencies, unrelated edits).
-4. Return a final verdict: PASS (all criteria met, no out-of-scope changes), CONDITIONAL PASS (criteria met but minor out-of-scope changes), or FAIL (one or more criteria unmet).
 Do not suggest fixes. Do not write code. Your output is a verdict report.`;
 
 export const CALIBRATION_DEBRIEF_PROMPT = `You just completed the first slice of work on this repository using the
 Agent Handoff Framework. This was a calibration run — the point was not
-to ship value, it was to reveal everything that was wrong or under-
+to ship value, it was to reveal what was wrong, missing, or under-
 specified in PROJECT.md.
 
 Your job in this session is to produce a list of PROPOSED edits to
@@ -634,7 +719,7 @@ Rules:
 
 export const BUILDER_PR_DESCRIPTION = `## Builder PR — <slice name from HANDOFF.md>
 
-**Builder model:** <name + version, e.g. claude-sonnet-4.5-2026-03>
+**Builder model:** <provider/model id + date run>
 **Branch:** \`feature/<slice-name>\`
 **HANDOFF.md ref:** <commit SHA of HANDOFF.md the Builder worked against>
 
@@ -708,9 +793,9 @@ or explicitly declared blocked above._
 
 export const VERIFIER_PR_COMMENT = `## Verifier Report
 
-**Model:** <name + version, e.g. gpt-5-thinking-2026-04>
+**Model:** <provider/model id + date run>
 **Context:** clean — no prior slices loaded
-**Builder model:** <name + version, e.g. claude-sonnet-4.5-2026-03>
+**Builder model:** <provider/model id from PR>
 **Slice:** <slice name from HANDOFF.md>
 **Verdict:** <PASS | CONDITIONAL PASS | FAIL>
 
@@ -762,7 +847,7 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
     scenarioTag: "INSTALL",
     cadence: "Run once, in order, when bringing a repo into the framework.",
     intro:
-      "These four prompts walk you through the 90-minute install of the framework onto a codebase that already exists. Execute them top-to-bottom; do not skip the human Edit Pass — it is the highest-leverage step in the whole install.",
+      "These four prompts walk you through a compact install of the framework onto a codebase that already exists. Execute them top-to-bottom; do not skip the human Edit Pass — it is the step that turns repo observations into project intent.",
     items: [
       {
         id: "inventory",
@@ -786,7 +871,7 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         filename: "edit-pass-checklist.md",
         title: "Edit Pass Checklist — you, not the LLM",
         whenToUse:
-          "Run immediately after Inventory. The draft is ~70% right; this checklist finishes the other 30%.",
+          "Run immediately after Inventory. Treat the draft as evidence to validate, not a source of truth.",
         context:
           "This is a human checklist, not an LLM prompt. Keep it open alongside the draft PROJECT.md and check boxes as you go.",
         body: EDIT_PASS_CHECKLIST,
@@ -938,13 +1023,13 @@ export const BUILD_VERIFY_STAGES = [
     tag: "A",
     actor: "Builder LLM",
     role: "Executes the slice",
-    body: "Reads PROJECT.md and HANDOFF.md. Writes code that satisfies the Acceptance Criteria. Runs the Closeout prompt: commits to a feature branch, opens a PR, appends to CHANGELOG.md, and drafts the next HANDOFF.md.",
+    body: "Reads PROJECT.md and HANDOFF.md. Writes code that satisfies the Acceptance Criteria. Runs the Closeout prompt: appends to CHANGELOG.md, drafts the next HANDOFF.md, commits to a feature branch, and opens a PR.",
   },
   {
     tag: "B",
     actor: "Verifier LLM",
     role: "Independent check",
-    body: "A different model in a fresh context window. Reads ONLY the PR diff and HANDOFF.md. Returns PASS, CONDITIONAL PASS, or FAIL with one line of evidence per Acceptance Criterion. Does not write code.",
+    body: "A different model in a fresh context window. Reads the PR description, PR diff, and base-version HANDOFF.md. Returns PASS, CONDITIONAL PASS, or FAIL with evidence per Acceptance Criterion. Does not write code.",
   },
   {
     tag: "C",
@@ -957,55 +1042,55 @@ export const BUILD_VERIFY_STAGES = [
 export const BUILD_VERIFY_PRINCIPLES = [
   {
     title: "Different model, not just different context",
-    body: "Use a different LLM family for the Verifier than the Builder (e.g., Builder = Claude, Verifier = GPT, or vice versa). Different training distributions catch different failure modes. Same-model verification mostly rubber-stamps the Builder's mistakes.",
+    body: "Prefer a different model family or provider for the Verifier than the Builder. Different model lineages, tooling behavior, and post-training priors reduce correlated failure modes; they do not eliminate them.",
   },
   {
     title: "Clean context window — always",
-    body: "The Verifier must boot with no prior conversation, no prior slice memory, no scratchpad. It reads only the diff and HANDOFF.md. This is the single most important rule; without it, the Verifier inherits the Builder's biases.",
+    body: "The Verifier must boot with no prior conversation, no prior slice memory, and no Builder scratchpad. It reads only the review inputs. This is the single most important rule; without it, the Verifier inherits the Builder's framing.",
   },
   {
-    title: "Diff-only reading",
-    body: "The Verifier is forbidden from reading the rest of the codebase unless evaluating a specific Acceptance Criterion requires it. This caps cost and forces the verdict to be grounded in what the slice actually changed.",
+    title: "Review-input-first reading",
+    body: "The Verifier starts from the PR description, diff, and scope document. It may inspect additional files only when a specific Acceptance Criterion cannot be evaluated otherwise, and it should name that reason in the report.",
   },
   {
     title: "Verdict, not advice",
-    body: "The Verifier returns PASS / CONDITIONAL PASS / FAIL with evidence. It does NOT propose fixes, does NOT suggest refactors, and does NOT write code. Mixing roles destroys the independence that makes the check valuable.",
+    body: "The Verifier returns PASS / CONDITIONAL PASS / FAIL with evidence. It does NOT propose fixes, suggest refactors, or write code. Mixing roles weakens the independence that makes the check valuable.",
   },
 ] as const;
 
-export const MODEL_PAIRINGS_FRESHNESS = "April 2026";
+export const MODEL_PAIRINGS_FRESHNESS = "May 2026 · model-agnostic guidance";
 
 export const MODEL_PAIRINGS = [
   {
     tier: "Default",
-    builder: "Claude (Sonnet/Opus class)",
-    verifier: "GPT (frontier reasoning class)",
+    builder: "Provider A · best code-capable model",
+    verifier: "Provider B · strong reasoning/review model",
     rationale:
-      "Strong code-writing model paired with a strong reasoning model from a different lab. Different training data and different RLHF priors mean the Verifier is unlikely to hallucinate the same way the Builder did. Best general-purpose pairing for production code.",
+      "Strong implementation model paired with a strong review model from a different provider. This reduces correlated blind spots while keeping both roles capable enough for production code review.",
     cost: "Medium",
   },
   {
     tier: "Inverted default",
-    builder: "GPT (frontier reasoning class)",
-    verifier: "Claude (Sonnet/Opus class)",
+    builder: "Provider B · strongest reasoning model",
+    verifier: "Provider A · strong code-review model",
     rationale:
-      "Useful when the slice is reasoning-heavy (algorithms, edge-case logic). The Builder gets the reasoning model and the Verifier brings code-grounded scrutiny. Swap with the Default pairing depending on slice type.",
+      "Useful when the slice is reasoning-heavy: algorithms, migrations, edge-case logic, or concurrency. The Builder gets the model best suited to hard reasoning and the Verifier brings independent code-grounded scrutiny.",
     cost: "Medium",
   },
   {
     tier: "Three-lab triangle",
-    builder: "Claude or GPT",
-    verifier: "Gemini (frontier class)",
+    builder: "Provider A or B",
+    verifier: "Provider C · frontier-class reviewer",
     rationale:
-      "Use Gemini as the Verifier when you want a third training distribution in the loop. Particularly valuable when both your team's preferred labs have shipped from similar data cuts. Reduces correlated failure modes.",
+      "Use a third provider as Verifier when your team normally builds with one of two providers. The point is independent failure behavior, not brand loyalty.",
     cost: "Medium",
   },
   {
     tier: "Cost-controlled",
-    builder: "Claude/GPT (frontier)",
-    verifier: "Smaller frontier model from a different lab",
+    builder: "Frontier Builder",
+    verifier: "Smaller model from another provider",
     rationale:
-      "Verification is mostly a structured comparison task — it does not need the largest model. Pairing a frontier Builder with a smaller-but-different-lab Verifier captures most of the independence benefit at a fraction of the token cost.",
+      "Many verification passes are structured comparison tasks. A smaller independent Verifier can catch scope, evidence, and skipped-criterion failures at lower cost; escalate to a stronger Verifier for ambiguous or high-risk PRs.",
     cost: "Low",
   },
   {
@@ -1013,7 +1098,7 @@ export const MODEL_PAIRINGS = [
     builder: "Hosted frontier model",
     verifier: "Local model from a different family (e.g., Llama, Qwen)",
     rationale:
-      "When the diff cannot leave your environment, run the Verifier locally on a different-family model. Quality drops vs. a frontier Verifier, but you preserve the cross-distribution check, which is the structural goal.",
+      "When the diff cannot leave your environment, run the Verifier locally on a different-family model. Review quality may drop versus a frontier Verifier, but you preserve separation between the Builder and review roles.",
     cost: "Variable",
   },
   {
@@ -1021,7 +1106,7 @@ export const MODEL_PAIRINGS = [
     builder: "Model X",
     verifier: "Same model X (different prompt)",
     rationale:
-      "DO NOT pair a model with itself. Same-distribution verification rubber-stamps the Builder's mistakes — the failure modes are correlated. Different prompts on the same model is not a substitute for a different model.",
+      "Avoid pairing a model with itself for both roles. Different prompts on the same model can help, but they are a weak substitute for independent model behavior when the goal is catching correlated mistakes.",
     cost: "—",
     isAntiPattern: true,
   },
@@ -1030,17 +1115,17 @@ export const MODEL_PAIRINGS = [
 export const ESCALATION_RULE = {
   rule: "Two consecutive FAILs on the same slice = freeze the slice, not the Builder.",
   premise:
-    "A single FAIL is a Builder mistake. A second FAIL on the same slice is a slice-definition mistake. The Verifier is telling you the HANDOFF.md is ambiguous, the Acceptance Criteria are untestable, or the slice is too big — not that the Builder is bad. Treat the second FAIL as a hard stop, not a third attempt.",
+    "A single FAIL may be an execution mistake. A second FAIL on the same slice is strong evidence of a slice-definition problem: ambiguous HANDOFF.md, untestable Acceptance Criteria, missing constraints, or a slice that is too large. Treat the second FAIL as a hard stop, not a third attempt.",
   steps: [
     {
       n: "01",
       title: "Stop the Builder. Do not retry the slice.",
-      body: "A third Builder attempt on the same HANDOFF.md will produce a third correlated failure. Close the second PR without merging. Tag it `escalated/<slice-name>` so you can find it later.",
+      body: "A third Builder attempt on the same HANDOFF.md is likely to repeat the same ambiguity. Close the second PR without merging. Tag it `escalated/<slice-name>` so you can find it later.",
     },
     {
       n: "02",
       title: "Read both Verifier reports side-by-side.",
-      body: "Look for the same criterion failing twice, or two different criteria failing because of one underlying ambiguity. The pattern is the diagnosis. If the two reports disagree about what failed, the slice itself is under-specified.",
+      body: "Look for the same criterion failing twice, or two different criteria failing because of one underlying ambiguity. The pattern is the diagnosis. If the two reports disagree about what failed, the slice may be under-specified.",
     },
     {
       n: "03",
@@ -1057,7 +1142,7 @@ export const ESCALATION_RULE = {
     "Swapping the Builder model on the third attempt — masks the real defect.",
     "Letting the Verifier propose the fix — violates the independence rule and creates a feedback loop where the Verifier grades its own suggestions.",
     "Merging a CONDITIONAL PASS as if it were a PASS to avoid the escalation — the silent debt this creates is exactly the failure mode this whole framework was built to prevent.",
-    "Treating the second FAIL as a Builder performance issue — it is almost always an upstream HANDOFF.md issue.",
+    "Treating the second FAIL as only a Builder performance issue — often the upstream HANDOFF.md is the thing that needs repair.",
   ],
 } as const;
 
@@ -1076,12 +1161,13 @@ slice runs.
 
 ## Why two LLMs?
 
-A Builder LLM is biased to claim success on its own work. A Verifier LLM in
-a fresh context, reading only the diff, catches stubs, hallucinated calls,
-out-of-scope changes, and silently skipped Acceptance Criteria that the
-Builder will never report on itself.
+A Builder LLM can overstate completion on its own work. A Verifier LLM in
+a fresh context, reading the PR description, diff, and scope document,
+catches stubs, hallucinated calls, out-of-scope changes, and silently
+skipped Acceptance Criteria that the Builder may under-report.
 
-The marginal cost is small. The marginal signal is high.
+The marginal cost is bounded. The marginal signal is high when the review
+input is narrow and evidence-backed.
 
 ---
 
@@ -1095,16 +1181,16 @@ The marginal cost is small. The marginal signal is high.
    │  1. BUILDER LLM                   │
    │  Reads PROJECT.md + HANDOFF.md    │
    │  Writes code, runs tests          │
-   │  Opens PR on feature/<slice>      │
    │  Updates CHANGELOG.md             │
    │  Drafts next HANDOFF.md           │
+   │  Opens PR on feature/<slice>      │
    └───────────────────────────────────┘
                       │
                       ▼  (PR opened)
    ┌───────────────────────────────────┐
    │  2. VERIFIER LLM   (different     │
    │     model, clean context)         │
-   │  Reads ONLY the diff + HANDOFF.md │
+   │  Reads PR body + diff + HANDOFF.md│
    │  Returns PASS / COND. PASS / FAIL │
    │  with one line of evidence per    │
    │  Acceptance Criterion.            │
@@ -1127,22 +1213,23 @@ The marginal cost is small. The marginal signal is high.
 | Role          | Model                  | Reads                         | Writes                          |
 |---------------|------------------------|-------------------------------|----------------------------------|
 | Builder       | LLM A (e.g., Claude)   | PROJECT.md, HANDOFF.md, code  | Code, CHANGELOG.md, HANDOFF.md  |
-| Verifier      | LLM B (e.g., GPT)      | PR diff, HANDOFF.md           | Verdict report only              |
+| Verifier      | LLM B (e.g., GPT)      | PR body, diff, HANDOFF.md     | Verdict report only              |
 | Gatekeeper    | Human (you)            | Verdict + diff                | Merge / reject / revise decision |
 
 ---
 
 ## Non-negotiable rules
 
-1. **Different model families.** Builder and Verifier must come from different
-   training distributions. Same-model verification mostly rubber-stamps the
-   Builder's mistakes.
+1. **Different model families.** Builder and Verifier should come from
+   different model families or providers when possible. This reduces
+   correlated mistakes; it does not eliminate them.
 2. **Clean context window for the Verifier.** No prior conversation, no
    memory of past slices, no scratchpad. Boot fresh every time.
-3. **Diff-only reading.** The Verifier may not browse the rest of the
-   codebase unless evaluating a specific Acceptance Criterion requires it.
+3. **Review-input-first reading.** The Verifier starts with the PR body,
+   diff, and scope document. It may browse additional files only when
+   evaluating a specific Acceptance Criterion requires it.
 4. **Verdict, not advice.** The Verifier returns a verdict with evidence. It
-   does not propose fixes, refactors, or new code. Mixing roles destroys the
+   does not propose fixes, refactors, or new code. Mixing roles weakens the
    independence that makes this check valuable.
 5. **One slice in flight at a time.** Do not run a new Builder until the
    previous slice has been merged or rejected. Parallel slices defeat the
@@ -1169,7 +1256,7 @@ Builder's execution.
 
 export const PHASE_TWO_INTRO = {
   pull: "Closing the install does not end the Verifier. It graduates the Verifier into its real job.",
-  body: "When the Verifier returns its first VERDICT: CLOSE on PROJECT.md, the natural assumption is that the framework is done. It is not. The install is Phase 1 of a two-phase operating model. Stopping here is the most common failure mode of dual-agent systems and the single biggest waste of the work you just put in.",
+  body: "When the Verifier returns its first VERDICT: CLOSE on PROJECT.md, the natural assumption is that the framework is done. It is not. The install is Phase 1 of a two-phase operating model. Stopping here turns PROJECT.md into passive documentation instead of an active review input.",
 } as const;
 
 export const PHASE_TWO_PHASES = [
@@ -1183,7 +1270,7 @@ export const PHASE_TWO_PHASES = [
     verifierJob:
       "Audit PROJECT.md against the codebase and against itself for internal coherence.",
     exit: "VERDICT: CLOSE. Spec is in steady-state.",
-    duration: "Finite. Typically 3–8 audit cycles.",
+    duration: "Finite. Often 3–8 audit cycles.",
   },
   {
     tag: "Phase 2",
@@ -1200,9 +1287,9 @@ export const PHASE_TWO_PHASES = [
 
 export const PHASE_TWO_LEVERAGE = {
   headline: "The leverage math",
-  body: "Phase 1 has a fixed, bounded cost. Eight audit cycles spread across a few weeks, producing one durable specification file. Phase 2 has a small marginal cost per PR and runs continuously. Fifty PRs over a project's first year — modest for a real product — means the Verifier reviews fifty PRs, each one informed by the spec you spent eight cycles getting right. Roughly fifty times the leverage of the install effort, paid out over time on a one-time fixed cost.",
+  body: "Phase 1 has a fixed, bounded cost: a finite number of audit cycles that produce one durable specification file. Phase 2 has a small marginal cost per PR and runs continuously. Fifty PRs over a project's first year means fifty reviews informed by the same spec, so the install effort is amortized across every later merge decision.",
   callout:
-    "If you stop running the Verifier after install, you have built a constitution and then dissolved the supreme court. The document still exists. It enforces nothing.",
+    "If you stop running the Verifier after install, PROJECT.md still exists, but it no longer participates in merge decisions.",
 } as const;
 
 export const PHASE_TWO_FINDINGS = [
@@ -1228,7 +1315,7 @@ export const PHASE_TWO_FINDINGS = [
     type: "Architecture drift",
     example:
       "A PR puts business logic in a route handler when PROJECT.md requires 'thin handlers, logic in service modules.'",
-    miss: "A code-review judgment call that no automated test catches. Surfaces only if the reviewer remembers the rule — or if PROJECT.md enforces it.",
+    miss: "A code-review judgment call that no automated test catches. Surfaces only if the reviewer remembers the rule — or if the Verifier checks PROJECT.md.",
   },
   {
     type: "Spec staleness",
@@ -1255,7 +1342,7 @@ What I want from you:
    the spec.
 2. Implement the task using only the stack, conventions, and
    architecture declared in PROJECT.md. New dependencies, new
-   patterns, or new architectural seams require explicit
+   patterns, or new architectural interfaces require explicit
    justification in the PR description.
 3. Stay inside the bounds of the requested task. Do not refactor
    adjacent code, rename files, reformat unrelated modules, or
@@ -1283,7 +1370,7 @@ Scope: this task only. Do not modify PROJECT.md. Do not introduce
 features, files, or dependencies that were not requested.
 `;
 export const PHASE_TWO_BUILDER_PR_DESCRIPTION = `## Phase 2 Builder PR — <feature or fix name>
-**Builder model:** <name + version, e.g. claude-sonnet-4.5-2026-03 — or "human">
+**Builder model:** <provider/model id + date run — or "human">
 **Branch:** \`feature/<short-name>\` or \`fix/<short-name>\`
 **PROJECT.md ref:** <commit SHA of PROJECT.md the Builder worked against>
 > One-paragraph summary of what this PR does, in plain language. Match the
@@ -1330,8 +1417,9 @@ _(A red CI is a wasted Verifier cycle. All three should be green before
 you open the PR.)_
 ### Verifier expectation
 - Expected verdict: \`APPROVE\` (no MAJOR findings expected).
-- If \`SPEC-UPDATE-REQUIRED\` is returned, the Builder will open a separate
-  spec-amendment PR before this one merges.
+- If \`SPEC-UPDATE-REQUIRED\` is returned, this PR must not merge until
+  PROJECT.md is updated through an explicit META-PR, or until this PR is
+  re-scoped as a combined code + spec PR with a pasted Spec Update Proposal.
 ---
 _Phase 2 Builder rules: scope is the requested task only, no
 out-of-scope refactors, no silent debt, no quiet PROJECT.md amendments.
@@ -1339,9 +1427,9 @@ All non-goals are respected unless explicitly amended in a separate PR
 first._
 `;
 export const PHASE_TWO_VERIFIER_PR_COMMENT = `## Phase 2 Verifier Report
-**Model:** <name + version, e.g. gpt-5-thinking-2026-04>
+**Model:** <provider/model id + date run>
 **Context:** clean — no prior PRs loaded
-**Builder model:** <name + version, e.g. claude-sonnet-4.5-2026-03 — or "human">
+**Builder model:** <provider/model id from PR — or "human">
 **PR:** #<N> — <title>
 **PROJECT.md ref:** <commit SHA the audit was run against>
 **Verdict:** <APPROVE | REQUEST-CHANGES | SPEC-UPDATE-REQUIRED>
@@ -1358,8 +1446,8 @@ flagging back to the Gatekeeper as evidence the spec is mature.)_
 ### Non-goal violations
 - <Non-goal name from PROJECT.md> — violated by \`src/...:line\`.
 _(or "None observed". Non-goals are the bright lines the project owner
-explicitly drew. Treat them as non-negotiable unless the PR description
-argues for moving the line and amending PROJECT.md in the same PR.)_
+explicitly drew. Treat them as non-negotiable unless a separate META-PR
+or an explicitly scoped combined code + spec PR moves the line.)_
 ### Out-of-scope changes
 - \`src/utils/logger.ts\` — refactored unrelated helper, not justified by
   the requested task.
@@ -1397,11 +1485,14 @@ phase is to audit incoming code PRs against PROJECT.md.
 Target of this audit:
 PR #<N> — <title>
 Branch: <branch-name>
+PR description: <paste full PR body>
 Diff: <attach \`gh pr diff <N>\` output, or paste the diff>
 
 What I want from you:
 
-1. Audit the PR diff against PROJECT.md.
+1. Audit the PR description and diff against PROJECT.md. The diff is the
+   evidence; the PR description is the Builder's claim about scope, stubs,
+   tests, and intent.
 
 2. Classify every finding as one of:
    - MAJOR: must be fixed before merge. Violates a non-goal, a hard
@@ -1412,19 +1503,21 @@ What I want from you:
 
 3. Be especially strict on non-goal violations. Non-goals are the
    bright lines the project owner explicitly drew. Treat them as
-   non-negotiable unless the PR description argues for moving the
-   line and updating PROJECT.md.
+   non-negotiable unless the PR is explicitly scoped as a META-PR or
+   combined code + spec PR with a Spec Update Proposal.
 
 4. If the PR appears to obsolete part of PROJECT.md (e.g., the
    feature being added contradicts a stated non-goal but is clearly
-   intentional), flag this as a SPEC-UPDATE finding: the PR should
-   include a PROJECT.md amendment, not just code.
+   intentional), flag this as a SPEC-UPDATE finding. The code PR should
+   not merge until PROJECT.md is updated through a META-PR, unless this
+   PR was explicitly scoped as a combined code + spec PR and includes a
+   Spec Update Proposal in the PR description.
 
 5. End with an explicit verdict line in this format:
 
    VERDICT: APPROVE              — no MAJOR findings; merge as-is or with MINOR fixes.
    VERDICT: REQUEST-CHANGES      — one or more MAJOR findings; do not merge.
-   VERDICT: SPEC-UPDATE-REQUIRED — PR is intentional but PROJECT.md must be amended in the same PR.
+   VERDICT: SPEC-UPDATE-REQUIRED — code may be intentional, but PROJECT.md must be updated through an explicit spec path before merge.
 
 Scope: this PR only. Do not re-audit PROJECT.md itself unless the
 PR modifies it.
@@ -1450,7 +1543,7 @@ export const PHASE_TWO_WIRING = [
   {
     n: "03",
     title: "Branch on the verdict",
-    body: "APPROVE: merge per your normal process. REQUEST-CHANGES: post findings as a PR comment, have Builder address them, re-run the Verifier on the updated diff. SPEC-UPDATE-REQUIRED: the Builder amends PROJECT.md in the same PR before merge.",
+    body: "APPROVE: merge per your normal process. REQUEST-CHANGES: post findings as a PR comment, have Builder address them, re-run the Verifier on the updated diff. SPEC-UPDATE-REQUIRED: pause the code PR until a META-PR updates PROJECT.md, unless this PR already contains an explicit Spec Update Proposal and is being reviewed as a combined code + spec PR.",
   },
   {
     n: "04",
@@ -1471,17 +1564,18 @@ export const PHASE_TWO_TRIAGE = {
     {
       condition:
         "PR violates a rule that has been obsoleted by the product's evolution.",
-      action: "Amend PROJECT.md in the same PR; then accept the code change.",
+      action:
+        "Open a META-PR to amend PROJECT.md first, or explicitly re-scope the current PR as code + spec with a pasted Spec Update Proposal before accepting the code change.",
     },
     {
       condition:
         "PR violates a non-goal you have quietly changed your mind about.",
       action:
-        "STOP. Do not amend PROJECT.md inside a feature PR. Open a separate spec-amendment PR first, run the Phase 1 audit on it, merge it, then return to the feature PR.",
+        "STOP. Do not amend PROJECT.md inside an ordinary feature PR. Open a separate spec-amendment META-PR first, run the Phase 2 META-PR audit on it, merge it, then return to the feature PR.",
     },
   ],
   warning:
-    "The third case is the trap. Non-goals are slow-moving by design; amending one inside a feature PR is how the constitution gets quietly rewritten without judicial review.",
+    "The third case is the trap. Non-goals are slow-moving by design; changing one inside an ordinary feature PR lets the project boundary move without explicit review.",
 } as const;
 
 export const PHASE_TWO_CALIBRATION = {
@@ -1507,7 +1601,6 @@ export const PHASE_TWO_DORMANT = {
     "The team or solo operator describes the framework as 'we did that earlier this year' rather than 'we run that on every PR.'",
   ],
 } as const;
-
 
 // =============================================================================
 // SECTION 08 — META-PRs
@@ -1652,7 +1745,7 @@ export const META_BUILDER_PR_DESCRIPTION = `## META-PR — <what spec doc is cha
 
 **Type:** META-PR (modifies <HANDOFF.md | PROJECT.md>)
 **Phase:** <Phase 1 mid-slice spec correction | Phase 2 spec evolution | Phase 2 Calibration Debrief output>
-**Builder model:** <e.g., Claude Sonnet 4.5>
+**Builder model:** <provider/model id + date run>
 **Triggering slice / PR:** <PR # or slice name that surfaced this need>
 
 ## Why this META-PR exists
@@ -1703,7 +1796,7 @@ export const META_BUILDER_PR_DESCRIPTION = `## META-PR — <what spec doc is cha
 
 export const META_VERIFIER_PR_COMMENT = `## META-PR Verifier Report
 
-**Verifier model:** <e.g., GPT-5>
+**Verifier model:** <provider/model id + date run>
 **Builder model:** <whatever drafted the spec edit>
 **PR:** #<N> — <title>
 **Spec doc affected:** <HANDOFF.md | PROJECT.md>

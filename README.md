@@ -1,6 +1,6 @@
 # Agent Handoff Framework — site
 
-A single-page reference for AI agent handoff workflows: document schema, builder and closeout prompts, and failure modes. Built as a static React app with an optional Express shell for production.
+A single-page reference for AI agent handoff workflows: document schema, builder, closeout, verifier prompts, and failure-mode guardrails. Built as a static React app with an optional Express shell for production.
 
 ## Prerequisites
 
