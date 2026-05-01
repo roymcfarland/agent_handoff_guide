@@ -197,11 +197,32 @@
     @apply border-border outline-ring/50;
   }
   html {
-    scroll-behavior: smooth;
+    /* Smooth in-page jumps, but only when the user has not requested reduced
+       motion. Vestibular-sensitive users find programmatic smooth scroll
+       disorienting; fall back to instant jumps for them. */
+    @media (prefers-reduced-motion: no-preference) {
+      scroll-behavior: smooth;
+    }
     /* Match the actual sticky header height. The header is ~56px on mobile and
        ~64px above md. We use a single value that errs slightly high so anchor
        targets clear the header at every width. */
     scroll-padding-top: 4.5rem;
+  }
+  /* Theme cross-fade: when the .dark class flips, only the surface colors
+     transition, not layout-affecting properties. Skipped under reduced motion
+     so the switch is instant for users who prefer that. */
+  @media (prefers-reduced-motion: no-preference) {
+    body {
+      transition: background-color 220ms ease-out, color 220ms ease-out;
+    }
+  }
+  /* Honour reduced-motion across our own animations (ink-in, etc.). */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
   }
   body {
     @apply bg-background text-foreground;
@@ -289,26 +310,59 @@
   .flex { min-height: 0; min-width: 0; }
 
   /* The signature graph-paper background.
-     Two layered linear-gradients give a 24px grid with a stronger every-5th line.
-     Routed through CSS variables so the grid lines flip from cyan-on-cream to
-     bright-cyan-on-navy when .dark is active. */
+     Two layered linear-gradients give a 24px grid with a stronger every-5th
+     line. Routed through CSS variables so the grid lines flip from
+     cyan-on-cream to soft-cyan-on-navy when .dark is active.
+     Softened May 2026: minor lines 35%->18%, major lines 45%->26% to keep the
+     paper feel without the grid reading as foreground. The .dark block below
+     drops them slightly further because bright cyan on deep navy is visually
+     louder than cyan on cream at equal alpha. */
   .graph-paper {
     background-color: var(--paper);
     background-image:
-      linear-gradient(to right,  color-mix(in oklch, var(--grid) 35%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 35%, transparent) 1px, transparent 1px),
-      linear-gradient(to right,  color-mix(in oklch, var(--grid-strong) 45%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklch, var(--grid-strong) 45%, transparent) 1px, transparent 1px);
+      linear-gradient(to right,  color-mix(in oklch, var(--grid) 18%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 18%, transparent) 1px, transparent 1px),
+      linear-gradient(to right,  color-mix(in oklch, var(--grid-strong) 26%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--grid-strong) 26%, transparent) 1px, transparent 1px);
     background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
     background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+    /* Hairline-thin radial vignette so the grid recedes as the eye moves
+       toward the edges of the page. Keeps the centre crisp where content
+       lives, prevents the corners from feeling like a CAD blueprint. */
+    -webkit-mask-image: radial-gradient(
+      ellipse 80% 80% at 50% 35%,
+      black 60%,
+      color-mix(in oklch, black 60%, transparent) 100%
+    );
+            mask-image: radial-gradient(
+      ellipse 80% 80% at 50% 35%,
+      black 60%,
+      color-mix(in oklch, black 60%, transparent) 100%
+    );
   }
-
+  /* Inside cards (PromptCard body) we want texture, not pattern. The dense
+     16px grid runs much fainter than before so the prompt text is the
+     foreground and the grid is just paper grain. */
   .graph-paper-dense {
     background-color: var(--paper);
     background-image:
-      linear-gradient(to right,  color-mix(in oklch, var(--grid) 50%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 50%, transparent) 1px, transparent 1px);
+      linear-gradient(to right,  color-mix(in oklch, var(--grid) 22%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 22%, transparent) 1px, transparent 1px);
     background-size: 16px 16px;
+  }
+  /* Dark-mode tightening: the cyan grid is brighter on deep navy than the
+     same alpha on cream, so we drop another step. */
+  .dark .graph-paper {
+    background-image:
+      linear-gradient(to right,  color-mix(in oklch, var(--grid) 14%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 14%, transparent) 1px, transparent 1px),
+      linear-gradient(to right,  color-mix(in oklch, var(--grid-strong) 22%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--grid-strong) 22%, transparent) 1px, transparent 1px);
+  }
+  .dark .graph-paper-dense {
+    background-image:
+      linear-gradient(to right,  color-mix(in oklch, var(--grid) 16%, transparent) 1px, transparent 1px),
+      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 16%, transparent) 1px, transparent 1px);
   }
 
   /* Stamped, monospace section labels. */
@@ -373,6 +427,42 @@
     transition: color 150ms ease-out;
   }
   .ink-link:hover { color: var(--red); }
+  /* Skip-to-content link: visually hidden until focused, then promoted to a
+     drafting-red stamp at top-left so a keyboard user can jump past the
+     8-item nav. Pure CSS, no JS. */
+  .skip-link {
+    position: fixed;
+    top: 0.5rem;
+    left: 0.5rem;
+    z-index: 60;
+    padding: 0.5rem 0.75rem;
+    background: var(--primary);
+    color: var(--primary-foreground);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    border: 1px solid var(--primary);
+    border-radius: var(--radius);
+    transform: translateY(-150%);
+    transition: transform 150ms ease-out;
+  }
+  .skip-link:focus,
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  /* Default focus ring for in-page anchor links (the SiteHeader nav and
+     anchor jumps inside section content). shadcn buttons already have a
+     ring; raw <a> elements did not. */
+  a[href^="#"]:focus-visible,
+  a[href^="/"]:focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
 
   /* Mechanical, deliberate fade-in for sections. */
   @keyframes ink-in {

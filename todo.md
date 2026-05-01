@@ -42,6 +42,28 @@
 - [ ] Confirm the red circle annotation on the hero still works against dark bg
 - [ ] Open PR, merge, sync sandbox
 
+# PR #10 — Soften graph paper + harden functionality (May 1)
+
+## Audit (read-only)
+- [ ] Read index.css — find graph-paper utility, color tokens, focus styles
+- [ ] Screenshot current site 1280px light + dark for before reference
+- [ ] Grep for a11y red flags: missing alt, button-vs-div, aria-label, focus-visible
+- [ ] Grep for error-prone patterns: nested anchors, empty Select values, useEffect deps
+- [ ] Grep for hard-coded color values that bypass tokens
+- [ ] Confirm landmark structure: main, header, footer, heading hierarchy
+
+## Soften
+- [ ] Reduce grid line opacity in .graph-paper for light AND dark
+- [ ] Verify minor + major grid still legible but not loud
+- [ ] Optional radial fade so grid recedes near edges
+
+## Polish + harden (sub-tasks added post-audit)
+
+## Ship
+- [ ] pnpm build clean
+- [ ] Screenshot 390 + 1280 in both themes
+- [ ] PR #10, squash-merge Path B, sync sandbox, checkpoint
+
 
 # Section 08 — META-PRs (Apr 30 / May 1)
 - [ ] Re-read existing Verifier prompts (sections 06 and 07) and PR templates to anchor voice
