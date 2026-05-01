@@ -34,6 +34,7 @@ const SHORT_LABEL: Record<string, string> = {
   prompts: "Prompts",
   "build-verify": "Build & Verify",
   "phase-2": "Operate",
+  "meta-prs": "META-PRs",
 };
 
 export function SiteHeader() {

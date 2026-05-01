@@ -41,3 +41,18 @@
 - [ ] Confirm cream paper card surfaces still read correctly in both modes
 - [ ] Confirm the red circle annotation on the hero still works against dark bg
 - [ ] Open PR, merge, sync sandbox
+
+
+# Section 08 — META-PRs (Apr 30 / May 1)
+- [ ] Re-read existing Verifier prompts (sections 06 and 07) and PR templates to anchor voice
+- [ ] Add inline META-PR safety-net clause to PHASE_1 Verifier prompt
+- [ ] Add inline META-PR safety-net clause to PHASE_2 Verifier prompt
+- [ ] Draft PHASE_1 META-PR Verifier prompt
+- [ ] Draft PHASE_2 META-PR Verifier prompt
+- [ ] Draft PHASE_2 META-PR Builder prompt (for Calibration Debrief output)
+- [ ] Draft META-PR Builder PR description template
+- [ ] Draft META-PR Verifier PR comment template
+- [ ] Add Section 08 to nav (long: "META-PRs", short: "META")
+- [ ] Render five cards in Home.tsx (parallel structure to sections 06/07)
+- [ ] Build + screenshot in light + dark at 390 / 1280
+- [ ] Open PR, merge, sync sandbox

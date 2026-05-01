@@ -20,6 +20,7 @@ export const SECTIONS = [
   { id: "prompts", label: "Prompt Library", number: "05" },
   { id: "build-verify", label: "Build & Verify", number: "06" },
   { id: "phase-2", label: "Operate the framework", number: "07" },
+  { id: "meta-prs", label: "META-PRs", number: "08" },
 ] as const;
 
 export const FAILURE_MODES = [
@@ -523,13 +524,12 @@ Instructions:
 Do not write feature code during this phase. Your only outputs are git commands, the PR body, and the updated markdown files.`;
 
 export const VERIFIER_PROMPT = `You are a Verifier. You did not write this code. Your job is to check whether the diff in this Pull Request actually satisfies the Acceptance Criteria in HANDOFF.md — nothing more, nothing less.
-
+META-PR EXCEPTION: If HANDOFF.md itself is one of the files being changed by this PR, do NOT use the changed HANDOFF.md as the scope document. Instead, treat the Builder Brief / Acceptance Criteria pasted into the PR description as the authoritative scope. If the PR description does not contain a Builder Brief, switch to the dedicated META-PR Verifier prompt and stop here.
 Instructions:
 1. Read ONLY the PR diff and HANDOFF.md. Do not read the rest of the codebase unless absolutely necessary to evaluate a criterion.
 2. For each item in the Acceptance Criteria, return PASS or FAIL with one sentence of evidence pointing to a file and line number.
 3. Flag any change in the diff that is OUT OF SCOPE relative to the slice (refactors, new dependencies, unrelated edits).
 4. Return a final verdict: PASS (all criteria met, no out-of-scope changes), CONDITIONAL PASS (criteria met but minor out-of-scope changes), or FAIL (one or more criteria unmet).
-
 Do not suggest fixes. Do not write code. Your output is a verdict report.`;
 
 export const CALIBRATION_DEBRIEF_PROMPT = `You just completed the first slice of work on this repository using the
@@ -1428,6 +1428,12 @@ What I want from you:
 
 Scope: this PR only. Do not re-audit PROJECT.md itself unless the
 PR modifies it.
+META-PR EXCEPTION: If PROJECT.md itself is one of the files being
+changed by this PR, do NOT use the changed PROJECT.md as the
+authoritative spec. Instead, treat the Spec Update Proposal pasted
+into the PR description as the authoritative scope. If the PR
+description does not contain a Spec Update Proposal, switch to the
+dedicated META-PR Verifier prompt and stop here.
 `;
 
 export const PHASE_TWO_WIRING = [
@@ -1501,3 +1507,252 @@ export const PHASE_TWO_DORMANT = {
     "The team or solo operator describes the framework as 'we did that earlier this year' rather than 'we run that on every PR.'",
   ],
 } as const;
+
+
+// =============================================================================
+// SECTION 08 — META-PRs
+// PRs that change the spec itself (HANDOFF.md or PROJECT.md). Need their own
+// verifier loop because the normal Verifier reads the spec as ground truth,
+// and in a META-PR the spec is the thing being changed.
+// =============================================================================
+
+export const META_INTRO = {
+  eyebrow: "FILE 08 / META",
+  headline: "When the PR changes the spec itself.",
+  body: `Most PRs add features. Some PRs change the document the framework runs against — HANDOFF.md mid-slice, or PROJECT.md after a Calibration Debrief. These need their own verifier loop because the normal Verifier reads the spec as ground truth, and in a META-PR the spec is the thing being changed. The prompts below close that loop.`,
+};
+
+export const META_WHEN_TO_USE = [
+  {
+    n: "01",
+    label: "Mid-slice HANDOFF.md edit (Phase 1)",
+    body: "You started a slice, ran the Builder, and discovered the Acceptance Criteria in HANDOFF.md were wrong or under-specified. The PR amends HANDOFF.md as part of the slice. Use the Phase 1 META-PR Verifier prompt with the Builder Brief in the PR description as the scope.",
+  },
+  {
+    n: "02",
+    label: "Calibration Debrief output (Phase 2)",
+    body: "The first full slice surfaced gaps in PROJECT.md. The Calibration Debrief Builder produces a diff-style proposal that becomes a META-PR. Use the Phase 2 META-PR Builder prompt to write the proposal, and the Phase 2 META-PR Verifier prompt to grade it.",
+  },
+  {
+    n: "03",
+    label: "Spec evolution (Phase 2)",
+    body: "Six months in, your team's conventions or non-goals have drifted. A PR amends PROJECT.md to reflect the new reality. Use the Phase 2 META-PR Verifier prompt with the Spec Update Proposal in the PR description as the scope.",
+  },
+];
+
+// -----------------------------------------------------------------------------
+// PROMPTS (3)
+// -----------------------------------------------------------------------------
+
+export const META_VERIFIER_PROMPT_PHASE_1 = `You are a Verifier. You did not write this code. This is a META-PR — it modifies HANDOFF.md itself. You will NOT use HANDOFF.md (the file in the diff) as the scope document, because the file is the thing being changed.
+The authoritative scope for this verification is the Builder Brief pasted below, which the Builder worked against when producing the diff. The Builder Brief is the spec; the diff (including changes to HANDOFF.md) is what you grade.
+
+Builder Brief acceptance criteria for THIS PR:
+[paste numbered criteria from the Builder Brief, or paste the full Builder Brief inline]
+
+Files expected to change (from the Builder Brief):
+[list expected files — typically HANDOFF.md plus any code files the slice required]
+
+Files explicitly OUT of scope:
+[list forbidden files, or "none specified"]
+
+Instructions:
+1. Read the PR diff and the Builder Brief criteria above. Do NOT treat any file in the diff (including HANDOFF.md) as the scope document; the Builder Brief above is the scope document.
+2. For each Builder Brief criterion, return PASS or FAIL with one sentence of evidence pointing to a file and line number in the PR diff.
+3. Flag any change in the diff that is OUT OF SCOPE relative to the Builder Brief (refactors, new dependencies, unrelated edits, files not in the expected-files list).
+4. Specifically check whether the new HANDOFF.md (in the diff) actually matches the Builder Brief — if the Builder Brief says "Acceptance Criteria 3 should require X" and the new HANDOFF.md doesn't contain that, that is a FAIL.
+5. Return a final verdict: PASS (all criteria met, no out-of-scope changes), CONDITIONAL PASS (criteria met but minor out-of-scope changes), or FAIL (one or more criteria unmet).
+
+Do not suggest fixes. Do not write code. Your output is a verdict report.`;
+
+export const META_VERIFIER_PROMPT_PHASE_2 = `You are a Verifier. You did not write this code. This is a META-PR — it modifies PROJECT.md itself. You will NOT use PROJECT.md (the file in the diff) as the authoritative spec, because the file is the thing being changed.
+The authoritative scope for this verification is the Spec Update Proposal pasted below, which the human or the Calibration Debrief Builder produced before this PR. The Spec Update Proposal is the spec; the diff (including changes to PROJECT.md) is what you grade.
+
+Spec Update Proposal for THIS PR:
+[paste the full Spec Update Proposal inline — typically a list of "before / after" PROJECT.md edits with rationale for each]
+
+Trigger for the spec update (from the Proposal):
+[one or two sentences: which slice or finding revealed that PROJECT.md needed to change]
+
+Files expected to change:
+[typically PROJECT.md only; list any other files if the spec change requires code follow-up]
+
+Instructions:
+1. Read the PR diff and the Spec Update Proposal above. Do NOT treat the new PROJECT.md (in the diff) as the spec; the Spec Update Proposal is the spec.
+2. For each "before / after" edit in the Proposal, return PASS or FAIL with one sentence of evidence pointing to the new PROJECT.md content in the diff. PASS means the diff implements the proposed edit faithfully; FAIL means the diff goes further, falls short, or changes something the Proposal did not authorize.
+3. Flag any change in the diff that is OUT OF SCOPE relative to the Proposal — particularly silent edits to PROJECT.md sections that the Proposal did not name.
+4. Specifically check that non-goals removed by the Proposal really were promoted into goals (or deleted) intentionally, not by accident. Removing a non-goal silently is a MAJOR finding.
+5. Return a final verdict: APPROVE (all proposed edits implemented, no out-of-scope changes), REQUEST-CHANGES (one or more proposed edits not implemented faithfully or unauthorized edits present), or PROPOSAL-INSUFFICIENT (the diff implements the Proposal correctly but the Proposal itself is internally inconsistent or under-specified — kick back to the human, do not merge).
+
+Do not suggest fixes. Do not write code. Your output is a verdict report.`;
+
+export const META_BUILDER_PROMPT_PHASE_2 = `You are a Spec-Editor Builder. You are NOT writing code in this session — you are writing a Spec Update Proposal that will become a META-PR against PROJECT.md. The output of this session is a structured markdown document, not a code diff.
+
+You have access to:
+1. The current PROJECT.md (attached / at repo root).
+2. The HANDOFF.md, PR diff, and Verifier report from the slice that just shipped (the trigger for this Spec Update Proposal).
+3. Any other context the human pastes below.
+
+What you produce:
+A Spec Update Proposal in this exact shape:
+
+---
+
+# Spec Update Proposal — <one-line summary>
+
+## Trigger
+<2–3 sentences: which slice or finding revealed that PROJECT.md needed to change. Cite the PR number and the specific Verifier finding or unwritten convention.>
+
+## Proposed edits
+
+For each edit, produce a block in this format:
+
+### Edit <N> — <short label>
+
+**Section of PROJECT.md affected:** <e.g., "Conventions / Naming", "Non-goals">
+
+**Before:**
+\`\`\`
+<copy the exact current text from PROJECT.md, including surrounding context if needed for disambiguation>
+\`\`\`
+
+**After:**
+\`\`\`
+<the proposed replacement text>
+\`\`\`
+
+**Rationale:** <1–3 sentences explaining what surfaced this need. Cite the PR or finding.>
+
+**Risk if not adopted:** <one sentence — what failure mode recurs if PROJECT.md stays as-is>
+
+---
+
+## What this Proposal does NOT touch
+
+<List PROJECT.md sections you considered changing but deliberately left alone, and a one-sentence reason for each. This is how you prevent silent scope creep.>
+
+## Open questions for the human
+
+<If the slice surfaced ambiguity that you cannot resolve, list 1–4 numbered open questions here. Do NOT guess. Open questions block the Proposal from becoming a META-PR until the human answers them.>
+
+---
+
+Rules:
+1. Match PROJECT.md's existing voice and section structure. Do not introduce new top-level section types unless absolutely necessary.
+2. Every "before / after" pair must be a real, copy-pasteable replacement. Do not paraphrase the current text. Do not omit surrounding lines that are needed to disambiguate which paragraph you mean.
+3. If you find yourself wanting to add a new convention to PROJECT.md, ask: did the slice that just shipped actually surface this need, or am I inventing it? If the latter, drop it.
+4. The Verifier (using the Phase 2 META-PR Verifier prompt) will grade the eventual META-PR diff against this Proposal. Write the Proposal precisely enough that a faithful diff is unambiguous.
+5. Do not write code. Do not modify PROJECT.md directly. Your output is the Proposal markdown only.`;
+
+// -----------------------------------------------------------------------------
+// PR TEMPLATES (2)
+// -----------------------------------------------------------------------------
+
+export const META_BUILDER_PR_DESCRIPTION = `## META-PR — <what spec doc is changing and why>
+
+**Type:** META-PR (modifies <HANDOFF.md | PROJECT.md>)
+**Phase:** <Phase 1 mid-slice spec correction | Phase 2 spec evolution | Phase 2 Calibration Debrief output>
+**Builder model:** <e.g., Claude Sonnet 4.5>
+**Triggering slice / PR:** <PR # or slice name that surfaced this need>
+
+## Why this META-PR exists
+
+<2–4 sentences. What did the recent slice surface that the existing spec doc did not anticipate? Cite specific evidence: a Verifier finding, a convention nobody had written down, a non-goal that turned out to be a goal.>
+
+## Scope document for the Verifier
+
+<Paste the Builder Brief (Phase 1) or the Spec Update Proposal (Phase 2) inline below. The Verifier will grade the diff against this, NOT against the changed file in the diff.>
+
+\`\`\`
+[Builder Brief or Spec Update Proposal goes here, in full]
+\`\`\`
+
+## What changed
+
+| File | Change |
+|---|---|
+| <HANDOFF.md or PROJECT.md> | <one-line summary of edit; reference the section> |
+| <other file if applicable> | <reason it had to change too> |
+
+## Sections of the spec doc deliberately NOT changed
+
+<List sections you considered changing but left alone, with a one-sentence reason each. This is how you prevent silent scope creep on the spec itself.>
+
+## Out-of-scope changes
+
+<None expected. If anything else changed, flag it here with rationale.>
+
+## Self-classification
+
+\`docs:\` (spec doc edit, no behavior change) — most common
+\`feat:\` only if the spec change unlocks a new behavior committed in the same PR
+
+## Tests run
+
+- N/A for spec-only changes
+- For Phase 1 mid-slice META-PRs that include code: list code tests as you would for a normal Builder PR
+
+## Verifier expectation
+
+\`PASS\` (Phase 1) / \`APPROVE\` (Phase 2) — if the diff faithfully implements the Builder Brief / Spec Update Proposal pasted above.
+
+\`FAIL\` / \`REQUEST-CHANGES\` — if the diff goes further, falls short, or silently edits sections the Proposal did not name.
+
+\`PROPOSAL-INSUFFICIENT\` (Phase 2 only) — if the diff is correct but the Proposal itself was under-specified. The Verifier kicks this back to the human.
+`;
+
+export const META_VERIFIER_PR_COMMENT = `## META-PR Verifier Report
+
+**Verifier model:** <e.g., GPT-5>
+**Builder model:** <whatever drafted the spec edit>
+**PR:** #<N> — <title>
+**Spec doc affected:** <HANDOFF.md | PROJECT.md>
+**Scope used for verification:** <Builder Brief from PR description | Spec Update Proposal from PR description> — NOT the changed file in the diff
+**Verdict:** <PASS | CONDITIONAL PASS | FAIL>  (Phase 1)
+            <APPROVE | REQUEST-CHANGES | PROPOSAL-INSUFFICIENT>  (Phase 2)
+
+---
+
+### Per-criterion / per-edit findings
+
+For each numbered criterion in the Builder Brief (Phase 1) or each "before / after" edit in the Spec Update Proposal (Phase 2):
+
+**<Criterion N or Edit N — short label>**
+- **Verdict:** PASS | FAIL
+- **Evidence:** \`<file>:<line range>\` — <one sentence describing what the diff actually does and whether it matches the Builder Brief / Proposal>
+
+---
+
+### Out-of-scope changes
+
+<List any edits in the diff that the Builder Brief / Proposal did NOT authorize. For META-PRs this most commonly takes the form of silent edits to spec doc sections the Proposal did not name. Each item:>
+
+- \`<file>:<line range>\` — <what changed> — <why it is out of scope>
+
+If none, write: "None observed."
+
+---
+
+### Spec doc sections changed but not in the Proposal
+
+<Phase 2 specific. List any section of PROJECT.md that the diff edits but the Spec Update Proposal did not mention. Even small edits — a renamed heading, a reformatted bullet — count here.>
+
+If none, write: "None observed."
+
+---
+
+### Notes for the Gatekeeper
+
+<2–4 sentences. What is wrong, NOT how to fix it. Examples:
+- "Edit 3 in the Proposal removes a non-goal but the diff retains it; this is a FAIL on Edit 3."
+- "The Proposal is internally consistent but Edit 2's 'after' text contradicts Edit 5's 'after' text. PROPOSAL-INSUFFICIENT."
+- "All proposed edits implemented faithfully; one MINOR formatting drift in section heading capitalization (line 47).">
+
+---
+
+### Footer rules
+
+The Verifier read ONLY the PR diff and the Builder Brief / Spec Update Proposal pasted in the PR description.
+The Verifier did NOT propose alternative edits. The Verifier did NOT modify the spec doc. The Verifier did NOT write code.
+If the Proposal itself appears under-specified, the verdict is PROPOSAL-INSUFFICIENT (Phase 2) and the PR should NOT be merged until the human revises the Proposal.
+`;
