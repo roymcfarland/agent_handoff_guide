@@ -12,27 +12,27 @@ export function ReferenceArchitectureDiagram() {
       figure="Fig. 1"
       title="Reference architecture"
       legend="Documents · models · human"
-      caption="The three files split memory by cadence. The Builder works with context; the Verifier never shares the Builder’s session."
+      caption="The three files split memory by cadence. The Builder loads context from the docs; the Verifier always starts in a fresh session."
     >
       <svg
-        viewBox="0 0 820 400"
+        viewBox="0 0 840 454"
         xmlns="http://www.w3.org/2000/svg"
-        className="block h-auto w-full"
+        className="mx-auto block h-auto w-full max-w-5xl"
         role="img"
-        aria-label="Reference architecture: PROJECT.md, CHANGELOG.md, and HANDOFF.md connect to Builder LLM and Verifier LLM; the human gatekeeper merges pull requests. The Verifier uses a clean context."
+        aria-label="Reference architecture: PROJECT.md, CHANGELOG.md, and HANDOFF.md connect to Builder LLM and Verifier LLM; the human gatekeeper merges pull requests."
       >
         <defs>
           <pattern
             id={`${pid}-grid`}
-            width="24"
-            height="24"
+            width="32"
+            height="32"
             patternUnits="userSpaceOnUse"
           >
             <path
-              d="M 24 0 L 0 0 0 24"
+              d="M 32 0 L 0 0 0 32"
               fill="none"
               stroke={D.grid}
-              strokeOpacity="0.35"
+              strokeOpacity="0.2"
               strokeWidth="1"
             />
           </pattern>
@@ -59,92 +59,91 @@ export function ReferenceArchitectureDiagram() {
             <path d="M 0 0 L 10 5 L 0 10 z" fill={D.ink} />
           </marker>
         </defs>
-        <rect x="0" y="0" width="820" height="400" fill={D.paper} />
-        <rect x="0" y="0" width="820" height="400" fill={`url(#${pid}-grid)`} />
+        <rect x="0" y="0" width="840" height="454" fill={D.paper} />
+        <rect x="0" y="0" width="840" height="454" fill={`url(#${pid}-grid)`} />
 
-        {/* Three artifacts */}
         <g fontFamily="'JetBrains Mono', ui-monospace, monospace" fill={D.ink}>
           <rect
-            x="40"
-            y="32"
-            width="220"
-            height="72"
+            x="44"
+            y="40"
+            width="232"
+            height="84"
+            rx="2"
             fill={D.paper}
             stroke={D.ink}
             strokeWidth="1.5"
           />
-          <text x="150" y="58" textAnchor="middle" fontWeight="700" fontSize="12">
+          <text x="160" y="68" textAnchor="middle" fontWeight="700" fontSize="13">
             PROJECT.md
           </text>
           <text
-            x="150"
-            y="78"
+            x="160"
+            y="92"
             textAnchor="middle"
             fill={D.inkSoft}
-            fontSize="10"
+            fontSize="11"
           >
-            immutable core · read-mostly
+            immutable core
+          </text>
+          <text x="160" y="108" textAnchor="middle" fill={D.inkSoft} fontSize="10">
+            read-mostly
           </text>
 
           <rect
-            x="300"
-            y="32"
-            width="220"
-            height="72"
+            x="304"
+            y="40"
+            width="232"
+            height="84"
+            rx="2"
             fill={D.paper}
             stroke={D.ink}
             strokeWidth="1.5"
           />
-          <text x="410" y="58" textAnchor="middle" fontWeight="700" fontSize="12">
+          <text x="420" y="68" textAnchor="middle" fontWeight="700" fontSize="13">
             CHANGELOG.md
           </text>
-          <text
-            x="410"
-            y="78"
-            textAnchor="middle"
-            fill={D.inkSoft}
-            fontSize="10"
-          >
-            append-only history
+          <text x="420" y="92" textAnchor="middle" fill={D.inkSoft} fontSize="11">
+            append-only
+          </text>
+          <text x="420" y="108" textAnchor="middle" fill={D.inkSoft} fontSize="10">
+            long memory
           </text>
 
           <rect
-            x="560"
-            y="32"
-            width="220"
-            height="72"
+            x="564"
+            y="40"
+            width="232"
+            height="84"
+            rx="2"
             fill={D.paper}
             stroke={D.red}
             strokeWidth="2"
           />
-          <text x="670" y="58" textAnchor="middle" fontWeight="700" fontSize="12">
+          <text x="680" y="68" textAnchor="middle" fontWeight="700" fontSize="13">
             HANDOFF.md
           </text>
-          <text
-            x="670"
-            y="78"
-            textAnchor="middle"
-            fill={D.inkSoft}
-            fontSize="10"
-          >
-            current slice · overwritten
+          <text x="680" y="92" textAnchor="middle" fill={D.inkSoft} fontSize="11">
+            current slice
+          </text>
+          <text x="680" y="108" textAnchor="middle" fill={D.inkSoft} fontSize="10">
+            overwritten each handoff
           </text>
         </g>
 
-        {/* Builder */}
         <g>
           <rect
-            x="48"
-            y="160"
-            width="300"
-            height="120"
+            x="56"
+            y="168"
+            width="320"
+            height="132"
+            rx="2"
             fill={D.paper}
             stroke={D.ink}
             strokeWidth="1.5"
           />
           <text
-            x="64"
-            y="188"
+            x="72"
+            y="196"
             fontFamily="'JetBrains Mono', ui-monospace, monospace"
             fontWeight="700"
             fontSize="10"
@@ -154,50 +153,50 @@ export function ReferenceArchitectureDiagram() {
             BUILDER
           </text>
           <text
-            x="198"
-            y="212"
+            x="216"
+            y="224"
             textAnchor="middle"
             fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif"
             fontWeight="700"
-            fontSize="17"
+            fontSize="18"
             fill={D.ink}
           >
             Builder LLM
           </text>
           <text
-            x="64"
-            y="236"
+            x="72"
+            y="248"
             fontFamily="'JetBrains Mono', ui-monospace, monospace"
-            fontSize="10"
+            fontSize="11"
             fill={D.inkSoft}
           >
-            · reads PROJECT.md + HANDOFF.md
+            · Reads PROJECT.md + HANDOFF.md
           </text>
           <text
-            x="64"
-            y="254"
+            x="72"
+            y="268"
             fontFamily="'JetBrains Mono', ui-monospace, monospace"
-            fontSize="10"
+            fontSize="11"
             fill={D.inkSoft}
           >
-            · writes code branch + opens PR
+            · Ships branch + opens PR
           </text>
         </g>
 
-        {/* Verifier */}
         <g>
           <rect
-            x="472"
-            y="160"
-            width="300"
-            height="120"
+            x="464"
+            y="168"
+            width="320"
+            height="132"
+            rx="2"
             fill={D.paper}
             stroke={D.ink}
             strokeWidth="1.5"
           />
           <text
-            x="488"
-            y="188"
+            x="480"
+            y="196"
             fontFamily="'JetBrains Mono', ui-monospace, monospace"
             fontWeight="700"
             fontSize="10"
@@ -207,135 +206,132 @@ export function ReferenceArchitectureDiagram() {
             VERIFIER
           </text>
           <text
-            x="622"
-            y="212"
+            x="624"
+            y="224"
             textAnchor="middle"
             fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif"
             fontWeight="700"
-            fontSize="17"
+            fontSize="18"
             fill={D.ink}
           >
             Verifier LLM
           </text>
           <text
-            x="488"
-            y="236"
+            x="480"
+            y="248"
             fontFamily="'JetBrains Mono', ui-monospace, monospace"
-            fontSize="10"
+            fontSize="11"
             fill={D.inkSoft}
           >
-            · clean context (no Builder memory)
+            · Clean context (no Builder chat)
           </text>
           <text
-            x="488"
-            y="254"
+            x="480"
+            y="268"
             fontFamily="'JetBrains Mono', ui-monospace, monospace"
-            fontSize="10"
+            fontSize="11"
             fill={D.inkSoft}
           >
-            · reads PR diff + HANDOFF.md
+            · Reads diff + HANDOFF.md only
           </text>
         </g>
 
-        {/* Arrows from docs to Builder (merge above Builder top) */}
         <path
-          d="M 150 104 L 150 140 L 198 140 L 198 160"
+          d="M 160 124 L 160 152 L 216 152 L 216 168"
           fill="none"
           stroke={D.red}
           strokeWidth="1.5"
           markerEnd={`url(#${pid}-ar)`}
         />
         <path
-          d="M 670 104 L 670 140 L 198 140"
+          d="M 680 124 L 680 160 L 216 160"
           fill="none"
           stroke={D.red}
           strokeWidth="1.5"
         />
         <text
-          x="355"
-          y="124"
+          x="390"
+          y="150"
+          textAnchor="middle"
           fontFamily="'JetBrains Mono', ui-monospace, monospace"
-          fontSize="9"
+          fontSize="10"
           fill={D.red}
           fontWeight="700"
         >
           context in
         </text>
 
-        {/* PR to Verifier */}
         <path
-          d="M 348 220 L 472 220"
+          d="M 376 234 L 464 234"
           fill="none"
           stroke={D.red}
           strokeWidth="2"
           markerEnd={`url(#${pid}-ar)`}
         />
         <text
-          x="390"
-          y="212"
+          x="396"
+          y="226"
           fontFamily="'JetBrains Mono', ui-monospace, monospace"
-          fontSize="9"
+          fontSize="10"
           fontWeight="700"
           fill={D.red}
         >
-          pull request / diff
+          pull request
         </text>
 
-        {/* Verdict down */}
         <path
-          d="M 622 280 L 622 300 L 410 300 L 410 316"
+          d="M 624 300 L 624 328 L 420 328 L 420 348"
           fill="none"
           stroke={D.ink}
           strokeWidth="1.5"
           markerEnd={`url(#${pid}-ai)`}
         />
+        <text
+          x="624"
+          y="320"
+          textAnchor="middle"
+          fontFamily="'JetBrains Mono', ui-monospace, monospace"
+          fontSize="10"
+          fontWeight="700"
+          fill={D.ink}
+        >
+          verdict
+        </text>
 
-        {/* Gatekeeper */}
         <g>
           <rect
-            x="280"
-            y="316"
-            width="260"
-            height="64"
+            x="272"
+            y="348"
+            width="296"
+            height="76"
+            rx="2"
             fill={D.paper}
             stroke={D.ink}
             strokeWidth="1.5"
             strokeDasharray="4 3"
           />
           <text
-            x="410"
-            y="340"
+            x="420"
+            y="378"
             textAnchor="middle"
             fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif"
             fontWeight="700"
-            fontSize="16"
+            fontSize="17"
             fill={D.ink}
           >
             Gatekeeper (human)
           </text>
           <text
-            x="410"
-            y="360"
+            x="420"
+            y="402"
             textAnchor="middle"
             fontFamily="'JetBrains Mono', ui-monospace, monospace"
             fontSize="10"
             fill={D.inkSoft}
           >
-            merge · scope · spec amendments
+            merge · scope · spec decisions
           </text>
         </g>
-
-        <text
-          x="622"
-          y="292"
-          textAnchor="middle"
-          fontFamily="'JetBrains Mono', ui-monospace, monospace"
-          fontSize="9"
-          fontWeight="700"
-          fill={D.ink}
-        >
-          verdict
-        </text>
       </svg>
     </DiagramShell>
   );

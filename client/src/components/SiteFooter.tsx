@@ -18,6 +18,15 @@ export function SiteFooter() {
           <div className="font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
             <p>v1.0 · drafted 2026</p>
             <p className="mt-1">Print, paste, and improve as you learn.</p>
+            <p className="mt-3 normal-case tracking-normal">
+              <a
+                className="text-foreground underline decoration-muted-foreground/60 underline-offset-4 hover:decoration-foreground"
+                href="https://github.com/roymcfarland/agent_handoff_guide"
+                rel="noopener noreferrer"
+                target="_blank">
+                Source on GitHub
+              </a>
+            </p>
           </div>
         </div>
       </div>

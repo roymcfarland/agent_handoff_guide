@@ -1,0 +1,65 @@
+# Agent Handoff Framework — site
+
+A single-page reference for AI agent handoff workflows: document schema, builder and closeout prompts, and failure modes. Built as a static React app with an optional Express shell for production.
+
+## Prerequisites
+
+- [Node.js](https://nodejs.org/) 20+ (recommended)
+- [pnpm](https://pnpm.io/) 9+
+
+## Quick start
+
+```bash
+pnpm install
+pnpm dev
+```
+
+Vite serves the app from `client/` (see `vite.config.ts` for port; default is 3000 unless busy).
+
+## Scripts
+
+| Command | Purpose |
+| --- | --- |
+| `pnpm dev` | Local development (Vite, HMR) |
+| `pnpm build` | Production client build to `dist/public` + bundle `server/index.ts` to `dist/index.js` |
+| `pnpm start` | Run the production server (`NODE_ENV=production node dist/index.js`) |
+| `pnpm preview` | Preview the built client with Vite |
+| `pnpm check` | TypeScript check (`tsc --noEmit`) |
+| `pnpm format` | Prettier |
+
+## Environment variables
+
+Copy `.env.example` to `.env` in the **repository root** (Vite reads from the root via `envDir`).
+
+| Variable | Used by | Description |
+| --- | --- | --- |
+| `VITE_ANALYTICS_ENDPOINT` | Client | Base URL of an [Umami](https://umami.is/) (or compatible) instance, without trailing slash. |
+| `VITE_ANALYTICS_WEBSITE_ID` | Client | Umami website ID. Both analytics vars must be set for the script to load. |
+| `PORT` | `server/index.ts` | HTTP port (default `3000`). |
+| `BUILT_IN_FORGE_API_URL` | Vite dev only | Optional; enables the `/manus-storage` dev proxy in `vite.config.ts`. |
+| `BUILT_IN_FORGE_API_KEY` | Vite dev only | Bearer token paired with the forge URL above. |
+
+`NODE_ENV=production` is set by `pnpm start`; the Express app serves files from `dist/public` next to `dist/index.js`.
+
+## Deploying (Vercel)
+
+`vercel.json` sets `buildCommand`, `installCommand`, `outputDirectory` to `dist/public`, and SPA rewrites to `index.html`. Run `pnpm run build` so the client output exists at that path. Production analytics, if used, must be configured as Vercel project environment variables with the `VITE_` prefix.
+
+## Project layout
+
+| Path | Role |
+| --- | --- |
+| `client/src/` | React app, routes, UI |
+| `client/src/lib/content.ts` | Long-form guide copy and structured sections |
+| `client/src/components/diagrams/` | SVG figures and shared diagram shell |
+| `server/index.ts` | Static file + SPA fallback server |
+| `shared/` | Shared types or modules (if present) |
+| `dist/public/` | Vite build output (gitignored) |
+
+## Theme
+
+The inline script in `client/index.html` and `client/src/contexts/ThemeContext.tsx` both use the `localStorage` key `theme` (`light` \| `dark` \| `system` / absent for system). Keep them in sync when changing persistence behavior.
+
+## License
+
+MIT — see `package.json`.

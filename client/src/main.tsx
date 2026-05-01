@@ -2,6 +2,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
+/** Optional Umami: set both VITE_ANALYTICS_ENDPOINT and VITE_ANALYTICS_WEBSITE_ID (see README.md / .env.example). */
 const analyticsEndpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT;
 const analyticsWebsiteId = import.meta.env.VITE_ANALYTICS_WEBSITE_ID;
 if (analyticsEndpoint && analyticsWebsiteId) {

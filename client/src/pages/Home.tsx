@@ -22,6 +22,7 @@ import { ArrowDown, Check, Copy, FileText } from "lucide-react";
 import { toast } from "sonner";
 import { BuildVerifyDiagram } from "@/components/BuildVerifyDiagram";
 import {
+  DiagramFigureLegend,
   DocumentCadenceDiagram,
   FailureModesMatrixDiagram,
   InstallPipelineDiagram,
@@ -178,6 +179,7 @@ function Hero() {
       </div>
       <div className="container mt-14 lg:mt-20">
         <ReferenceArchitectureDiagram />
+        <DiagramFigureLegend />
       </div>
     </section>
   );
@@ -206,7 +208,7 @@ function Diagnosis() {
           />
         </div>
 
-        <div className="lg:col-span-8">
+        <div className="lg:col-span-8 lg:mt-2">
           <FailureModesMatrixDiagram />
         </div>
 
@@ -300,7 +302,7 @@ function Schema() {
           ))}
         </div>
 
-        <div className="mt-16">
+        <div className="mt-16 lg:mt-20">
           <DocumentCadenceDiagram />
         </div>
 
@@ -390,7 +392,7 @@ function Install() {
           }
         />
 
-        <div className="mt-12 overflow-x-auto">
+        <div className="mt-16 lg:mt-20">
           <InstallPipelineDiagram />
         </div>
 
@@ -551,12 +553,12 @@ function Prompts() {
           ))}
         </nav>
 
-        <div className="mt-12">
+        <div className="mt-16 lg:mt-20">
           <PromptScenariosDiagram />
         </div>
 
         {/* The groups */}
-        <div className="mt-12 space-y-20">
+        <div className="mt-16 space-y-20">
           {PROMPT_LIBRARY.map(group => (
             <PromptGroup key={group.scenarioTag} group={group} />
           ))}
@@ -764,7 +766,7 @@ function BuildAndVerify() {
         </div>
 
         {/* Loop diagram */}
-        <div className="mt-12">
+        <div className="mt-16 lg:mt-20">
           <BuildVerifyDiagram />
         </div>
 
@@ -1104,7 +1106,7 @@ function PhaseTwo() {
           ))}
         </div>
 
-        <div className="mt-16">
+        <div className="mt-16 lg:mt-20">
           <PhaseModelDiagram />
         </div>
 
@@ -1590,7 +1592,7 @@ function MetaPRs() {
           ))}
         </div>
 
-        <div className="mt-14">
+        <div className="mt-16 lg:mt-20">
           <MetaPRScopeDiagram />
         </div>
 

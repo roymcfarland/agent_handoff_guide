@@ -1,3 +1,4 @@
+export { DiagramFigureLegend } from "./DiagramFigureLegend";
 export { DiagramShell } from "./DiagramShell";
 export { FailureModesMatrixDiagram } from "./FailureModesMatrixDiagram";
 export { DocumentCadenceDiagram } from "./DocumentCadenceDiagram";

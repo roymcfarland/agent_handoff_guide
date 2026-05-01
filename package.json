@@ -1,8 +1,17 @@
 {
   "name": "agent_handoff_guide",
   "version": "1.0.0",
+  "description": "Single-page reference site: AI agent handoff workflows, prompts, and failure-mode guardrails.",
   "type": "module",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/roymcfarland/agent_handoff_guide.git"
+  },
+  "bugs": {
+    "url": "https://github.com/roymcfarland/agent_handoff_guide/issues"
+  },
+  "homepage": "https://github.com/roymcfarland/agent_handoff_guide#readme",
   "scripts": {
     "dev": "vite --host",
     "build": "vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist",

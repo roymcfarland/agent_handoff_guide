@@ -1,7 +1,6 @@
 /*
- * BuildVerifyDiagram — inline SVG of the two-LLM loop in the notebook style.
- * Hand-drafted feel: ink-navy boxes, mono labels, drafting-red arrows.
- * Unique SVG def IDs via useId to avoid collisions with other figures on the page.
+ * BuildVerifyDiagram — two-LLM loop in the notebook style.
+ * Looser vertical rhythm than earlier revisions so labels stay legible.
  */
 
 import { useId } from "react";
@@ -30,26 +29,27 @@ export function BuildVerifyDiagram() {
           gatekeeper makes the final merge call.
         </>
       }
+      contentClassName="overflow-x-auto"
     >
       <svg
-        viewBox="0 0 900 520"
+        viewBox="0 0 920 556"
         xmlns="http://www.w3.org/2000/svg"
-        className="block h-auto w-full"
+        className="mx-auto block h-auto min-w-[680px] w-full max-w-5xl"
         role="img"
         aria-label="Diagram of the two-LLM build-and-verify loop: HANDOFF.md feeds the Builder LLM, which opens a PR. A different Verifier LLM in a clean context returns PASS, CONDITIONAL PASS, or FAIL, and the human gatekeeper decides whether to merge."
       >
         <defs>
           <pattern
             id={`${pid}-grid`}
-            width="24"
-            height="24"
+            width="32"
+            height="32"
             patternUnits="userSpaceOnUse"
           >
             <path
-              d="M 24 0 L 0 0 0 24"
+              d="M 32 0 L 0 0 0 32"
               fill="none"
               stroke={grid}
-              strokeOpacity="0.35"
+              strokeOpacity="0.2"
               strokeWidth="1"
             />
           </pattern>
@@ -77,8 +77,8 @@ export function BuildVerifyDiagram() {
           </marker>
         </defs>
 
-        <rect x="0" y="0" width="900" height="520" fill={paper} />
-        <rect x="0" y="0" width="900" height="520" fill={`url(#${pid}-grid)`} />
+        <rect x="0" y="0" width="920" height="556" fill={paper} />
+        <rect x="0" y="0" width="920" height="556" fill={`url(#${pid}-grid)`} />
 
         <g
           fontFamily="'JetBrains Mono', ui-monospace, monospace"
@@ -87,27 +87,28 @@ export function BuildVerifyDiagram() {
         >
           <g>
             <rect
-              x="370"
-              y="20"
+              x="380"
+              y="28"
               width="160"
-              height="56"
+              height="60"
+              rx="2"
               fill={paper}
               stroke={ink}
               strokeWidth="1.5"
             />
-            <text x="450" y="44" textAnchor="middle" fontWeight="700" fontSize="13">
+            <text x="460" y="52" textAnchor="middle" fontWeight="700" fontSize="14">
               HANDOFF.md
             </text>
-            <text x="450" y="62" textAnchor="middle" fill={inkSoft} fontSize="11">
+            <text x="460" y="72" textAnchor="middle" fill={inkSoft} fontSize="11">
               current slice
             </text>
           </g>
 
           <line
-            x1="450"
-            y1="76"
-            x2="450"
-            y2="116"
+            x1="460"
+            y1="88"
+            x2="460"
+            y2="118"
             stroke={red}
             strokeWidth="2"
             markerEnd={`url(#${pid}-arrow)`}
@@ -115,46 +116,47 @@ export function BuildVerifyDiagram() {
 
           <g>
             <rect
-              x="120"
-              y="120"
-              width="320"
-              height="140"
+              x="100"
+              y="118"
+              width="340"
+              height="158"
+              rx="2"
               fill={paper}
               stroke={ink}
               strokeWidth="1.5"
             />
-            <text x="140" y="146" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>
+            <text x="120" y="148" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>
               STAGE A
             </text>
             <text
-              x="140"
-              y="170"
+              x="120"
+              y="174"
               fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif"
               fontWeight="700"
-              fontSize="20"
+              fontSize="21"
               fill={ink}
             >
               Builder LLM
             </text>
-            <text x="140" y="194" fontSize="11" fill={inkSoft}>
+            <text x="120" y="198" fontSize="11" fill={inkSoft}>
               model A · with project context
             </text>
             <line
-              x1="140"
-              y1="204"
+              x1="120"
+              y1="210"
               x2="420"
-              y2="204"
+              y2="210"
               stroke={ink}
-              strokeOpacity="0.25"
+              strokeOpacity="0.22"
               strokeWidth="1"
             />
-            <text x="140" y="222" fontSize="11">
+            <text x="120" y="230" fontSize="12">
               · reads PROJECT.md + HANDOFF.md
             </text>
-            <text x="140" y="238" fontSize="11">
+            <text x="120" y="248" fontSize="12">
               · writes code, runs tests
             </text>
-            <text x="140" y="254" fontSize="11">
+            <text x="120" y="266" fontSize="12">
               · opens PR on feature/&lt;slice&gt;
             </text>
           </g>
@@ -162,69 +164,70 @@ export function BuildVerifyDiagram() {
           <g>
             <line
               x1="440"
-              y1="190"
+              y1="197"
               x2="540"
-              y2="190"
+              y2="197"
               stroke={red}
               strokeWidth="2"
               markerEnd={`url(#${pid}-arrow)`}
             />
-            <text x="490" y="180" textAnchor="middle" fontSize="11" fill={red} fontWeight="700">
+            <text x="490" y="190" textAnchor="middle" fontSize="11" fill={red} fontWeight="700">
               PR opened
             </text>
           </g>
 
           <g>
             <rect
-              x="540"
-              y="120"
-              width="320"
-              height="140"
+              x="480"
+              y="118"
+              width="340"
+              height="158"
+              rx="2"
               fill={paper}
               stroke={ink}
               strokeWidth="1.5"
             />
-            <text x="560" y="146" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>
+            <text x="500" y="148" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>
               STAGE B
             </text>
             <text
-              x="560"
-              y="170"
+              x="500"
+              y="174"
               fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif"
               fontWeight="700"
-              fontSize="20"
+              fontSize="21"
               fill={ink}
             >
               Verifier LLM
             </text>
-            <text x="560" y="194" fontSize="11" fill={inkSoft}>
+            <text x="500" y="198" fontSize="11" fill={inkSoft}>
               model B · clean context · no memory
             </text>
             <line
-              x1="560"
-              y1="204"
-              x2="840"
-              y2="204"
+              x1="500"
+              y1="210"
+              x2="800"
+              y2="210"
               stroke={ink}
-              strokeOpacity="0.25"
+              strokeOpacity="0.22"
               strokeWidth="1"
             />
-            <text x="560" y="222" fontSize="11">
+            <text x="500" y="230" fontSize="12">
               · reads ONLY the PR diff + HANDOFF.md
             </text>
-            <text x="560" y="238" fontSize="11">
+            <text x="500" y="248" fontSize="12">
               · checks each Acceptance Criterion
             </text>
-            <text x="560" y="254" fontSize="11">
+            <text x="500" y="266" fontSize="12">
               · returns verdict + evidence (no fixes)
             </text>
           </g>
 
           <line
-            x1="700"
-            y1="260"
-            x2="700"
-            y2="310"
+            x1="650"
+            y1="276"
+            x2="650"
+            y2="312"
             stroke={red}
             strokeWidth="2"
             markerEnd={`url(#${pid}-arrow)`}
@@ -232,98 +235,112 @@ export function BuildVerifyDiagram() {
 
           <g>
             <rect
-              x="540"
-              y="310"
-              width="320"
-              height="86"
+              x="470"
+              y="312"
+              width="360"
+              height="92"
+              rx="2"
               fill={paper}
               stroke={ink}
               strokeWidth="1.5"
               strokeDasharray="4 4"
             />
-            <text x="560" y="336" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>
+            <text x="492" y="342" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>
               STAGE C
             </text>
             <text
-              x="560"
-              y="360"
+              x="492"
+              y="370"
               fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif"
               fontWeight="700"
-              fontSize="20"
+              fontSize="21"
               fill={ink}
             >
               Gatekeeper (you)
             </text>
-            <text x="560" y="382" fontSize="11" fill={inkSoft}>
-              reviews verdict, makes the merge call
+            <text x="492" y="392" fontSize="12" fill={inkSoft}>
+              reviews verdict · merge · follow-ups
             </text>
           </g>
 
+          <text
+            x="650"
+            y="302"
+            textAnchor="middle"
+            fontSize="10"
+            fontWeight="700"
+            fill={ink}
+          >
+            verdict
+          </text>
+
           <g>
             <line
-              x1="600"
-              y1="396"
-              x2="600"
-              y2="450"
+              x1="540"
+              y1="404"
+              x2="540"
+              y2="458"
               stroke={ink}
               strokeWidth="1.5"
               markerEnd={`url(#${pid}-arrow-ink)`}
             />
             <rect
-              x="500"
-              y="452"
-              width="200"
-              height="48"
+              x="450"
+              y="460"
+              width="180"
+              height="52"
+              rx="2"
               fill={paper}
               stroke={ink}
               strokeWidth="1.5"
             />
-            <text x="600" y="473" textAnchor="middle" fontWeight="700" fontSize="11" fill={red}>
+            <text x="540" y="482" textAnchor="middle" fontWeight="700" fontSize="11" fill={red}>
               PASS
             </text>
-            <text x="600" y="490" textAnchor="middle" fontSize="11">
-              merge → run next Builder
+            <text x="540" y="500" textAnchor="middle" fontSize="11">
+              merge → next Builder
             </text>
           </g>
 
           <g>
             <line
-              x1="800"
-              y1="396"
-              x2="800"
-              y2="450"
+              x1="760"
+              y1="404"
+              x2="760"
+              y2="458"
               stroke={ink}
               strokeWidth="1.5"
               markerEnd={`url(#${pid}-arrow-ink)`}
             />
             <rect
-              x="710"
-              y="452"
-              width="180"
-              height="48"
+              x="670"
+              y="460"
+              width="200"
+              height="52"
+              rx="2"
               fill={paper}
               stroke={ink}
               strokeWidth="1.5"
             />
-            <text x="800" y="473" textAnchor="middle" fontWeight="700" fontSize="11" fill={red}>
+            <text x="770" y="482" textAnchor="middle" fontWeight="700" fontSize="11" fill={red}>
               COND. PASS
             </text>
-            <text x="800" y="490" textAnchor="middle" fontSize="11">
-              merge + follow-up ticket
+            <text x="770" y="500" textAnchor="middle" fontSize="11">
+              merge + ticket
             </text>
           </g>
 
           <g>
             <path
-              d="M 540 360 C 360 360, 280 320, 280 270"
+              d="M 470 358 C 300 358, 240 300, 240 240"
               fill="none"
               stroke={red}
               strokeWidth="2"
               strokeDasharray="6 4"
               markerEnd={`url(#${pid}-arrow)`}
             />
-            <text x="380" y="345" fontSize="11" fontWeight="700" fill={red}>
-              FAIL — reopen slice, send verdict back
+            <text x="320" y="330" fontSize="11" fontWeight="700" fill={red}>
+              FAIL — send verdict back
             </text>
           </g>
         </g>

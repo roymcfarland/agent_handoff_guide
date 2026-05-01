@@ -1,3 +1,17 @@
+/**
+ * Production static server for the built SPA.
+ *
+ * After `pnpm build`, Vite emits the client to `dist/public` and esbuild emits
+ * this file as `dist/index.js`. With NODE_ENV=production, static assets are
+ * resolved from `./public` relative to this module (i.e. `dist/public`).
+ *
+ * The non-production branch points at `../dist/public` for the rare case of
+ * running the bundled server without NODE_ENV=production; local development
+ * normally uses `pnpm dev` (Vite only), not this process.
+ *
+ * All unrecognized paths return `index.html` so client-side routing works.
+ * Port: process.env.PORT or 3000.
+ */
 import express from "express";
 import { createServer } from "http";
 import path from "path";
