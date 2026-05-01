@@ -29,6 +29,19 @@ export function SiteFooter() {
             </p>
           </div>
         </div>
+        <div className="ruled mt-10" />
+        <p className="mt-6 text-center font-mono text-[10px] leading-relaxed text-muted-foreground sm:text-[11px]">
+          Built by{" "}
+          <a
+            className="font-semibold text-foreground underline decoration-muted-foreground/60 underline-offset-4 hover:decoration-foreground"
+            href="https://brightline.io/"
+            rel="noopener noreferrer"
+            target="_blank">
+            Brightline Labs
+          </a>
+          <span className="mx-2 text-border">·</span>
+          <span className="text-foreground/90">© {new Date().getFullYear()} Roy McFarland</span>
+        </p>
       </div>
     </footer>
   );
