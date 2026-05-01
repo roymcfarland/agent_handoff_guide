@@ -1,6 +1,10 @@
-# Agent Handoff Framework — site
+# Agent Handoff Framework
 
-A single-page reference for AI agent handoff workflows: document schema, builder, closeout, verifier prompts, and failure-mode guardrails. Built as a static React app with an optional Express shell for production.
+Source for the [Worksmith Labs](https://worksmithlabs.com) Agent Handoff Framework reference site: document schema, builder / closeout / verifier prompts, and failure-mode guardrails for shipping software with AI coding agents. Built as a static React app with an optional Express shell for self-hosting.
+
+Live site: **[worksmithlabs.com](https://worksmithlabs.com)** — built and maintained by [Brightline Labs](https://brightline.io).
+
+Project scope, non-goals, and Verifier rules live in [`PROJECT.md`](./PROJECT.md). Read that file before opening a PR.
 
 ## Prerequisites
 
@@ -64,4 +68,4 @@ The inline script in `client/index.html` and `client/src/contexts/ThemeContext.t
 
 ## License
 
-MIT — see `package.json`.
+MIT — see [`LICENSE`](./LICENSE). Copyright (c) 2026 Roy McFarland.
