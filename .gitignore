@@ -108,8 +108,8 @@ temp/
 # Webdev artifacts (checkpoint zips, migrations, etc.)
 .webdev/
 
-# Manus version file (auto-generated, not part of source)
-client/public/__manus__/version.json
+# Browser debug collector metadata (auto-generated, not part of source)
+client/public/__debug__/version.json
 .vercel
 
 # Private working notes (kept locally, not part of public artifact)

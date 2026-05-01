@@ -227,7 +227,7 @@ export const INSTALL_STEPS = [
     duration: "~15 min",
     actor: "Builder model · read-only",
     title: "Inventory pass — reverse-engineer PROJECT.md from the code",
-    body: "Drop the Inventory prompt into your Builder tool (Codex/Cursor) and let it read the repo without writing code. It produces a draft PROJECT.md grounded in the repository: stack, architecture, conventions with file evidence, and an explicit list of open questions for you. The output is a draft, not an authority.",
+    body: "Drop the Inventory prompt into your builder model or coding assistant and let it read the repo without writing code. It produces a draft PROJECT.md grounded in the repository: stack, architecture, conventions with file evidence, and an explicit list of open questions for you. The output is a draft, not an authority.",
     promptRef: "inventory",
   },
   {
@@ -906,7 +906,7 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         whenToUse:
           "Run first. Read-only pass over the repo to produce a draft PROJECT.md.",
         context:
-          "Drop into Codex or Cursor at the start of install. Agent is forbidden from writing code.",
+          "Drop into your builder model or coding assistant at the start of install. Agent is forbidden from writing code.",
         body: INVENTORY_PROMPT,
         toastLabel: "Inventory prompt copied",
       },
@@ -1545,7 +1545,7 @@ export const PHASE_TWO_WIRING = [
   {
     n: "01",
     title: "Builder opens a PR",
-    body: "Cursor, Codex, or a human authors a feature PR through your normal workflow. No change here.",
+    body: "A builder model, coding assistant, or human authors a feature PR through your normal workflow. No change here.",
   },
   {
     n: "02",

@@ -41,7 +41,8 @@ Copy `.env.example` to `.env` in the **repository root** (Vite reads from the ro
 | `VITE_ANALYTICS_ENDPOINT` | Client | Base URL of an [Umami](https://umami.is/) (or compatible) instance, without trailing slash. |
 | `VITE_ANALYTICS_WEBSITE_ID` | Client | Umami website ID. Both analytics vars must be set for the script to load. |
 | `PORT` | `server/index.ts` | HTTP port (default `3000`). |
-| `BUILT_IN_FORGE_API_URL` | Vite dev only | Optional; enables the `/manus-storage` dev proxy in `vite.config.ts`. |
+| `VITE_DEV_ALLOWED_HOSTS` | Vite dev only | Optional comma-separated list of additional hosts allowed by the Vite dev server. |
+| `BUILT_IN_FORGE_API_URL` | Vite dev only | Optional; enables the `/dev-storage` dev proxy in `vite.config.ts`. |
 | `BUILT_IN_FORGE_API_KEY` | Vite dev only | Bearer token paired with the forge URL above. |
 
 `NODE_ENV=production` is set by `pnpm start`; the Express app serves files from `dist/public` next to `dist/index.js`.
