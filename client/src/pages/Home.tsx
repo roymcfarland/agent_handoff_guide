@@ -88,7 +88,7 @@ export default function Home() {
 
 function Hero() {
   return (
-    <section id="overview" className="relative">
+    <section id="overview" aria-labelledby="overview-heading" className="relative">
       <div className="container grid gap-10 py-20 sm:py-24 lg:grid-cols-12 lg:gap-12 lg:py-28">
         <aside className="lg:col-span-3">
           <div className="stamp">FILE 00 / OVERVIEW</div>
@@ -111,7 +111,7 @@ function Hero() {
         </aside>
 
         <div className="lg:col-span-9">
-          <h1 className="font-display text-5xl font-bold leading-[0.98] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+          <h1 id="overview-heading" className="font-display text-5xl font-bold leading-[0.98] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
             A working guide for <span className="pen-circle">handing off</span>{" "}
             work between AI agents.
           </h1>
@@ -175,10 +175,11 @@ function Hero() {
 
 function Diagnosis() {
   return (
-    <section id="diagnosis" className="border-t border-border bg-background/60">
+    <section id="diagnosis" aria-labelledby="diagnosis-heading" className="border-t border-border bg-background/60">
       <div className="container grid gap-12 py-20 lg:grid-cols-12 lg:py-24">
         <div className="lg:col-span-4">
           <SectionHeader
+            id="diagnosis-heading"
             number="02"
             label="DIAGNOSIS"
             title="Where agent handoffs actually break down."
@@ -225,9 +226,10 @@ function Diagnosis() {
 
 function Schema() {
   return (
-    <section id="schema" className="border-t border-border">
+    <section id="schema" aria-labelledby="schema-heading" className="border-t border-border">
       <div className="container py-20 lg:py-24">
         <SectionHeader
+          id="schema-heading"
           number="03"
           label="DOCUMENT SCHEMA"
           title="Stop using one handoff document. Use three."
@@ -349,9 +351,10 @@ function TemplateBlock() {
 
 function Install() {
   return (
-    <section id="install" className="border-t border-border">
+    <section id="install" aria-labelledby="install-heading" className="border-t border-border">
       <div className="container py-20 lg:py-24">
         <SectionHeader
+          id="install-heading"
           number="04"
           label="INSTALL ON EXISTING REPO"
           title="How to bootstrap the loop on a codebase that already exists."
@@ -483,9 +486,10 @@ function Install() {
 
 function Prompts() {
   return (
-    <section id="prompts" className="border-t border-border bg-background/60">
+    <section id="prompts" aria-labelledby="prompts-heading" className="border-t border-border bg-background/60">
       <div className="container py-20 lg:py-24">
         <SectionHeader
+          id="prompts-heading"
           number="05"
           label="PROMPT LIBRARY"
           title="Every prompt in one place — organized in the order you run them."
@@ -672,9 +676,10 @@ function PromptLibraryItem({ item }: { item: LibraryPrompt }) {
 
 function BuildAndVerify() {
   return (
-    <section id="build-verify" className="border-t border-border">
+    <section id="build-verify" aria-labelledby="build-verify-heading" className="border-t border-border">
       <div className="container py-20 lg:py-24">
         <SectionHeader
+          id="build-verify-heading"
           number="06"
           label="BUILD & VERIFY"
           title="One LLM builds. A different LLM verifies. You merge."
@@ -992,9 +997,10 @@ function BuildAndVerify() {
 
 function PhaseTwo() {
   return (
-    <section id="phase-2" className="border-t border-border bg-background/60">
+    <section id="phase-2" aria-labelledby="phase-2-heading" className="border-t border-border bg-background/60">
       <div className="container py-20 lg:py-24">
         <SectionHeader
+          id="phase-2-heading"
           number="07"
           label="AFTER THE INSTALL"
           title="Closing the install does not end the Verifier. It graduates it into its real job."
@@ -1516,9 +1522,10 @@ function PhaseTwo() {
 /* ───────────────────────────────────────────────────────────────────────── */
 function MetaPRs() {
   return (
-    <section id="meta-prs" className="border-t border-border">
+    <section id="meta-prs" aria-labelledby="meta-prs-heading" className="border-t border-border">
       <div className="container py-20 lg:py-24">
         <SectionHeader
+          id="meta-prs-heading"
           number="08"
           label={META_INTRO.eyebrow}
           title={META_INTRO.headline}
