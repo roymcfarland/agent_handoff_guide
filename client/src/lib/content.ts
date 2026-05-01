@@ -1105,61 +1105,6 @@ export const BUILD_VERIFY_PRINCIPLES = [
   },
 ] as const;
 
-export const MODEL_PAIRINGS_FRESHNESS =
-  "May 2026 · heuristic matrix (not vendor endorsement)";
-
-export const MODEL_PAIRINGS = [
-  {
-    tier: "Default",
-    builder: "Provider A · best code-capable model",
-    verifier: "Provider B · strong reasoning/review model",
-    rationale:
-      "Strong implementation model paired with a strong review model from a different provider. This reduces correlated blind spots while keeping both roles capable enough for production code review.",
-    cost: "Medium",
-  },
-  {
-    tier: "Inverted default",
-    builder: "Provider B · strongest reasoning model",
-    verifier: "Provider A · strong code-review model",
-    rationale:
-      "Useful when the slice is reasoning-heavy: algorithms, migrations, edge-case logic, or concurrency. The Builder gets the model best suited to hard reasoning and the Verifier brings independent code-grounded scrutiny.",
-    cost: "Medium",
-  },
-  {
-    tier: "Three-lab triangle",
-    builder: "Provider A or B",
-    verifier: "Provider C · frontier-class reviewer",
-    rationale:
-      "Use a third provider as Verifier when your team normally builds with one of two providers. The point is independent failure behavior, not brand loyalty.",
-    cost: "Medium",
-  },
-  {
-    tier: "Cost-controlled",
-    builder: "Frontier Builder",
-    verifier: "Smaller model from another provider",
-    rationale:
-      "Many verification passes are structured comparison tasks. A smaller independent Verifier can catch scope, evidence, and skipped-criterion failures at lower cost; escalate to a stronger Verifier for ambiguous or high-risk PRs.",
-    cost: "Low",
-  },
-  {
-    tier: "Local / privacy",
-    builder: "Hosted frontier model",
-    verifier: "Local model from a different family (e.g., Llama, Qwen)",
-    rationale:
-      "When the diff cannot leave your environment, run the Verifier locally on a different-family model. Review quality may drop versus a frontier Verifier, but you preserve separation between the Builder and review roles.",
-    cost: "Variable",
-  },
-  {
-    tier: "Anti-pattern",
-    builder: "Model X",
-    verifier: "Same model X (different prompt)",
-    rationale:
-      "Avoid pairing a model with itself for both roles. Different prompts on the same model can help, but they are a weak substitute for independent model behavior when the goal is catching correlated mistakes.",
-    cost: "—",
-    isAntiPattern: true,
-  },
-] as const;
-
 export const ESCALATION_RULE = {
   rule: "Two consecutive FAILs on the same slice = freeze the slice, not the Builder.",
   premise:

@@ -46,8 +46,6 @@ import {
   HANDOFF_TEMPLATE,
   INSTALL_ANTI_PATTERNS,
   INSTALL_STEPS,
-  MODEL_PAIRINGS,
-  MODEL_PAIRINGS_FRESHNESS,
   PHASE_TWO_CALIBRATION,
   PHASE_TWO_DORMANT,
   PHASE_TWO_FINDINGS,
@@ -847,117 +845,6 @@ function BuildAndVerify() {
                 </li>
               ))}
             </ul>
-          </div>
-        </div>
-
-        {/* Model pairings */}
-        <div className="mt-16">
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <div className="stamp">MODEL PAIRINGS · STARTER MATRIX</div>
-              <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
-                Which LLMs to pair, and why.
-              </h3>
-            </div>
-            <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
-              The principle is{" "}
-              <span className="font-semibold text-foreground">
-                cross-distribution
-              </span>
-              , not specific brands. Pair a Builder with a Verifier from a
-              different provider or model family so their failure modes are less
-              correlated. Re-evaluate every quarter.
-            </p>
-          </div>
-
-          <div className="mt-8 paper-card overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full border-collapse text-left">
-                <thead>
-                  <tr className="border-b border-border bg-secondary/40">
-                    <th
-                      scope="col"
-                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
-                    >
-                      Tier
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
-                    >
-                      Builder (writes code)
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
-                    >
-                      Verifier (clean context)
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-5 py-3 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
-                    >
-                      Why this pairing
-                    </th>
-                    <th
-                      scope="col"
-                      className="px-5 py-3 text-right font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground"
-                    >
-                      Cost
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {MODEL_PAIRINGS.map(row => {
-                    const isAnti = "isAntiPattern" in row && row.isAntiPattern;
-                    return (
-                      <tr
-                        key={row.tier}
-                        className={`border-b border-border last:border-b-0 align-top ${isAnti ? "bg-primary/5" : ""}`}
-                      >
-                        <td className="px-5 py-5 align-top">
-                          <div
-                            className={`font-mono text-[11px] font-bold uppercase tracking-widest ${isAnti ? "text-primary" : "text-foreground"}`}
-                          >
-                            {row.tier}
-                          </div>
-                        </td>
-                        <td className="px-5 py-5 align-top">
-                          <div className="font-display text-[15px] font-bold leading-snug text-foreground">
-                            {row.builder}
-                          </div>
-                        </td>
-                        <td className="px-5 py-5 align-top">
-                          <div className="font-display text-[15px] font-bold leading-snug text-foreground">
-                            {row.verifier}
-                          </div>
-                        </td>
-                        <td className="px-5 py-5 align-top">
-                          <p className="max-w-prose text-[14px] leading-relaxed text-foreground/85">
-                            {row.rationale}
-                          </p>
-                        </td>
-                        <td className="px-5 py-5 text-right align-top">
-                          <span
-                            className={`inline-block border px-2 py-0.5 font-mono text-[10.5px] font-bold uppercase tracking-widest ${isAnti ? "border-primary text-primary" : "border-border text-muted-foreground"}`}
-                          >
-                            {row.cost}
-                          </span>
-                        </td>
-                      </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
-            <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border bg-secondary/40 px-5 py-3">
-              <span className="font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
-                Living document · Re-evaluate quarterly
-              </span>
-              <span className="font-mono text-[10.5px] uppercase tracking-widest text-muted-foreground">
-                Last reviewed: {MODEL_PAIRINGS_FRESHNESS}
-              </span>
-            </div>
           </div>
         </div>
 
