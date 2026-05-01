@@ -25,11 +25,11 @@ export function SectionHeader({ number, label, title, kicker, id }: SectionHeade
         <span>SECTION {number}</span>
         <span className="opacity-60">/ {label}</span>
       </div>
-      <h2 id={id} className="mt-4 font-display text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl">
+      <h2 id={id} className="mt-4 text-balance font-display text-4xl font-bold leading-[1.05] tracking-tight text-foreground sm:text-5xl">
         {title}
       </h2>
       {kicker && (
-        <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted-foreground sm:text-lg">
+        <p className="mt-5 max-w-2xl text-pretty text-base leading-relaxed text-muted-foreground sm:text-lg">
           {kicker}
         </p>
       )}

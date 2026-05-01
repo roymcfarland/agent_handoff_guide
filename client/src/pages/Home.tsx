@@ -1,7 +1,7 @@
 /*
  * Home.tsx — Single-page Agent Handoff Framework guide.
  * Design philosophy: "The Engineer's Notebook" — graph-paper background, paper cards,
- * mono stamps, serif display titles, drafting-red accent.
+ * mono stamps, IBM Plex Serif display titles, drafting-red accent.
  *
  * IA (6 sections):
  *   01 Overview
@@ -111,7 +111,7 @@ function Hero() {
         </aside>
 
         <div className="lg:col-span-9">
-          <h1 id="overview-heading" className="font-display text-5xl font-bold leading-[0.98] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
+          <h1 id="overview-heading" className="text-balance font-display text-5xl font-bold leading-[0.98] tracking-tight text-foreground sm:text-6xl lg:text-7xl">
             A working guide for <span className="pen-circle">handing off</span>{" "}
             work between AI agents.
           </h1>
@@ -156,7 +156,7 @@ function Hero() {
                 key={item.v}
                 className="border-b border-border px-5 py-6 sm:border-b-0 sm:border-r last:sm:border-r-0"
               >
-                <div className="font-display text-5xl font-black text-primary">
+                <div className="font-display text-5xl font-bold text-primary">
                   {item.k}
                 </div>
                 <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
@@ -712,7 +712,7 @@ function BuildAndVerify() {
               <div className="flex items-center gap-4">
                 <div
                   aria-hidden
-                  className="flex h-12 w-12 shrink-0 items-center justify-center border border-foreground bg-background font-display text-2xl font-black text-primary"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center border border-foreground bg-background font-display text-2xl font-bold text-primary"
                 >
                   {stage.tag}
                 </div>
@@ -1027,7 +1027,7 @@ function PhaseTwo() {
               <div className="flex items-center gap-4">
                 <div
                   aria-hidden
-                  className="flex h-12 w-12 shrink-0 items-center justify-center border border-foreground bg-background font-display text-base font-black text-primary"
+                  className="flex h-12 w-12 shrink-0 items-center justify-center border border-foreground bg-background font-display text-base font-bold text-primary"
                 >
                   {phase.tag.replace("Phase ", "P")}
                 </div>
@@ -1091,7 +1091,7 @@ function PhaseTwo() {
               {PHASE_TWO_LEVERAGE.body}
             </p>
             <blockquote className="mt-6 border-l-4 border-l-primary bg-background px-6 py-5">
-              <p className="font-display text-xl font-semibold leading-snug text-foreground">
+              <p className="text-balance font-display text-xl font-semibold leading-snug text-foreground">
                 {PHASE_TWO_LEVERAGE.callout}
               </p>
             </blockquote>

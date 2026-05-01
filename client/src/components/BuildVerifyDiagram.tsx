@@ -73,7 +73,7 @@ export function BuildVerifyDiagram() {
             <g>
               <rect x="120" y="120" width="320" height="140" fill={paper} stroke={ink} strokeWidth="1.5" />
               <text x="140" y="146" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>STAGE A</text>
-              <text x="140" y="170" fontFamily="Fraunces, serif" fontWeight="700" fontSize="20" fill={ink}>Builder LLM</text>
+              <text x="140" y="170" fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif" fontWeight="700" fontSize="20" fill={ink}>Builder LLM</text>
               <text x="140" y="194" fontSize="11" fill={inkSoft}>model A · with project context</text>
               <line x1="140" y1="204" x2="420" y2="204" stroke={ink} strokeOpacity="0.25" strokeWidth="1" />
               <text x="140" y="222" fontSize="11">· reads PROJECT.md + HANDOFF.md</text>
@@ -91,7 +91,7 @@ export function BuildVerifyDiagram() {
             <g>
               <rect x="540" y="120" width="320" height="140" fill={paper} stroke={ink} strokeWidth="1.5" />
               <text x="560" y="146" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>STAGE B</text>
-              <text x="560" y="170" fontFamily="Fraunces, serif" fontWeight="700" fontSize="20" fill={ink}>Verifier LLM</text>
+              <text x="560" y="170" fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif" fontWeight="700" fontSize="20" fill={ink}>Verifier LLM</text>
               <text x="560" y="194" fontSize="11" fill={inkSoft}>model B · clean context · no memory</text>
               <line x1="560" y1="204" x2="840" y2="204" stroke={ink} strokeOpacity="0.25" strokeWidth="1" />
               <text x="560" y="222" fontSize="11">· reads ONLY the PR diff + HANDOFF.md</text>
@@ -106,7 +106,7 @@ export function BuildVerifyDiagram() {
             <g>
               <rect x="540" y="310" width="320" height="86" fill={paper} stroke={ink} strokeWidth="1.5" strokeDasharray="4 4" />
               <text x="560" y="336" fontWeight="700" fontSize="11" letterSpacing="2" fill={red}>STAGE C</text>
-              <text x="560" y="360" fontFamily="Fraunces, serif" fontWeight="700" fontSize="20" fill={ink}>Gatekeeper (you)</text>
+              <text x="560" y="360" fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif" fontWeight="700" fontSize="20" fill={ink}>Gatekeeper (you)</text>
               <text x="560" y="382" fontSize="11" fill={inkSoft}>reviews verdict, makes the merge call</text>
             </g>
 

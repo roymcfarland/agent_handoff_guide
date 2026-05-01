@@ -38,7 +38,7 @@ export function PromptCard({ label, title, subtitle, body }: PromptCardProps) {
       <header className="flex flex-wrap items-start justify-between gap-4 border-b border-border px-6 py-5">
         <div className="min-w-0">
           <div className="stamp">{label}</div>
-          <h3 className="mt-2 font-display text-2xl leading-tight text-foreground sm:text-3xl">
+          <h3 className="mt-2 text-balance font-display text-2xl leading-tight text-foreground sm:text-3xl">
             {title}
           </h3>
           <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>

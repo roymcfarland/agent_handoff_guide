@@ -19,11 +19,11 @@ export default function NotFound() {
       <main className="paper-card relative w-full max-w-lg p-10 sm:p-12">
         <div className="stamp">FILE NOT FOUND / 404</div>
 
-        <h1 className="mt-4 font-display text-6xl font-bold leading-none tracking-tight text-foreground sm:text-7xl">
+        <h1 className="mt-4 text-balance font-display text-6xl font-bold leading-none tracking-tight text-foreground sm:text-7xl">
           <span className="pen-circle">404</span>
         </h1>
 
-        <p className="mt-6 font-display text-2xl leading-snug text-foreground">
+        <p className="mt-6 text-balance font-display text-2xl leading-snug text-foreground">
           Off the page.
         </p>
 

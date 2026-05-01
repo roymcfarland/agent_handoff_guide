@@ -59,7 +59,7 @@ export function SiteHeader() {
   }, []);
 
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur-sm">
+    <header className="sticky top-0 z-40 border-b border-border bg-background/95 supports-[backdrop-filter]:bg-background/88 supports-[backdrop-filter]:backdrop-blur-sm">
       <div className="container flex items-center justify-between gap-4 py-4">
         {/* Brand */}
         <a href="#overview" className="flex shrink-0 items-center gap-3 group">

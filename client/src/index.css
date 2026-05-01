@@ -3,7 +3,7 @@
  * Design philosophy: "The Engineer's Notebook"
  * - Warm paper cream background, deep ink navy text, drafting red as the SOLE accent.
  * - 24px graph grid is visible across the page (via background-image utility .graph-paper).
- * - Three-font rotation: Fraunces (display serif), Inter (body sans), JetBrains Mono (stamps + code).
+ * - Three-font rotation: IBM Plex Serif (display / headings), Inter (body sans), JetBrains Mono (stamps + code).
  * - No gradients, no glass, no glow. Mechanical, deliberate motion only (150–200ms ease-out).
  * Anti-slop guardrails: do NOT introduce purple gradients, uniform full-rounded corners,
  * generic centered hero layouts, or Inter-everywhere typography.
@@ -53,7 +53,7 @@
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
 
-  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-display: "IBM Plex Serif", ui-serif, Georgia, serif;
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", monospace;
 }
@@ -272,7 +272,7 @@
   h1, h2, h3, h4 {
     font-family: var(--font-display);
     font-weight: 700;
-    letter-spacing: -0.015em;
+    letter-spacing: -0.02em;
     /* Long, dash-laden display headings would otherwise extend past the
        viewport on narrow widths because em-dashes suppress word breaks.
        `overflow-wrap: anywhere` allows mid-word breaks only when nothing else
@@ -285,6 +285,20 @@
   ::selection {
     background: var(--red);
     color: var(--primary-foreground);
+  }
+  /* Prose blocks: slightly roomier default for long-form reading. */
+  p,
+  ul:not([class]),
+  ol:not([class]) {
+    line-height: 1.65;
+  }
+  @supports (text-wrap: pretty) {
+    p {
+      text-wrap: pretty;
+    }
+  }
+  #main-content:focus {
+    outline: none;
   }
   button:not(:disabled),
   [role="button"]:not([aria-disabled="true"]),
