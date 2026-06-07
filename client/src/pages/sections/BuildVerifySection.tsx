@@ -87,7 +87,7 @@ export default function BuildVerifySection() {
           <div className="lg:col-span-4">
             <div className="stamp">NON-NEGOTIABLES</div>
             <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
-              Four rules that make the loop actually work.
+              Seven rules that make the loop actually work.
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
               Skip these and the Verifier stops being independent. The

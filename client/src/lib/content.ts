@@ -1111,6 +1111,18 @@ export const BUILD_VERIFY_PRINCIPLES = [
     title: "Verdict, not advice",
     body: "The Verifier returns PASS / CONDITIONAL PASS / FAIL with evidence. It does NOT propose fixes, suggest refactors, or write code. Mixing roles weakens the independence that makes the check valuable.",
   },
+  {
+    title: "The Verifier runs the gates, not just reads the diff",
+    body: "Reading the diff tells the Verifier what changed; it does not prove the tree still compiles. A mature Verifier checks out the branch and runs the project's real gates — typecheck, build, tests — by their exact script names (read package.json; never assume a script like 'npm test' exists), plus any forbidden-artifact greps, before forming a verdict. Review inputs are how it understands scope; running the gates is how it earns the verdict. When a repo has no CI to lean on, that local run is the only gate there is.",
+  },
+  {
+    title: "Behavior, not shape",
+    body: "Grade what the change does, not how it is written. A Verifier that rejects correct code because the implementation differs from the one it imagined wastes a cycle and trains the Builder to pattern-match instead of solve. State the observable invariant — 'the duplicate write is suppressed during hydration' — and let any implementation that satisfies it pass. Welcome behavior-correct deviations and richer-than-spec work; reserve rejection for behavior that is actually wrong.",
+  },
+  {
+    title: "Green is not shipped",
+    body: "Typecheck, build, and a passing verdict prove the code is correct in the abstract — not that the feature does anything once it ships. A visual change can pass every check and render invisibly; an integration can pass and silently fall back to a no-op. For anything visual or dependent on live external data, a human confirms the rendered result on the preview URL, or runs a real before/after with production-like inputs, before the slice is called done.",
+  },
 ] as const;
 
 export const ESCALATION_RULE = {
