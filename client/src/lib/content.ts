@@ -150,6 +150,14 @@ export const FAILURE_MODES = [
     title: "Planning vs. building drift",
     body: "Agents drift into planning mode when the task is ambiguous, the doc reads like a brainstorm, or there is no explicit build-only framing with a stop condition.",
   },
+  {
+    title: "Green checks, dead feature",
+    body: "A change can pass typecheck, pass build, and pass the Verifier and still do nothing once it ships: a particle layer that renders invisibly, a sitemap a validator accepts but the real crawler rejects, an integration that silently falls back to a no-op. Code-correct is not behavior-correct. Visual changes get a human eyeballing the rendered preview; anything that leans on live external data gets a real before/after on production-like inputs before the slice is called done.",
+  },
+  {
+    title: "Trusting the report over the repo",
+    body: "'Approved and merged' is a claim, not a fact, and a verdict whose details do not match the diff is worth less than the diff itself. Ground truth lives in the artifacts: the PR diff, the checks on the PR's own commit, and main after the pull. Before any housekeeping — pruning branches, updating a ledger, telling someone it shipped — confirm the change is actually present on main, not just that an agent said so.",
+  },
 ] as const;
 
 /* ─────────────────────────────────────────────────────────────────────────── */

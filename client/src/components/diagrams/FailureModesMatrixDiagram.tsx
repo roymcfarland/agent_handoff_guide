@@ -16,13 +16,14 @@ export function FailureModesMatrixDiagram() {
   const topY = 36;
   const colGap = 24;
   const vbW = padX * 2 + colW * 2 + colGap;
-  const vbH = topY + 3 * rowH + 2 * gapY + 32;
+  const rows = Math.ceil(FAILURE_MODES.length / 2);
+  const vbH = topY + rows * rowH + (rows - 1) * gapY + 32;
 
   return (
     <DiagramShell
       figure="Fig. 2"
       title="Failure-mode index"
-      legend="Six classes · workflow, not model"
+      legend="Eight classes · workflow, not model"
       caption="Skim the map first; each numbered card below expands the same idea in full."
     >
       <svg
@@ -30,7 +31,7 @@ export function FailureModesMatrixDiagram() {
         xmlns="http://www.w3.org/2000/svg"
         className="mx-auto block h-auto w-full max-w-3xl"
         role="img"
-        aria-label="Grid of six numbered failure mode titles from committing to main through planning versus building drift."
+        aria-label="Grid of eight numbered failure mode titles from committing to main through trusting the report over the repo."
       >
         <defs>
           <pattern
