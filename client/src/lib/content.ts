@@ -1687,7 +1687,7 @@ Instructions:
 2. For each Builder Brief criterion, return PASS or FAIL with one sentence of evidence pointing to a file and line number in the PR diff.
 3. Flag any change in the diff that is OUT OF SCOPE relative to the Builder Brief (refactors, new dependencies, unrelated edits, files not in the expected-files list).
 4. Specifically check whether the new HANDOFF.md (in the diff) actually matches the Builder Brief — if the Builder Brief says "Acceptance Criteria 3 should require X" and the new HANDOFF.md doesn't contain that, that is a FAIL.
-5. Return a final verdict: PASS (all criteria met, no out-of-scope changes), CONDITIONAL PASS (criteria met but minor out-of-scope changes), or FAIL (one or more criteria unmet).
+5. Return a final verdict: APPROVE (all criteria met; minor out-of-scope changes noted as follow-ups, not blockers) or REJECT (one or more criteria unmet, or materially out of scope).
 
 Do not suggest fixes. Do not write code. Your output is a verdict report.`;
 
@@ -1708,7 +1708,7 @@ Instructions:
 2. For each "before / after" edit in the Proposal, return PASS or FAIL with one sentence of evidence pointing to the new PROJECT.md content in the diff. PASS means the diff implements the proposed edit faithfully; FAIL means the diff goes further, falls short, or changes something the Proposal did not authorize.
 3. Flag any change in the diff that is OUT OF SCOPE relative to the Proposal — particularly silent edits to PROJECT.md sections that the Proposal did not name.
 4. Specifically check that non-goals removed by the Proposal really were promoted into goals (or deleted) intentionally, not by accident. Removing a non-goal silently is a MAJOR finding.
-5. Return a final verdict: APPROVE (all proposed edits implemented, no out-of-scope changes), REQUEST-CHANGES (one or more proposed edits not implemented faithfully or unauthorized edits present), or PROPOSAL-INSUFFICIENT (the diff implements the Proposal correctly but the Proposal itself is internally inconsistent or under-specified — kick back to the human, do not merge).
+5. Return a final verdict: APPROVE (all proposed edits implemented, no out-of-scope changes) or REJECT, naming the route — REJECT (fix the edits) when one or more proposed edits are not implemented faithfully or unauthorized edits are present, or REJECT (proposal-insufficient) when the diff implements the Proposal correctly but the Proposal itself is internally inconsistent or under-specified (kick back to the human, do not merge).
 
 Do not suggest fixes. Do not write code. Your output is a verdict report.`;
 
@@ -1820,11 +1820,11 @@ export const META_BUILDER_PR_DESCRIPTION = `## META-PR — <what spec doc is cha
 
 ## Verifier expectation
 
-\`PASS\` (Phase 1) / \`APPROVE\` (Phase 2) — if the diff faithfully implements the Builder Brief / Spec Update Proposal pasted above.
+\`APPROVE\` — if the diff faithfully implements the Builder Brief (Phase 1) or Spec Update Proposal (Phase 2) pasted above.
 
-\`FAIL\` / \`REQUEST-CHANGES\` — if the diff goes further, falls short, or silently edits sections the Proposal did not name.
+\`REJECT\` — if the diff goes further, falls short, or silently edits sections the Proposal did not name. On a Phase 2 META-PR, name the route: \`REJECT (fix the edits)\`.
 
-\`PROPOSAL-INSUFFICIENT\` (Phase 2 only) — if the diff is correct but the Proposal itself was under-specified. The Verifier kicks this back to the human.
+\`REJECT (proposal-insufficient)\` (Phase 2 only) — if the diff is correct but the Proposal itself was under-specified. The Verifier kicks this back to the human.
 `;
 
 export const META_VERIFIER_PR_COMMENT = `## META-PR Verifier Report
@@ -1834,8 +1834,8 @@ export const META_VERIFIER_PR_COMMENT = `## META-PR Verifier Report
 **PR:** #<N> — <title>
 **Spec doc affected:** <HANDOFF.md | PROJECT.md>
 **Scope used for verification:** <Builder Brief from PR description | Spec Update Proposal from PR description> — NOT the changed file in the diff
-**Verdict:** <PASS | CONDITIONAL PASS | FAIL>  (Phase 1)
-            <APPROVE | REQUEST-CHANGES | PROPOSAL-INSUFFICIENT>  (Phase 2)
+**Verdict:** <APPROVE | REJECT>  (Phase 1)
+            <APPROVE | REJECT>  (Phase 2 — on REJECT name the route: \`REJECT (fix the edits)\` or \`REJECT (proposal-insufficient)\`)
 
 ---
 
@@ -1871,7 +1871,7 @@ If none, write: "None observed."
 
 <2–4 sentences. What is wrong, NOT how to fix it. Examples:
 - "Edit 3 in the Proposal removes a non-goal but the diff retains it; this is a FAIL on Edit 3."
-- "The Proposal is internally consistent but Edit 2's 'after' text contradicts Edit 5's 'after' text. PROPOSAL-INSUFFICIENT."
+- "The Proposal is internally consistent but Edit 2's 'after' text contradicts Edit 5's 'after' text. REJECT (proposal-insufficient)."
 - "All proposed edits implemented faithfully; one MINOR formatting drift in section heading capitalization (line 47).">
 
 ---
@@ -1880,5 +1880,5 @@ If none, write: "None observed."
 
 The Verifier read ONLY the PR diff and the Builder Brief / Spec Update Proposal pasted in the PR description.
 The Verifier did NOT propose alternative edits. The Verifier did NOT modify the spec doc. The Verifier did NOT write code.
-If the Proposal itself appears under-specified, the verdict is PROPOSAL-INSUFFICIENT (Phase 2) and the PR should NOT be merged until the human revises the Proposal.
+If the Proposal itself appears under-specified, the verdict is REJECT (proposal-insufficient) (Phase 2) and the PR should NOT be merged until the human revises the Proposal.
 `;

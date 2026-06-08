@@ -5,9 +5,7 @@
  */
 import { PromptCard } from "@/components/PromptCard";
 import { SectionHeader } from "@/components/SectionHeader";
-import {
-  MetaPRScopeDiagram,
-} from "@/components/diagrams";
+import { MetaPRScopeDiagram } from "@/components/diagrams";
 import {
   META_BUILDER_PROMPT_PHASE_2,
   META_BUILDER_PR_DESCRIPTION,
@@ -130,16 +128,20 @@ export default function MetaPRsSection() {
               Auditing a PR that edits PROJECT.md.
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              Three verdicts:{" "}
-              <code className="font-mono text-foreground">APPROVE</code>,{" "}
-              <code className="font-mono text-foreground">REQUEST-CHANGES</code>
-              , and{" "}
+              Two verdicts —{" "}
+              <code className="font-mono text-foreground">APPROVE</code> or{" "}
+              <code className="font-mono text-foreground">REJECT</code> — and a
+              REJECT names its route:{" "}
               <code className="font-mono text-foreground">
-                PROPOSAL-INSUFFICIENT
+                REJECT (fix the edits)
+              </code>{" "}
+              when the diff doesn't match the Proposal, or{" "}
+              <code className="font-mono text-foreground">
+                REJECT (proposal-insufficient)
               </code>
-              . The third is unique to META-PRs — it flags that the diff
-              implements the Proposal correctly but the Proposal itself was
-              under-specified. That kicks back to the human.
+              , unique to META-PRs — the diff implements the Proposal correctly
+              but the Proposal itself was under-specified. That kicks back to
+              the human.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
               The most common failure mode this prompt catches: a META-PR that
@@ -206,11 +208,11 @@ export default function MetaPRsSection() {
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
               The Verifier still proposes no fixes. The
               <code className="ml-1 font-mono text-foreground">
-                PROPOSAL-INSUFFICIENT
+                REJECT (proposal-insufficient)
               </code>{" "}
-              verdict is the explicit "throw it back to the human" path — never
-              to the Builder. The human owns the Proposal; the Builder
-              implements it.
+              route is the explicit "throw it back to the human" path — never to
+              the Builder. The human owns the Proposal; the Builder implements
+              it.
             </p>
           </div>
           <div className="lg:col-span-8">
