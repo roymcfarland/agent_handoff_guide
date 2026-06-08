@@ -2,11 +2,11 @@
 
 **A dual-agent playbook for shipping real software with AI coding agents** — not another “prompt tips” page, but a single reference you can install on a repo: **document schema**, **copy-paste prompts** (builder, closeout, verifier), and **failure-mode guardrails** so merges stay human-gated and evidence-backed.
 
-This repository is the **open-source** source for the **[Worksmith Labs](https://worksmithlabs.com)** reference site. The *methodology* is the product story; the *code* is MIT-licensed and yours to fork. The live experience is built and maintained by **[Brightline Labs](https://brightline.io)**.
+This repository is the **open-source** source for the **[Worksmith Labs](https://worksmithlabs.com)** reference site. The _methodology_ is the product story; the _code_ is MIT-licensed and yours to fork. The live experience is built and maintained by **[Brightline Labs](https://brightline.io)**.
 
-| | |
-| --- | --- |
-| **Live site** | **[worksmithlabs.com](https://worksmithlabs.com)** |
+|                                       |                                                             |
+| ------------------------------------- | ----------------------------------------------------------- |
+| **Live site**                         | **[worksmithlabs.com](https://worksmithlabs.com)**          |
 | **Authoritative scope & agent rules** | **[`PROJECT.md`](./PROJECT.md)** — read before opening a PR |
 
 **Repository** — [github.com/roymcfarland/agent_handoff_guide](https://github.com/roymcfarland/agent_handoff_guide): `git clone https://github.com/roymcfarland/agent_handoff_guide.git` · [Issues](https://github.com/roymcfarland/agent_handoff_guide/issues)
@@ -15,7 +15,7 @@ This repository is the **open-source** source for the **[Worksmith Labs](https:/
 
 ## Why this exists
 
-Most teams don’t lack *access* to an AI that can write code — they lack a **repeatable handoff**: clear scope documents, a builder that stays in lane, and a verifier that checks against **diffs and criteria** instead of vibes. This site collects that workflow in one scrollable, tool-agnostic reference (no ranked “best model” drama, no SaaS signup wall).
+Most teams don’t lack _access_ to an AI that can write code — they lack a **repeatable handoff**: clear scope documents, a builder that stays in lane, and a verifier that checks against **diffs and criteria** instead of vibes. This site collects that workflow in one scrollable, tool-agnostic reference (no ranked “best model” drama, no SaaS signup wall).
 
 Under the hood it’s a **static React app** with an optional **Express** shell if you want to self-host the built assets beside a tiny Node server.
 
@@ -70,14 +70,14 @@ Vite serves the app from `client/` (see `vite.config.ts` for the port; default i
 
 ## Scripts
 
-| Command | Purpose |
-| --- | --- |
-| `pnpm dev` | Local development (Vite, HMR) |
-| `pnpm build` | Production client → `dist/public` + bundle `server/index.ts` → `dist/index.js` |
-| `pnpm start` | Production server: `NODE_ENV=production node dist/index.js` |
-| `pnpm preview` | Preview the built client with Vite |
-| `pnpm check` | TypeScript (`tsc --noEmit`) |
-| `pnpm format` | Prettier |
+| Command        | Purpose                                                                        |
+| -------------- | ------------------------------------------------------------------------------ |
+| `pnpm dev`     | Local development (Vite, HMR)                                                  |
+| `pnpm build`   | Production client → `dist/public` + bundle `server/index.ts` → `dist/index.js` |
+| `pnpm start`   | Production server: `NODE_ENV=production node dist/index.js`                    |
+| `pnpm preview` | Preview the built client with Vite                                             |
+| `pnpm check`   | TypeScript (`tsc --noEmit`)                                                    |
+| `pnpm format`  | Prettier                                                                       |
 
 ---
 
@@ -85,15 +85,13 @@ Vite serves the app from `client/` (see `vite.config.ts` for the port; default i
 
 Copy **`.env.example`** to **`.env`** at the **repository root** (Vite reads from the root via `envDir`).
 
-| Variable | Used by | Description |
-| --- | --- | --- |
-| `VITE_SITE_URL` | `index.html` (build) | Public origin **without** trailing slash (e.g. `https://example.com`). Drives `rel="canonical"`, Open Graph / Twitter image URLs, and JSON-LD. If unset, relative paths like `/og.jpg` still work; set in production for strongest link previews. |
-| `VITE_ANALYTICS_ENDPOINT` | Client | Base URL of an [Umami](https://umami.is/)-compatible instance, no trailing slash. |
-| `VITE_ANALYTICS_WEBSITE_ID` | Client | Umami website ID. Both analytics vars must be set for the script to load. |
-| `PORT` | `server/index.ts` | HTTP port (default `3000`). |
-| `VITE_DEV_ALLOWED_HOSTS` | Vite dev only | Optional comma-separated extra hosts for the dev server. |
-| `BUILT_IN_FORGE_API_URL` | Vite dev only | Optional; enables `/dev-storage` dev proxy in `vite.config.ts`. |
-| `BUILT_IN_FORGE_API_KEY` | Vite dev only | Bearer token paired with the forge URL above. |
+| Variable                    | Used by              | Description                                                                                                                                                                                                                                       |
+| --------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `VITE_SITE_URL`             | `index.html` (build) | Public origin **without** trailing slash (e.g. `https://example.com`). Drives `rel="canonical"`, Open Graph / Twitter image URLs, and JSON-LD. If unset, relative paths like `/og.jpg` still work; set in production for strongest link previews. |
+| `VITE_ANALYTICS_ENDPOINT`   | Client               | Base URL of an [Umami](https://umami.is/)-compatible instance, no trailing slash.                                                                                                                                                                 |
+| `VITE_ANALYTICS_WEBSITE_ID` | Client               | Umami website ID. Both analytics vars must be set for the script to load.                                                                                                                                                                         |
+| `PORT`                      | `server/index.ts`    | HTTP port (default `3000`).                                                                                                                                                                                                                       |
+| `VITE_DEV_ALLOWED_HOSTS`    | Vite dev only        | Optional comma-separated extra hosts for the dev server.                                                                                                                                                                                          |
 
 For `pnpm start`, `NODE_ENV=production` applies and Express serves **`dist/public`** next to **`dist/index.js`**.
 
@@ -107,15 +105,15 @@ For `pnpm start`, `NODE_ENV=production` applies and Express serves **`dist/publi
 
 ## Project layout
 
-| Path | Role |
-| --- | --- |
-| `client/src/` | React app, routes, UI |
-| `client/src/lib/content.ts` | Guide copy, prompts, structured section data |
-| `client/src/components/diagrams/` | SVG figures and shared diagram shell |
-| `client/public/og.jpg` | Social preview image (Open Graph / Twitter, 1200×630) |
-| `server/index.ts` | Static files + SPA fallback |
-| `shared/` | Shared types/modules |
-| `dist/public/` | Vite build output (gitignored) |
+| Path                              | Role                                                  |
+| --------------------------------- | ----------------------------------------------------- |
+| `client/src/`                     | React app, routes, UI                                 |
+| `client/src/lib/content.ts`       | Guide copy, prompts, structured section data          |
+| `client/src/components/diagrams/` | SVG figures and shared diagram shell                  |
+| `client/public/og.jpg`            | Social preview image (Open Graph / Twitter, 1200×630) |
+| `server/index.ts`                 | Static files + SPA fallback                           |
+| `shared/`                         | Shared types/modules                                  |
+| `dist/public/`                    | Vite build output (gitignored)                        |
 
 ---
 
