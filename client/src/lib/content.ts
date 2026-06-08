@@ -668,7 +668,7 @@ Instructions:
 2. For each Acceptance Criterion, return PASS or FAIL with one sentence of evidence pointing to a file and line number. If the criterion is untestable from the diff and available evidence, mark it FAIL as "unverifiable".
 3. Flag changes that are OUT OF SCOPE relative to the slice: unrelated refactors, dependency changes, formatting churn, new files, or edits outside the stated paths.
 4. Compare declared stubs / TODOs in the PR description against the diff. Undeclared stubs or skipped checks are findings.
-5. Return a final verdict: PASS (all criteria met, no out-of-scope changes), CONDITIONAL PASS (criteria met but minor declared or low-risk out-of-scope changes), or FAIL (one or more criteria unmet, unverifiable, or materially out of scope).
+5. Return a final verdict: APPROVE (all criteria met; any minor, declared, low-risk out-of-scope changes are noted as follow-ups, not blockers) or REJECT (one or more criteria unmet, unverifiable, or materially out of scope).
 
 Do not suggest fixes. Do not write code. Your output is a verdict report.`;
 
@@ -688,7 +688,7 @@ Inputs you will read:
 1. The current PROJECT.md (before any edits).
 2. HANDOFF.md for the slice that was just completed.
 3. The git diff of the slice that was merged (or the PR body).
-4. The Verifier report for that slice (PASS / CONDITIONAL PASS / FAIL).
+4. The Verifier report for that slice (APPROVE / REJECT).
 
 ---
 
@@ -822,7 +822,7 @@ you genuinely introduced none.)_
 
 _(If you touched anything outside the slice — refactors, new dependencies,
 unrelated edits — list them here and justify. The Verifier will flag them
-either way; declaring them here is faster than getting a FAIL.)_
+either way; declaring them here is faster than getting a REJECT.)_
 
 ### Tests run
 
@@ -852,7 +852,7 @@ export const VERIFIER_PR_COMMENT = `## Verifier Report
 **Context:** clean — no prior slices loaded
 **Builder model:** <provider/model id from PR>
 **Slice:** <slice name from HANDOFF.md>
-**Verdict:** <PASS | CONDITIONAL PASS | FAIL>
+**Verdict:** <APPROVE | REJECT>
 
 ---
 
@@ -879,7 +879,7 @@ _(or "None observed".)_
 
 <2–4 sentences max. Describe WHAT is broken or out of scope, not HOW to fix it.
 Example: "Endpoint is wired up but the empty-body error path is unhandled.
-Recommend FAIL and return to Builder. The logger refactor and the new lodash
+Recommend REJECT and return to Builder. The logger refactor and the new lodash
 dependency should be split into their own slices.">
 
 ---
@@ -1008,7 +1008,7 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         whenToUse:
           "After the Builder opens the PR. A DIFFERENT LLM, in a CLEAN context window.",
         context:
-          "Reads only the diff and HANDOFF.md. Returns PASS / CONDITIONAL PASS / FAIL with evidence. Does not propose fixes.",
+          "Reads only the diff and HANDOFF.md. Returns APPROVE / REJECT with evidence. Does not propose fixes.",
         body: VERIFIER_PROMPT,
         toastLabel: "Verifier prompt copied",
       },
@@ -1084,13 +1084,13 @@ export const BUILD_VERIFY_STAGES = [
     tag: "B",
     actor: "Verifier LLM",
     role: "Independent check",
-    body: "A different model in a fresh context window. Reads the PR description, PR diff, and base-version HANDOFF.md. Returns PASS, CONDITIONAL PASS, or FAIL with evidence per Acceptance Criterion. Does not write code.",
+    body: "A different model in a fresh context window. Reads the PR description, PR diff, and base-version HANDOFF.md. Returns APPROVE or REJECT with evidence per Acceptance Criterion. Does not write code.",
   },
   {
     tag: "C",
     actor: "You (gatekeeper)",
     role: "Merges or returns",
-    body: "Reviews the Verifier's verdict. PASS → merge to main and run the next Builder. FAIL → reopen the slice and send the verdict back to the Builder. CONDITIONAL PASS → decide whether to merge with a follow-up ticket or revise.",
+    body: "Reviews the Verifier's verdict. APPROVE → merge to main and run the next Builder; file a follow-up issue for any minor, out-of-scope cleanup the Verifier noted. REJECT → reopen the slice and send the verdict back to the Builder.",
   },
 ] as const;
 
@@ -1109,7 +1109,7 @@ export const BUILD_VERIFY_PRINCIPLES = [
   },
   {
     title: "Verdict, not advice",
-    body: "The Verifier returns PASS / CONDITIONAL PASS / FAIL with evidence. It does NOT propose fixes, suggest refactors, or write code. Mixing roles weakens the independence that makes the check valuable.",
+    body: "The Verifier returns APPROVE or REJECT with evidence. It does NOT propose fixes, suggest refactors, or write code. Mixing roles weakens the independence that makes the check valuable.",
   },
   {
     title: "The Verifier runs the gates, not just reads the diff",
@@ -1126,9 +1126,9 @@ export const BUILD_VERIFY_PRINCIPLES = [
 ] as const;
 
 export const ESCALATION_RULE = {
-  rule: "Two consecutive FAILs on the same slice = freeze the slice, not the Builder.",
+  rule: "Two consecutive REJECTs on the same slice = freeze the slice, not the Builder.",
   premise:
-    "A single FAIL may be an execution mistake. A second FAIL on the same slice is strong evidence of a slice-definition problem: ambiguous HANDOFF.md, untestable Acceptance Criteria, missing constraints, or a slice that is too large. Treat the second FAIL as a hard stop, not a third attempt.",
+    "A single REJECT may be an execution mistake. A second REJECT on the same slice is strong evidence of a slice-definition problem: ambiguous HANDOFF.md, untestable Acceptance Criteria, missing constraints, or a slice that is too large. Treat the second REJECT as a hard stop, not a third attempt.",
   steps: [
     {
       n: "01",
@@ -1154,8 +1154,8 @@ export const ESCALATION_RULE = {
   antiPatterns: [
     "Swapping the Builder model on the third attempt — masks the real defect.",
     "Letting the Verifier propose the fix — violates the independence rule and creates a feedback loop where the Verifier grades its own suggestions.",
-    "Merging a CONDITIONAL PASS as if it were a PASS to avoid the escalation — the silent debt this creates is exactly the failure mode this whole framework was built to prevent.",
-    "Treating the second FAIL as only a Builder performance issue — often the upstream HANDOFF.md is the thing that needs repair.",
+    'Merging a REJECT-worthy PR on a promise to "fix the unmet criteria in a follow-up" — the silent debt this creates is exactly the failure mode this whole framework was built to prevent.',
+    "Treating the second REJECT as only a Builder performance issue — often the upstream HANDOFF.md is the thing that needs repair.",
   ],
 } as const;
 
@@ -1208,19 +1208,18 @@ formats keep that signal usable.
    │  2. VERIFIER LLM   (different     │
    │     model, clean context)         │
    │  Reads PR body + diff + HANDOFF.md│
-   │  Returns PASS / COND. PASS / FAIL │
+   │  Returns APPROVE / REJECT         │
    │  with one line of evidence per    │
    │  Acceptance Criterion.            │
    └───────────────────────────────────┘
                       │
-        ┌─────────────┼──────────────┐
-        ▼             ▼              ▼
-      PASS    CONDITIONAL PASS     FAIL
-        │             │              │
-   merge to main   decide:       reopen slice;
-   run next       merge w/       send verdict
-   Builder        follow-up      back to Builder
-                  or revise
+              ┌───────┴────────┐
+              ▼                ▼
+           APPROVE           REJECT
+              │                │
+       merge to main     reopen slice;
+       run next Builder  send verdict
+                         back to Builder
 \`\`\`
 
 ---
@@ -1262,7 +1261,7 @@ formats keep that signal usable.
 4. **Gatekeeper decides.** Merge, reject, or merge with follow-up.
 5. **Move to next slice.** Only after the current PR is closed.
 
-If the Verifier returns FAIL twice in a row on the same slice, escalate to
+If the Verifier returns REJECT twice in a row on the same slice, escalate to
 the gatekeeper for re-scoping. The slice itself may be wrong, not the
 Builder's execution.
 
