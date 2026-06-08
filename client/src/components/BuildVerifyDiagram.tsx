@@ -36,7 +36,7 @@ export function BuildVerifyDiagram() {
         xmlns="http://www.w3.org/2000/svg"
         className="mx-auto block h-auto min-w-[680px] w-full max-w-5xl"
         role="img"
-        aria-label="Diagram of the two-LLM build-and-verify loop: HANDOFF.md feeds the Builder LLM, which opens a PR. A different Verifier LLM in a clean context reads the PR body, diff, and HANDOFF.md, returns PASS, CONDITIONAL PASS, or FAIL, and the human gatekeeper decides whether to merge."
+        aria-label="Diagram of the two-LLM build-and-verify loop: HANDOFF.md feeds the Builder LLM, which opens a PR. A different Verifier LLM in a clean context reads the PR body, diff, and HANDOFF.md, returns an APPROVE or REJECT verdict, and the human gatekeeper merges on APPROVE or sends the verdict back on REJECT."
       >
         <defs>
           <pattern
@@ -316,16 +316,16 @@ export function BuildVerifyDiagram() {
 
           <g>
             <line
-              x1="540"
+              x1="650"
               y1="404"
-              x2="540"
+              x2="650"
               y2="458"
               stroke={ink}
               strokeWidth="1.5"
               markerEnd={`url(#${pid}-arrow-ink)`}
             />
             <rect
-              x="450"
+              x="560"
               y="460"
               width="180"
               height="52"
@@ -335,52 +335,17 @@ export function BuildVerifyDiagram() {
               strokeWidth="1.5"
             />
             <text
-              x="540"
+              x="650"
               y="482"
               textAnchor="middle"
               fontWeight="700"
               fontSize="11"
               fill={red}
             >
-              PASS
+              APPROVE
             </text>
-            <text x="540" y="500" textAnchor="middle" fontSize="11">
+            <text x="650" y="500" textAnchor="middle" fontSize="11">
               merge → next Builder
-            </text>
-          </g>
-
-          <g>
-            <line
-              x1="760"
-              y1="404"
-              x2="760"
-              y2="458"
-              stroke={ink}
-              strokeWidth="1.5"
-              markerEnd={`url(#${pid}-arrow-ink)`}
-            />
-            <rect
-              x="670"
-              y="460"
-              width="200"
-              height="52"
-              rx="2"
-              fill={paper}
-              stroke={ink}
-              strokeWidth="1.5"
-            />
-            <text
-              x="770"
-              y="482"
-              textAnchor="middle"
-              fontWeight="700"
-              fontSize="11"
-              fill={red}
-            >
-              COND. PASS
-            </text>
-            <text x="770" y="500" textAnchor="middle" fontSize="11">
-              merge + ticket
             </text>
           </g>
 
@@ -394,7 +359,7 @@ export function BuildVerifyDiagram() {
               markerEnd={`url(#${pid}-arrow)`}
             />
             <text x="320" y="330" fontSize="11" fontWeight="700" fill={red}>
-              FAIL — send verdict back
+              REJECT — send verdict back
             </text>
           </g>
         </g>
