@@ -5,9 +5,7 @@
  */
 import { PromptCard } from "@/components/PromptCard";
 import { SectionHeader } from "@/components/SectionHeader";
-import {
-  PhaseModelDiagram,
-} from "@/components/diagrams";
+import { PhaseModelDiagram } from "@/components/diagrams";
 import {
   PHASE_TWO_BUILDER_PROMPT,
   PHASE_TWO_BUILDER_PR_DESCRIPTION,
@@ -255,14 +253,18 @@ export default function PhaseTwoSection() {
               strictness over the first few PRs.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
-              Three verdicts:{" "}
-              <code className="font-mono text-foreground">APPROVE</code>,{" "}
-              <code className="font-mono text-foreground">REQUEST-CHANGES</code>
-              , and{" "}
+              Two verdicts —{" "}
+              <code className="font-mono text-foreground">APPROVE</code> or{" "}
+              <code className="font-mono text-foreground">REJECT</code> — and a
+              REJECT names its route:{" "}
               <code className="font-mono text-foreground">
-                SPEC-UPDATE-REQUIRED
-              </code>
-              . The third covers PRs that may obsolete part of{" "}
+                REJECT (fix the code)
+              </code>{" "}
+              for a MAJOR finding, or{" "}
+              <code className="font-mono text-foreground">
+                REJECT (spec-update-required)
+              </code>{" "}
+              for a PR that may obsolete part of{" "}
               <code className="font-mono text-foreground">PROJECT.md</code> and
               must pause until a META-PR or explicitly scoped combined spec
               update resolves the mismatch.
@@ -330,14 +332,15 @@ export default function PhaseTwoSection() {
               so a human can compare claim against verdict in one scan.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
-              Three verdicts:{" "}
-              <code className="font-mono text-foreground">APPROVE</code>,{" "}
-              <code className="font-mono text-foreground">REQUEST-CHANGES</code>
-              , and{" "}
+              Two verdicts —{" "}
+              <code className="font-mono text-foreground">APPROVE</code> or{" "}
+              <code className="font-mono text-foreground">REJECT</code> — with a
+              REJECT naming its route (
+              <code className="font-mono text-foreground">fix the code</code> or{" "}
               <code className="font-mono text-foreground">
-                SPEC-UPDATE-REQUIRED
+                spec-update-required
               </code>
-              . Always evidence-backed (file:line). The Verifier reports drift;
+              ). Always evidence-backed (file:line). The Verifier reports drift;
               it does not propose fixes.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">

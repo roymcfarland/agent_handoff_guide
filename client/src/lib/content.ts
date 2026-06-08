@@ -1432,7 +1432,7 @@ open a separate spec-amendment PR first.)_
 _(If you touched anything outside the requested task — refactors, new
 dependencies, unrelated edits — list them here and justify. The Verifier
 will flag them either way; declaring them here is faster than getting a
-REQUEST-CHANGES verdict.)_
+REJECT verdict.)_
 ### Self-classification of judgment calls
 - INFO: <stylistic choice, naming decision, or other non-blocking call>.
 - MINOR: <choice that the Verifier may push back on; reasoning here>.
@@ -1448,7 +1448,8 @@ _(A red CI is a wasted Verifier cycle. All three should be green before
 you open the PR.)_
 ### Verifier expectation
 - Expected verdict: \`APPROVE\` (no MAJOR findings expected).
-- If \`SPEC-UPDATE-REQUIRED\` is returned, this PR must not merge until
+- If the verdict is \`REJECT (spec-update-required)\` — the code may be
+  intentional, but PROJECT.md must change first — this PR must not merge until
   PROJECT.md is updated through an explicit META-PR, or until this PR is
   re-scoped as a combined code + spec PR with a pasted Spec Update Proposal.
 ---
@@ -1463,7 +1464,7 @@ export const PHASE_TWO_VERIFIER_PR_COMMENT = `## Phase 2 Verifier Report
 **Builder model:** <provider/model id from PR — or "human">
 **PR:** #<N> — <title>
 **PROJECT.md ref:** <commit SHA the audit was run against>
-**Verdict:** <APPROVE | REQUEST-CHANGES | SPEC-UPDATE-REQUIRED>
+**Verdict:** <APPROVE | REJECT>  — on REJECT name the route: \`REJECT (fix the code)\` or \`REJECT (spec-update-required)\`
 ---
 ### Findings
 - [MAJOR] <finding> — evidence: \`src/...:line\`. Violates PROJECT.md
@@ -1491,13 +1492,13 @@ finding in Phase 2. Flag them even if they look harmless.)_
   section and why. The Builder should open a separate spec-amendment PR
   before this one merges.>
 _(or "None — PR is consistent with PROJECT.md as written.". Use this
-section only when the verdict is SPEC-UPDATE-REQUIRED, or when you want
+section only when the verdict is \`REJECT (spec-update-required)\`, or when you want
 to preemptively flag drift the Gatekeeper should track.)_
 ### Notes for the Gatekeeper
 <2–4 sentences max. Describe WHAT is wrong or out of scope, not HOW to
 fix it. Example: "PR adds a second-organization concept in line 88, which
 violates the explicit non-goal in PROJECT.md § Non-goals #1. Recommend
-REQUEST-CHANGES and surface to the Gatekeeper to decide whether the
+REJECT (spec-update-required) and surface to the Gatekeeper to decide whether the
 non-goal should be amended in a separate PR.">
 ---
 _Phase 2 Verifier rules: read only the diff and PROJECT.md, return a
@@ -1546,9 +1547,10 @@ What I want from you:
 
 5. End with an explicit verdict line in this format:
 
-   VERDICT: APPROVE              — no MAJOR findings; merge as-is or with MINOR fixes.
-   VERDICT: REQUEST-CHANGES      — one or more MAJOR findings; do not merge.
-   VERDICT: SPEC-UPDATE-REQUIRED — code may be intentional, but PROJECT.md must be updated through an explicit spec path before merge.
+   VERDICT: APPROVE — no MAJOR findings; merge as-is or with MINOR fixes.
+   VERDICT: REJECT  — do not merge. Name the route in parentheses:
+            REJECT (fix the code)         — one or more MAJOR findings the Builder must fix.
+            REJECT (spec-update-required) — code may be intentional, but PROJECT.md must be updated through an explicit spec path (a META-PR) before merge.
 
 Scope: this PR only. Do not re-audit PROJECT.md itself unless the
 PR modifies it.
@@ -1574,7 +1576,7 @@ export const PHASE_TWO_WIRING = [
   {
     n: "03",
     title: "Branch on the verdict",
-    body: "APPROVE: merge per your normal process. REQUEST-CHANGES: post findings as a PR comment, have Builder address them, re-run the Verifier on the updated diff. SPEC-UPDATE-REQUIRED: pause the code PR until a META-PR updates PROJECT.md, unless this PR already contains an explicit Spec Update Proposal and is being reviewed as a combined code + spec PR.",
+    body: "APPROVE: merge per your normal process. REJECT (fix the code): post findings as a PR comment, have the Builder address them, re-run the Verifier on the updated diff. REJECT (spec-update-required): pause the code PR until a META-PR updates PROJECT.md, unless this PR already contains an explicit Spec Update Proposal and is being reviewed as a combined code + spec PR.",
   },
   {
     n: "04",
