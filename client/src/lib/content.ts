@@ -1406,6 +1406,17 @@ before merge. Your job is to produce a PR that the Verifier returns
 VERDICT: APPROVE on, on the first pass.
 Task:
 <one-line description of the feature, fix, or refactor>
+
+Pre-flight — run this before writing any code:
+\`\`\`bash
+git checkout main
+git fetch origin --prune
+git pull --ff-only origin main
+git branch --merged main --format='%(refname:short)' | grep -vxF main | while read -r br; do git branch -d "$br" 2>/dev/null || true; done
+git checkout -b <type>/<short-name>
+\`\`\`
+If \`git pull --ff-only\` fails, STOP and report — do not force or merge.
+
 What I want from you:
 1. Read PROJECT.md before you write any code. If the task appears
    to violate a non-goal or a hard convention, STOP and respond with
@@ -1435,8 +1446,18 @@ What I want from you:
    - Self-classification of any judgment calls as MINOR or INFO,
      with reasoning. If you self-flag a MAJOR finding, the PR is
      not ready.
-6. Run the project's test suite, linter, and typechecker locally
-   before pushing. A red CI is a wasted Verifier cycle.
+6. Run the project's checks locally by their exact script names from
+   package.json / Makefile (typecheck, build, tests — never assume a
+   script like \`npm test\` exists) before pushing. A red CI is a
+   wasted Verifier cycle.
+7. Open the PR as your final, non-optional action, then confirm it is
+   not a draft:
+\`\`\`bash
+gh pr create --title "<title>" --body "<the PR description above>"
+gh pr view --json url,isDraft,state
+\`\`\`
+   A pushed branch with no PR is an incomplete task. Confirm
+   \`isDraft:false\` and report the URL.
 Scope: this task only. Do not modify PROJECT.md. Do not introduce
 features, files, or dependencies that were not requested.
 `;
@@ -1560,11 +1581,27 @@ Branch: <branch-name>
 PR description: <paste full PR body>
 Diff: <attach \`gh pr diff <N>\` output, or paste the diff>
 
+Setup — check out the branch and run the project's real gates yourself
+(do not grade from the diff text alone):
+\`\`\`bash
+git fetch origin --prune
+git checkout <branch-name>
+git diff --stat main..HEAD
+<install / typecheck / build / tests — by their exact script names from package.json; never assume \`npm test\` exists>
+\`\`\`
+A red gate is a REJECT no matter how clean the diff reads; if the project
+has no CI, this local run is the only gate there is. Green is not shipped,
+either: if the change is visual or depends on live external data, confirm
+the code matches spec but flag that a human must eyeball the rendered
+preview or run a real before/after before merge.
+
 What I want from you:
 
 1. Audit the PR description and diff against PROJECT.md. The diff is the
    evidence; the PR description is the Builder's claim about scope, stubs,
-   tests, and intent.
+   tests, and intent. Grade BEHAVIOR, not shape — judge what the change
+   does against the spec, not whether the implementation matches the one
+   you imagined; welcome behavior-correct deviations.
 
 2. Classify every finding as one of:
    - MAJOR: must be fixed before merge. Violates a non-goal, a hard
@@ -1722,11 +1759,19 @@ Files expected to change (from the Builder Brief):
 Files explicitly OUT of scope:
 [list forbidden files, or "none specified"]
 
+Setup — check out the branch and capture the diff:
+\`\`\`bash
+git fetch origin --prune
+git checkout <branch-name>
+git diff --stat main..HEAD
+\`\`\`
+If this META-PR includes code (a Phase 1 mid-slice META-PR often does), also run the project's real gates by their exact script names from package.json / Makefile (typecheck, build, tests — never assume \`npm test\` exists); a red gate is a REJECT. For a HANDOFF.md-only change there is nothing to build — the gate is whether the new HANDOFF.md faithfully matches the Builder Brief.
+
 Instructions:
 1. Read the PR diff and the Builder Brief criteria above. Do NOT treat any file in the diff (including HANDOFF.md) as the scope document; the Builder Brief above is the scope document.
 2. For each Builder Brief criterion, return PASS or FAIL with one sentence of evidence pointing to a file and line number in the PR diff.
 3. Flag any change in the diff that is OUT OF SCOPE relative to the Builder Brief (refactors, new dependencies, unrelated edits, files not in the expected-files list).
-4. Specifically check whether the new HANDOFF.md (in the diff) actually matches the Builder Brief — if the Builder Brief says "Acceptance Criteria 3 should require X" and the new HANDOFF.md doesn't contain that, that is a FAIL.
+4. Specifically check whether the new HANDOFF.md (in the diff) actually matches the Builder Brief — if the Builder Brief says "Acceptance Criteria 3 should require X" and the new HANDOFF.md doesn't contain that, that is a FAIL. Judge intent, not exact wording: an edit that satisfies the Builder Brief's requirement in different words is a PASS.
 5. Return a final verdict: APPROVE (all criteria met; minor out-of-scope changes noted as follow-ups, not blockers) or REJECT (one or more criteria unmet, or materially out of scope).
 
 Do not suggest fixes. Do not write code. Your output is a verdict report.`;
@@ -1743,9 +1788,17 @@ Trigger for the spec update (from the Proposal):
 Files expected to change:
 [typically PROJECT.md only; list any other files if the spec change requires code follow-up]
 
+Setup — check out the branch and capture the diff:
+\`\`\`bash
+git fetch origin --prune
+git checkout <branch-name>
+git diff --stat main..HEAD
+\`\`\`
+A PROJECT.md-only change has nothing to build — the gate is whether the diff implements the Spec Update Proposal faithfully and edits no section the Proposal did not name. If the spec change carries code follow-up, also run the project's real gates by their exact script names (never assume \`npm test\` exists); a red gate is a REJECT.
+
 Instructions:
 1. Read the PR diff and the Spec Update Proposal above. Do NOT treat the new PROJECT.md (in the diff) as the spec; the Spec Update Proposal is the spec.
-2. For each "before / after" edit in the Proposal, return PASS or FAIL with one sentence of evidence pointing to the new PROJECT.md content in the diff. PASS means the diff implements the proposed edit faithfully; FAIL means the diff goes further, falls short, or changes something the Proposal did not authorize.
+2. For each "before / after" edit in the Proposal, return PASS or FAIL with one sentence of evidence pointing to the new PROJECT.md content in the diff. PASS means the diff implements the proposed edit faithfully; FAIL means the diff goes further, falls short, or changes something the Proposal did not authorize. Judge intent, not exact wording — an edit that achieves the proposed change in different words is a PASS.
 3. Flag any change in the diff that is OUT OF SCOPE relative to the Proposal — particularly silent edits to PROJECT.md sections that the Proposal did not name.
 4. Specifically check that non-goals removed by the Proposal really were promoted into goals (or deleted) intentionally, not by accident. Removing a non-goal silently is a MAJOR finding.
 5. Return a final verdict: APPROVE (all proposed edits implemented, no out-of-scope changes) or REJECT, naming the route — REJECT (fix the edits) when one or more proposed edits are not implemented faithfully or unauthorized edits are present, or REJECT (proposal-insufficient) when the diff implements the Proposal correctly but the Proposal itself is internally inconsistent or under-specified (kick back to the human, do not merge).
