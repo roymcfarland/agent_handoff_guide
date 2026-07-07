@@ -11,6 +11,7 @@ import {
   BUILD_VERIFY_PRINCIPLES,
   BUILD_VERIFY_STAGES,
   ESCALATION_RULE,
+  VERDICT_TRIAGE,
 } from "@/lib/content";
 export default function BuildVerifySection() {
   return (
@@ -118,6 +119,86 @@ export default function BuildVerifySection() {
                 </li>
               ))}
             </ul>
+          </div>
+        </div>
+
+        {/* Verdict triage — runs before the escalation rule applies */}
+        <div className="mt-16">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="stamp">VERDICT TRIAGE · BEFORE ESCALATION</div>
+              <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+                {VERDICT_TRIAGE.headline}
+              </h3>
+            </div>
+            <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
+              {VERDICT_TRIAGE.intro}
+            </p>
+          </div>
+
+          <div className="mt-8 paper-card overflow-hidden">
+            <div className="border-b border-border bg-primary/5 px-6 py-5">
+              <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+                The question the Advisor answers for every FAIL
+              </div>
+              <p className="mt-2 font-display text-2xl font-bold leading-snug text-foreground">
+                {VERDICT_TRIAGE.question}
+              </p>
+            </div>
+
+            <div className="grid divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+              {VERDICT_TRIAGE.routes.map(route => (
+                <div key={route.label} className="px-6 py-6">
+                  <div className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+                    → {route.label}
+                  </div>
+                  <p className="mt-2 text-[15px] leading-relaxed text-foreground/85">
+                    {route.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-t border-border bg-secondary/40 px-6 py-5">
+              <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+                {VERDICT_TRIAGE.spuriousShapes.title}
+              </div>
+              <ul className="mt-3 grid gap-2.5 sm:grid-cols-2">
+                {VERDICT_TRIAGE.spuriousShapes.items.map((shape, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-2 text-[14px] leading-relaxed text-foreground/85"
+                  >
+                    <span
+                      aria-hidden
+                      className="mt-1 font-mono text-[11px] font-bold text-primary"
+                    >
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span>{shape}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            <div className="grid divide-y divide-border border-t border-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+              {VERDICT_TRIAGE.disciplines.map(d => (
+                <div key={d.title} className="px-6 py-6">
+                  <h4 className="font-display text-lg font-bold leading-snug text-foreground">
+                    {d.title}
+                  </h4>
+                  <p className="mt-2 text-[14px] leading-relaxed text-foreground/85">
+                    {d.body}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            <div className="border-t border-border bg-primary/5 px-6 py-5">
+              <p className="text-[14px] leading-relaxed text-foreground/85">
+                {VERDICT_TRIAGE.escalationLink}
+              </p>
+            </div>
           </div>
         </div>
 

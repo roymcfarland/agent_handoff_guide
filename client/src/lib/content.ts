@@ -158,6 +158,14 @@ export const FAILURE_MODES = [
     title: "Trusting the report over the repo",
     body: "'Approved and merged' is a claim, not a fact, and a verdict whose details do not match the diff is worth less than the diff itself. Ground truth lives in the artifacts: the PR diff, the checks on the PR's own commit, and main after the pull. Before any housekeeping — pruning branches, updating a ledger, telling someone it shipped — confirm the change is actually present on main, not just that an agent said so.",
   },
+  {
+    title: "The check was wrong, not the code",
+    body: "A REJECT is evidence, not a command. Verifier checks are authored artifacts, subject to the same defects as any other spec: an occurrence-count the recon under-counted, a grep that cannot match a string the formatter wrapped across lines, a rule that contradicts what the Builder was told. A defective check FAILs correct code. Triage every FAIL before re-running the Builder — if the defect is in the check, the honest move is to merge and fix the prompt template, not the code.",
+  },
+  {
+    title: "A criterion the Builder never saw",
+    body: "Any PASS criterion that lives only in the verifier prompt is a guaranteed spurious REJECT — the Builder cannot satisfy a requirement it was never given. Before finalizing a verifier prompt, diff its checklist against the builder prompt. If the check is genuinely wanted, it belongs in the builder prompt first; when one slips through and gets flagged, the fix is a small amendment, not a rejection of the Builder's work.",
+  },
 ] as const;
 
 /* ─────────────────────────────────────────────────────────────────────────── */
@@ -1170,6 +1178,50 @@ export const BUILD_VERIFY_PRINCIPLES = [
     body: "Typecheck, build, and a passing verdict prove the code is correct in the abstract — not that the feature does anything once it ships. A visual change can pass every check and render invisibly; an integration can pass and silently fall back to a no-op. For anything visual or dependent on live external data, a human confirms the rendered result on the preview URL, or runs a real before/after with production-like inputs, before the slice is called done.",
   },
 ] as const;
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* BUILD & VERIFY — VERDICT TRIAGE                                             */
+/* The Advisor's read on a verdict, run BEFORE the two-REJECT escalation.      */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+export const VERDICT_TRIAGE = {
+  headline: "Read the verdict before you obey it.",
+  intro:
+    "A Verifier can FAIL a correct PR. Its checks are authored artifacts — subject to the same defects as any other spec — so a REJECT is evidence to be read, not a command to be obeyed.",
+  question:
+    "Is the cited file:line a real defect — or is the check itself the bug?",
+  routes: [
+    {
+      label: "Real defect",
+      body: "Send a small, surgical amendment back to the Builder that fixes only the flagged issue. Do not re-issue the full slice prompt — the rest of the work already passed.",
+    },
+    {
+      label: "Defective check",
+      body: "Recommend merging anyway, with a one-line explanation on the PR. Then fix the defect where it lives — in the prompt template — so the same spurious FAIL never runs again.",
+    },
+  ],
+  spuriousShapes: {
+    title: "Spurious FAILs cluster in four shapes",
+    items: [
+      "A criterion the Builder never saw — it lives only in the verifier prompt, so no Builder could ever have satisfied it.",
+      "An exact-occurrence count the recon under-counted — the Builder's replace-all was correct; the expected N was wrong.",
+      "A shape check on behavior-correct code — the implementation differs from the one the prompt author imagined, and the observable behavior is right.",
+      "A single-line grep that cannot match a string the formatter wrapped across source lines.",
+    ],
+  },
+  disciplines: [
+    {
+      title: "A red deploy check is not always the diff",
+      body: "When an approved PR fails a deploy or build check, reproduce the build locally on the exact commit and force a no-cache rebuild before blaming the code. Platform and cache failures routinely masquerade as regressions — temporal proximity to your merge is the most seductive wrong lead.",
+    },
+    {
+      title: "“PR is up” and “merged” are claims, not facts",
+      body: "Verify the artifact before acting on the report: the PR exists and is not a draft, the verdict describes this diff, the merge commit is actually on main. A verdict whose details do not match the PR is worth less than the diff itself.",
+    },
+  ],
+  escalationLink:
+    "Only after every FAIL survives this triage does the escalation clock start: two triaged, genuine REJECTs on the same slice — that is when you freeze the slice, not before.",
+} as const;
 
 export const ESCALATION_RULE = {
   rule: "Two consecutive REJECTs on the same slice = freeze the slice, not the Builder.",
