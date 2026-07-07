@@ -1,36 +1,37 @@
-# Current Slice: CI workflow — make the repo's own gates real
+# Current Slice: Dead-code prune — unused ui components, hooks, dependencies
 
 ## Context
 
-The repo publishing a methodology built on "green checks" has no CI at all — no `.github/` directory. The Verifier's evidence and the after-merge protocol both assume checks exist on the PR's own commit. This slice adds a minimal, honest gate: typecheck, build, and the repo's own 800-line-cap rule from PROJECT.md Q1, enforced automatically.
+PROJECT.md Q2 mandates aggressive pruning and hard-fails PRs that add components without call sites — but the tree currently violates its own rule: eight of eleven `client/src/components/ui/` files have zero call sites, all three hooks are dead (two only serve the dead components, one is used nowhere), and several dependencies exist only to serve that dead code. This slice brings the tree back into compliance.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] `.github/workflows/ci.yml` runs on `pull_request` and on `push` to `main`: checkout → pnpm via Corepack (respecting the `packageManager` pin) → Node from `.nvmrc` → `pnpm install --frozen-lockfile` → `pnpm check` → `pnpm build`.
-- [ ] A line-cap job (or step) enforces PROJECT.md Q1: fail if any file in `client/src/pages/`, `client/src/lib/`, or `client/src/components/` (top level) exceeds 800 lines — with the two documented exemptions (`client/src/lib/content.ts`, `client/src/components/diagrams/**`). A small shell script inline in the workflow is fine; no new dependencies.
-- [ ] The workflow has no secrets, no deploy steps, and does not run the Vercel build — Vercel deploys are separate and stay that way.
-- [ ] The decisive check for this PR is the new workflow running green on the PR's own CI (`gh pr checks`), not a static YAML read.
+- [ ] Delete `client/src/components/ui/`: `button.tsx`, `input.tsx`, `label.tsx`, `textarea.tsx`, `skeleton.tsx`, `toggle.tsx`, `dialog.tsx`, `separator.tsx`. Keep `sheet.tsx`, `tooltip.tsx`, `sonner.tsx` (live call sites: SiteHeader, App).
+- [ ] Delete `client/src/hooks/`: `useComposition.ts` (only consumers are the deleted input/textarea), `usePersistFn.ts` (only consumer is useComposition), `useMobile.tsx` (no consumers).
+- [ ] Remove from `package.json` dependencies: `@radix-ui/react-label`, `@radix-ui/react-separator`, `@radix-ui/react-toggle`, `@radix-ui/react-slot`, `class-variance-authority` — then `pnpm install` to update the lockfile. KEEP `@radix-ui/react-dialog` (sheet.tsx is built on it) and `@radix-ui/react-tooltip` (tooltip.tsx).
+- [ ] Final grep gate: `git grep -nE 'ui/button|ui/input|ui/label|ui/textarea|ui/skeleton|ui/toggle|ui/dialog|ui/separator|useComposition|usePersistFn|useMobile|react-slot|class-variance-authority|react-label|react-separator|react-toggle' -- ':!HANDOFF.md' ':!pnpm-lock.yaml'` returns zero matches.
+- [ ] `pnpm check` passes with zero errors, `pnpm build` succeeds, and the site renders (header sheet, tooltips, toasts still work).
+- Expected test delta: none (repo has no test suite).
 
 ## Constraints & Anti-Goals
 
-- DO NOT add lint/test jobs for tools the repo does not have configured (there is no test suite and no eslint config — do not invent them).
-- DO NOT add dependencies or new package.json scripts unless the cap check genuinely needs one (prefer inline shell).
-- DO NOT touch application source in this slice.
+- DO NOT remove `sonner`, `@radix-ui/react-dialog`, or `@radix-ui/react-tooltip`.
+- DO NOT touch `client/src/lib/content.ts` or any section component.
+- DO NOT "improve" the surviving components while deleting the dead ones.
 
 ## Pre-confirmed facts
 
-- Exact script names from package.json: `check` (tsc --noEmit), `build` (vite build + esbuild server). There is NO `test` or `lint` script.
-- `packageManager: pnpm@10.4.1` (Corepack); `.nvmrc` exists (Node 22); `engines.node >= 22`.
-- The 800-line rule and its two exemptions are PROJECT.md Q1, verbatim.
-- Expected test delta: no test changes (repo has no test suite).
+- Call-site grep (verified): `sheet` ← SiteHeader.tsx; `tooltip`, `sonner` ← App.tsx; the eight deleted components have zero importers outside `components/ui/` (dialog is imported only by the dead input.tsx/textarea.tsx).
+- `class-variance-authority` importers: button.tsx, toggle.tsx (both deleted). `@radix-ui/react-slot` importer: button.tsx only.
+- CI (previous slice) will enforce typecheck + build on the PR.
 
 ## Files explicitly forbidden
 
-- `client/**`, `server/**`, `vercel.json` — no app or deploy changes in this slice.
+- `client/src/lib/content.ts`, `client/src/pages/**`, `server/**`, `vercel.json`.
 
 ## Starting Point
 
-- Relevant files: `.github/workflows/ci.yml` (NEW)
-- Known issues: none. Queued after this slice: Field Notes section (WAITING ON HUMAN — pick which lessons from the operating ledger go public), worked example, hygiene track (dead-component prune, wouter patch removal, theme toggle).
+- Relevant files: the deletions above, `package.json`, `pnpm-lock.yaml`
+- Known issues: none. Queued after: wouter patch removal + dep refresh, theme toggle, Field Notes (WAITING ON HUMAN — lesson curation), worked example.
