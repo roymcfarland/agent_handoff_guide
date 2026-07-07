@@ -508,3 +508,77 @@
   }
   .ink-in { animation: ink-in 220ms ease-out both; }
 }
+
+/* ───────────────────────────────────────────────────────────────────────────
+   PRINT — the notebook on actual paper.
+   Interactive chrome disappears, the grid drops (ink is expensive), tokens
+   are forced to black-on-white even from dark mode, and cards refuse to be
+   split across page breaks. The result should read like a printed spec.
+   ─────────────────────────────────────────────────────────────────────────── */
+@media print {
+  :root,
+  .dark {
+    --background: #fff;
+    --foreground: #111;
+    --card: #fff;
+    --card-foreground: #111;
+    --popover: #fff;
+    --popover-foreground: #111;
+    --secondary: #f3f3f3;
+    --muted: #f3f3f3;
+    --muted-foreground: #444;
+    --border: #999;
+    --paper: #fff;
+    --paper-deep: #f3f3f3;
+    --ink: #111;
+    --ink-soft: #333;
+    --ink-faint: #555;
+    --grid: transparent;
+    --grid-strong: transparent;
+    --card-shadow: none;
+  }
+
+  /* Interactive chrome has no business on paper. */
+  header,
+  button,
+  [data-sonner-toaster],
+  input[type="checkbox"] {
+    display: none !important;
+  }
+
+  /* The grid is charming on screen and a toner bill on paper. */
+  body,
+  .graph-paper,
+  .graph-paper-dense {
+    background-image: none !important;
+    background-color: #fff !important;
+  }
+
+  .paper-card,
+  .ink-in {
+    box-shadow: none !important;
+    animation: none !important;
+  }
+
+  /* Keep cards, notes, and table rows whole across page breaks. */
+  .paper-card,
+  article,
+  li,
+  tr,
+  details {
+    break-inside: avoid;
+  }
+
+  pre {
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+    /* Solid CTAs print as ink-wasting black bars; flatten them. */
+    background: transparent !important;
+    border-color: #999 !important;
+  }
+}

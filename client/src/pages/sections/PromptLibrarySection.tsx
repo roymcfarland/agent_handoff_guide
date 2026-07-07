@@ -133,7 +133,15 @@ function PromptLibraryItem({ item }: { item: LibraryPrompt }) {
         ? "Verifier LLM · clean context"
         : "Human";
 
-  if (item.kind === "template" || item.body.length > 1800) {
+  // The Edit Pass checklist is long, but it routes to PromptCard anyway:
+  // its [ ] lines render as real, localStorage-persisted checkboxes there —
+  // the notebook remembers your pencil marks.
+  const isInteractiveChecklist = item.id === "edit-pass";
+
+  if (
+    !isInteractiveChecklist &&
+    (item.kind === "template" || item.body.length > 1800)
+  ) {
     // Long content → MarkdownBlock for a scrollable viewer
     return (
       <article className="paper-card p-6">
@@ -203,6 +211,8 @@ function PromptLibraryItem({ item }: { item: LibraryPrompt }) {
         title={item.title}
         subtitle={item.whenToUse}
         body={item.body}
+        filename={item.filename}
+        checklistKey={isInteractiveChecklist ? "ahf-editpass-v1" : undefined}
       />
     </article>
   );
