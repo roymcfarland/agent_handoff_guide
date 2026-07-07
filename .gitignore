@@ -112,3 +112,4 @@ temp/
 
 # Private working notes (kept locally, not part of public artifact)
 .private/
+.claude/

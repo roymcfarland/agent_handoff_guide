@@ -1,37 +1,38 @@
-# Current Slice: Dead-code prune — unused ui components, hooks, dependencies
+# Current Slice: Drop the vestigial wouter patch + dependency refresh
 
 ## Context
 
-PROJECT.md Q2 mandates aggressive pruning and hard-fails PRs that add components without call sites — but the tree currently violates its own rule: eight of eleven `client/src/components/ui/` files have zero call sites, all three hooks are dead (two only serve the dead components, one is used nowhere), and several dependencies exist only to serve that dead code. This slice brings the tree back into compliance.
+`patches/wouter@3.7.1.patch` only injects route-collection into `window.__WOUTER_ROUTES__` — leftover instrumentation from the original site-builder tooling, same family as the `@builder.io/vite-plugin-jsx-loc` plugin removed in PR #26. Nothing in the app reads it. Dropping the patch removes the `patches/` directory, resolves the confusing `"wouter": "^3.3.5"` declared vs `3.7.1` patched mismatch, and unblocks upgrading wouter. While the lockfile is open, take the outstanding minor/patch dependency updates.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] Delete `client/src/components/ui/`: `button.tsx`, `input.tsx`, `label.tsx`, `textarea.tsx`, `skeleton.tsx`, `toggle.tsx`, `dialog.tsx`, `separator.tsx`. Keep `sheet.tsx`, `tooltip.tsx`, `sonner.tsx` (live call sites: SiteHeader, App).
-- [ ] Delete `client/src/hooks/`: `useComposition.ts` (only consumers are the deleted input/textarea), `usePersistFn.ts` (only consumer is useComposition), `useMobile.tsx` (no consumers).
-- [ ] Remove from `package.json` dependencies: `@radix-ui/react-label`, `@radix-ui/react-separator`, `@radix-ui/react-toggle`, `@radix-ui/react-slot`, `class-variance-authority` — then `pnpm install` to update the lockfile. KEEP `@radix-ui/react-dialog` (sheet.tsx is built on it) and `@radix-ui/react-tooltip` (tooltip.tsx).
-- [ ] Final grep gate: `git grep -nE 'ui/button|ui/input|ui/label|ui/textarea|ui/skeleton|ui/toggle|ui/dialog|ui/separator|useComposition|usePersistFn|useMobile|react-slot|class-variance-authority|react-label|react-separator|react-toggle' -- ':!HANDOFF.md' ':!pnpm-lock.yaml'` returns zero matches.
-- [ ] `pnpm check` passes with zero errors, `pnpm build` succeeds, and the site renders (header sheet, tooltips, toasts still work).
+- [ ] `pnpm.patchedDependencies` removed from `package.json`; `patches/` directory deleted.
+- [ ] `git grep -n "__WOUTER_ROUTES__"` returns zero matches (confirming nothing consumed it).
+- [ ] wouter upgraded to the current 3.x line; client-side routing still works (all three routes: `/`, `/404`, wildcard → NotFound).
+- [ ] Minor/patch updates taken for: react + react-dom (19.2.x latest), the two surviving @radix-ui packages, tailwindcss + @tailwindcss/vite (4.x latest), tailwind-merge, prettier, tsx, postcss, autoprefixer, @types/*. Do NOT take @types/express 5.x (express is 4); do NOT change express, esbuild, vite, or typescript majors.
+- [ ] `pnpm audit --prod` reports no known vulnerabilities after the refresh.
+- [ ] `pnpm check` passes, `pnpm build` succeeds, CI green on the PR.
 - Expected test delta: none (repo has no test suite).
 
 ## Constraints & Anti-Goals
 
-- DO NOT remove `sonner`, `@radix-ui/react-dialog`, or `@radix-ui/react-tooltip`.
-- DO NOT touch `client/src/lib/content.ts` or any section component.
-- DO NOT "improve" the surviving components while deleting the dead ones.
+- DO NOT upgrade any major versions (vite 7 stays, express 4 stays, typescript 5.6 stays).
+- DO NOT remove the `qs` / `express>path-to-regexp` security overrides (they guard the express 4 tree; removing them is the future express-5 slice's job).
+- DO NOT touch application source except where a dependency update forces a type-level fix.
 
 ## Pre-confirmed facts
 
-- Call-site grep (verified): `sheet` ← SiteHeader.tsx; `tooltip`, `sonner` ← App.tsx; the eight deleted components have zero importers outside `components/ui/` (dialog is imported only by the dead input.tsx/textarea.tsx).
-- `class-variance-authority` importers: button.tsx, toggle.tsx (both deleted). `@radix-ui/react-slot` importer: button.tsx only.
-- CI (previous slice) will enforce typecheck + build on the PR.
+- The patch content is ONLY the `__WOUTER_ROUTES__` collection block in `Switch` (verified by reading the patch); no app code references `__WOUTER_ROUTES__`.
+- Routes live in `client/src/App.tsx` (`/`, `/404`, fallback). Wouter usage is minimal: `Route`, `Switch` imports.
+- Outdated list as of 2026-07-07 included: react 19.2.7, radix minors, tailwindcss 4.3.2, prettier 3.9.4, tailwind-merge 3.6.0, wouter 3.10.0.
 
 ## Files explicitly forbidden
 
-- `client/src/lib/content.ts`, `client/src/pages/**`, `server/**`, `vercel.json`.
+- `client/src/lib/content.ts`, `server/**`, `vercel.json`, `.github/**`.
 
 ## Starting Point
 
-- Relevant files: the deletions above, `package.json`, `pnpm-lock.yaml`
-- Known issues: none. Queued after: wouter patch removal + dep refresh, theme toggle, Field Notes (WAITING ON HUMAN — lesson curation), worked example.
+- Relevant files: `package.json`, `pnpm-lock.yaml`, `patches/` (deleted)
+- Known issues: none. Queued after: theme toggle (delight), Field Notes (WAITING ON HUMAN — lesson curation), worked example, express 5 migration (drops the security overrides).
