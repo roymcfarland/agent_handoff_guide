@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <style>
+    .paper { fill: #f4efe6; }
+    .grid { stroke: #7da2b8; stroke-opacity: 0.35; }
+    .frame { stroke: #0e2a47; }
+    .mark { fill: #c8362d; }
+    @media (prefers-color-scheme: dark) {
+      .paper { fill: #0c1524; }
+      .grid { stroke: #3d5a78; stroke-opacity: 0.5; }
+      .frame { stroke: #a8c6dd; }
+      .mark { fill: #e05545; }
+    }
+  </style>
+  <rect class="paper" width="64" height="64" />
+  <path
+    class="grid"
+    d="M16 0V64M32 0V64M48 0V64M0 16H64M0 32H64M0 48H64"
+    fill="none"
+    stroke-width="1"
+  />
+  <rect class="frame" x="3" y="3" width="58" height="58" fill="none" stroke-width="5" />
+  <text
+    class="mark"
+    x="32"
+    y="45"
+    font-family="ui-monospace, Menlo, Consolas, monospace"
+    font-size="36"
+    font-weight="700"
+    text-anchor="middle"
+  >A</text>
+</svg>
