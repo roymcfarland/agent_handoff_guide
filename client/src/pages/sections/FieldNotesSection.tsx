@@ -4,7 +4,11 @@
  * verifiable events in this repo's own PR history.
  */
 import { SectionHeader } from "@/components/SectionHeader";
-import { FIELD_NOTES, FIELD_NOTES_INTRO } from "@/lib/content";
+import {
+  FIELD_NOTES,
+  FIELD_NOTES_INTRO,
+  WORKED_EXAMPLE,
+} from "@/lib/content";
 
 export default function FieldNotesSection() {
   return (
@@ -77,6 +81,56 @@ export default function FieldNotesSection() {
                       </a>
                     </p>
                   )}
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        {/* Worked example — one slice end to end, receipts included */}
+        <div className="mt-16">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="stamp">{WORKED_EXAMPLE.eyebrow}</div>
+              <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+                {WORKED_EXAMPLE.headline}
+              </h3>
+            </div>
+            <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
+              {WORKED_EXAMPLE.intro}
+            </p>
+          </div>
+
+          <div className="mt-8 paper-card overflow-hidden">
+            <ol className="divide-y divide-border">
+              {WORKED_EXAMPLE.steps.map(step => (
+                <li key={step.n} className="grid grid-cols-12 gap-6 px-6 py-6">
+                  <div className="col-span-12 sm:col-span-3">
+                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+                      Step {step.n}
+                    </span>
+                    <div className="mt-1 font-mono text-[10.5px] font-bold uppercase tracking-widest text-muted-foreground">
+                      {step.doctrine}
+                    </div>
+                  </div>
+                  <div className="col-span-12 sm:col-span-9">
+                    <h4 className="font-display text-xl font-bold leading-snug text-foreground">
+                      {step.title}
+                    </h4>
+                    <p className="mt-2 max-w-prose text-[15px] leading-relaxed text-foreground/85">
+                      {step.body}
+                    </p>
+                    <p className="mt-3 font-mono text-[11px] uppercase tracking-widest">
+                      <a
+                        href={step.receipt.href}
+                        rel="noopener noreferrer"
+                        target="_blank"
+                        className="text-muted-foreground underline decoration-muted-foreground/60 underline-offset-4 hover:text-foreground hover:decoration-foreground"
+                      >
+                        Receipt: {step.receipt.label} ↗
+                      </a>
+                    </p>
+                  </div>
                 </li>
               ))}
             </ol>
