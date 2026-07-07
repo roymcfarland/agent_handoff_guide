@@ -6,7 +6,7 @@
  */
 
 import { useState } from "react";
-import { Check, Copy, FileText } from "lucide-react";
+import { Check, Copy, Download, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 type MarkdownBlockProps = {
@@ -35,6 +35,20 @@ export function MarkdownBlock({
     }
   };
 
+  const handleDownload = () => {
+    // filename may carry a suggested repo path ("docs/build-and-verify.md");
+    // the saved file uses the basename.
+    const basename = filename.split("/").pop() ?? filename;
+    const blob = new Blob([body], { type: "text/markdown;charset=utf-8" });
+    const url = URL.createObjectURL(blob);
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = basename;
+    anchor.click();
+    URL.revokeObjectURL(url);
+    toast.success(`Downloaded ${basename}`);
+  };
+
   return (
     <article className="paper-card paper-card-lift overflow-hidden">
       <header className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-5 py-3">
@@ -47,6 +61,17 @@ export function MarkdownBlock({
             · {description}
           </span>
         </div>
+        <div className="flex shrink-0 items-center gap-2">
+        <button
+          type="button"
+          onClick={handleDownload}
+          aria-label={`Download ${filename}`}
+          title={`Download ${filename}`}
+          className="inline-flex items-center gap-2 border border-border bg-background px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground transition-colors duration-150 hover:border-primary hover:bg-primary hover:text-primary-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+        >
+          <Download className="h-3.5 w-3.5" strokeWidth={2} />
+          <span className="hidden sm:inline">.md</span>
+        </button>
         <button
           type="button"
           onClick={handleCopy}
@@ -65,6 +90,7 @@ export function MarkdownBlock({
             </>
           )}
         </button>
+        </div>
       </header>
 
       <div className="graph-paper-dense max-h-[640px] overflow-auto">

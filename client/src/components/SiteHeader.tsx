@@ -17,7 +17,7 @@
  * the desktop nav stays clean.
  */
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Menu, Monitor, Moon, Sun, X } from "lucide-react";
 import {
   Sheet,
@@ -93,6 +93,48 @@ function RobotMark({ className }: { className?: string }) {
       />
       <path d="M9 15v1.6M12 15v1.6M15 15v1.6" strokeWidth="1.7" />
     </svg>
+  );
+}
+
+/*
+ * ReadingProgress — a drafting-red line under the header tracking scroll
+ * depth. Writes transform directly on the node (rAF-throttled) instead of
+ * setting state, so scrolling never re-renders the header. Initial state is
+ * scaleX(0) on both server and client — hydration-safe.
+ */
+function ReadingProgress() {
+  const lineRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let frame = 0;
+    const update = () => {
+      frame = 0;
+      const max =
+        document.documentElement.scrollHeight - window.innerHeight;
+      const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      if (lineRef.current) {
+        lineRef.current.style.transform = `scaleX(${ratio})`;
+      }
+    };
+    const schedule = () => {
+      if (!frame) frame = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", schedule);
+      window.removeEventListener("resize", schedule);
+      if (frame) cancelAnimationFrame(frame);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={lineRef}
+      aria-hidden
+      className="absolute inset-x-0 bottom-0 h-[2px] origin-left scale-x-0 bg-primary"
+    />
   );
 }
 
@@ -263,6 +305,7 @@ export function SiteHeader() {
           </Sheet>
         </div>
       </div>
+      <ReadingProgress />
     </header>
   );
 }

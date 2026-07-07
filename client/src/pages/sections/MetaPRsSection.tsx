@@ -88,6 +88,7 @@ export default function MetaPRsSection() {
               title="Verifier audits a mid-slice HANDOFF.md change"
               subtitle="Actor — Verifier LLM · clean context · per META-PR"
               body={META_VERIFIER_PROMPT_PHASE_1}
+              filename="meta-verifier-phase-1.md"
             />
           </div>
         </div>
@@ -117,6 +118,7 @@ export default function MetaPRsSection() {
               title="Spec-Editor Builder writes a Spec Update Proposal"
               subtitle="Actor — Builder LLM · per Calibration Debrief or spec drift"
               body={META_BUILDER_PROMPT_PHASE_2}
+              filename="meta-spec-editor-builder.md"
             />
           </div>
         </div>
@@ -157,6 +159,7 @@ export default function MetaPRsSection() {
               title="Verifier audits a PROJECT.md META-PR against the Proposal"
               subtitle="Actor — Verifier LLM · clean context · per META-PR"
               body={META_VERIFIER_PROMPT_PHASE_2}
+              filename="meta-verifier-phase-2.md"
             />
           </div>
         </div>
@@ -188,6 +191,7 @@ export default function MetaPRsSection() {
               title="Builder pastes this into the META-PR description"
               subtitle="Builder fills in · the Verifier reads from this · per META-PR"
               body={META_BUILDER_PR_DESCRIPTION}
+              filename="meta-builder-pr-description.md"
             />
           </div>
         </div>
@@ -222,6 +226,7 @@ export default function MetaPRsSection() {
               title="Verifier pastes this as the first comment on the META-PR"
               subtitle="Verifier fills in · the Gatekeeper reads this · per META-PR"
               body={META_VERIFIER_PR_COMMENT}
+              filename="meta-verifier-pr-comment.md"
             />
           </div>
         </div>
