@@ -1,5 +1,6 @@
 /*
- * BuildVerifyDiagram — two-LLM loop in the notebook style.
+ * BuildVerifyDiagram — the build-and-verify loop in the notebook style,
+ * all four roles: Advisor → Builder → Verifier → Gatekeeper.
  * Looser vertical rhythm than earlier revisions so labels stay legible.
  */
 
@@ -36,11 +37,11 @@ export function BuildVerifyDiagram() {
       contentClassName="overflow-x-auto"
     >
       <svg
-        viewBox="0 0 920 556"
+        viewBox="0 0 920 616"
         xmlns="http://www.w3.org/2000/svg"
         className="mx-auto block h-auto min-w-[680px] w-full max-w-5xl"
         role="img"
-        aria-label="Diagram of the build-and-verify loop: HANDOFF.md — scoped by the Advisor, which drafts both prompts — feeds the Builder LLM, which opens a PR. A different Verifier LLM in a clean context reads the PR body, diff, and HANDOFF.md and returns an APPROVE or REJECT verdict. The Advisor interprets the verdict, and the human gatekeeper merges on APPROVE or sends the verdict back on REJECT."
+        aria-label="Diagram of the build-and-verify loop: the Advisor does the recon, scopes HANDOFF.md, and drafts both prompts. HANDOFF.md feeds the Builder LLM, which opens a PR. A different Verifier LLM in a clean context reads the PR body, diff, and HANDOFF.md and returns an APPROVE or REJECT verdict. The verdict passes through the Advisor's triage — real defect, or defective check? — and the human gatekeeper merges on APPROVE or sends the verdict back on REJECT."
       >
         <defs>
           <pattern
@@ -81,14 +82,71 @@ export function BuildVerifyDiagram() {
           </marker>
         </defs>
 
-        <rect x="0" y="0" width="920" height="556" fill={paper} />
-        <rect x="0" y="0" width="920" height="556" fill={`url(#${pid}-grid)`} />
+        <rect x="0" y="0" width="920" height="616" fill={paper} />
+        <rect x="0" y="0" width="920" height="616" fill={`url(#${pid}-grid)`} />
 
         <g
           fontFamily="'JetBrains Mono', ui-monospace, monospace"
           fontSize="12"
           fill={ink}
         >
+          <g>
+            <rect
+              x="100"
+              y="20"
+              width="240"
+              height="76"
+              rx="2"
+              fill={paper}
+              stroke={ink}
+              strokeWidth="1.5"
+            />
+            <text
+              x="116"
+              y="44"
+              fontWeight="700"
+              fontSize="11"
+              letterSpacing="2"
+              fill={red}
+            >
+              STAGE A
+            </text>
+            <text
+              x="116"
+              y="68"
+              fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif"
+              fontWeight="700"
+              fontSize="18"
+              fill={ink}
+            >
+              Advisor
+            </text>
+            <text x="116" y="86" fontSize="10.5" fill={inkSoft}>
+              recon · scopes · drafts prompts
+            </text>
+          </g>
+
+          <line
+            x1="340"
+            y1="58"
+            x2="376"
+            y2="58"
+            stroke={red}
+            strokeWidth="2"
+            markerEnd={`url(#${pid}-arrow)`}
+          />
+
+          <line
+            x1="220"
+            y1="96"
+            x2="220"
+            y2="114"
+            stroke={ink}
+            strokeWidth="1.5"
+            strokeDasharray="3 3"
+            markerEnd={`url(#${pid}-arrow-ink)`}
+          />
+
           <g>
             <rect
               x="380"
@@ -134,7 +192,7 @@ export function BuildVerifyDiagram() {
             <rect
               x="100"
               y="118"
-              width="340"
+              width="330"
               height="158"
               rx="2"
               fill={paper}
@@ -149,7 +207,7 @@ export function BuildVerifyDiagram() {
               letterSpacing="2"
               fill={red}
             >
-              STAGE A
+              STAGE B
             </text>
             <text
               x="120"
@@ -167,7 +225,7 @@ export function BuildVerifyDiagram() {
             <line
               x1="120"
               y1="210"
-              x2="420"
+              x2="410"
               y2="210"
               stroke={ink}
               strokeOpacity="0.22"
@@ -185,32 +243,10 @@ export function BuildVerifyDiagram() {
           </g>
 
           <g>
-            <line
-              x1="440"
-              y1="197"
-              x2="540"
-              y2="197"
-              stroke={red}
-              strokeWidth="2"
-              markerEnd={`url(#${pid}-arrow)`}
-            />
-            <text
-              x="490"
-              y="190"
-              textAnchor="middle"
-              fontSize="11"
-              fill={red}
-              fontWeight="700"
-            >
-              PR opened
-            </text>
-          </g>
-
-          <g>
             <rect
-              x="480"
+              x="490"
               y="118"
-              width="340"
+              width="330"
               height="158"
               rx="2"
               fill={paper}
@@ -218,17 +254,17 @@ export function BuildVerifyDiagram() {
               strokeWidth="1.5"
             />
             <text
-              x="500"
+              x="510"
               y="148"
               fontWeight="700"
               fontSize="11"
               letterSpacing="2"
               fill={red}
             >
-              STAGE B
+              STAGE C
             </text>
             <text
-              x="500"
+              x="510"
               y="174"
               fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif"
               fontWeight="700"
@@ -237,11 +273,11 @@ export function BuildVerifyDiagram() {
             >
               Verifier LLM
             </text>
-            <text x="500" y="198" fontSize="11" fill={inkSoft}>
+            <text x="510" y="198" fontSize="11" fill={inkSoft}>
               model B · clean context · no memory
             </text>
             <line
-              x1="500"
+              x1="510"
               y1="210"
               x2="800"
               y2="210"
@@ -249,14 +285,47 @@ export function BuildVerifyDiagram() {
               strokeOpacity="0.22"
               strokeWidth="1"
             />
-            <text x="500" y="230" fontSize="12">
+            <text x="510" y="230" fontSize="12">
               · reads PR body + diff + HANDOFF.md
             </text>
-            <text x="500" y="248" fontSize="12">
+            <text x="510" y="248" fontSize="12">
               · checks each Acceptance Criterion
             </text>
-            <text x="500" y="266" fontSize="12">
+            <text x="510" y="266" fontSize="12">
               · returns verdict + evidence (no fixes)
+            </text>
+          </g>
+
+          {/* Drawn after both boxes so the label can never be covered by them. */}
+          <g>
+            <line
+              x1="430"
+              y1="197"
+              x2="488"
+              y2="197"
+              stroke={red}
+              strokeWidth="2"
+              markerEnd={`url(#${pid}-arrow)`}
+            />
+            <text
+              x="460"
+              y="176"
+              textAnchor="middle"
+              fontSize="11"
+              fill={red}
+              fontWeight="700"
+            >
+              PR
+            </text>
+            <text
+              x="460"
+              y="189"
+              textAnchor="middle"
+              fontSize="11"
+              fill={red}
+              fontWeight="700"
+            >
+              opened
             </text>
           </g>
 
@@ -264,7 +333,50 @@ export function BuildVerifyDiagram() {
             x1="650"
             y1="276"
             x2="650"
-            y2="312"
+            y2="302"
+            stroke={red}
+            strokeWidth="2"
+            markerEnd={`url(#${pid}-arrow)`}
+          />
+
+          <g>
+            <rect
+              x="530"
+              y="306"
+              width="240"
+              height="52"
+              rx="2"
+              fill={paper}
+              stroke={ink}
+              strokeWidth="1.5"
+            />
+            <text
+              x="650"
+              y="328"
+              textAnchor="middle"
+              fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif"
+              fontWeight="700"
+              fontSize="15"
+              fill={ink}
+            >
+              Advisor triage
+            </text>
+            <text
+              x="650"
+              y="346"
+              textAnchor="middle"
+              fontSize="10"
+              fill={inkSoft}
+            >
+              real defect — or defective check?
+            </text>
+          </g>
+
+          <line
+            x1="650"
+            y1="358"
+            x2="650"
+            y2="388"
             stroke={red}
             strokeWidth="2"
             markerEnd={`url(#${pid}-arrow)`}
@@ -273,7 +385,7 @@ export function BuildVerifyDiagram() {
           <g>
             <rect
               x="470"
-              y="312"
+              y="392"
               width="360"
               height="92"
               rx="2"
@@ -284,17 +396,17 @@ export function BuildVerifyDiagram() {
             />
             <text
               x="492"
-              y="342"
+              y="422"
               fontWeight="700"
               fontSize="11"
               letterSpacing="2"
               fill={red}
             >
-              STAGE C
+              STAGE D
             </text>
             <text
               x="492"
-              y="370"
+              y="450"
               fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif"
               fontWeight="700"
               fontSize="21"
@@ -302,15 +414,15 @@ export function BuildVerifyDiagram() {
             >
               Gatekeeper (you)
             </text>
-            <text x="492" y="392" fontSize="12" fill={inkSoft}>
-              reviews verdict · merge · follow-ups
+            <text x="492" y="472" fontSize="12" fill={inkSoft}>
+              reviews verdict + triage · merge · follow-ups
             </text>
           </g>
 
           <text
-            x="650"
-            y="302"
-            textAnchor="middle"
+            x="662"
+            y="294"
+            textAnchor="start"
             fontSize="10"
             fontWeight="700"
             fill={ink}
@@ -321,16 +433,16 @@ export function BuildVerifyDiagram() {
           <g>
             <line
               x1="650"
-              y1="404"
+              y1="484"
               x2="650"
-              y2="458"
+              y2="526"
               stroke={ink}
               strokeWidth="1.5"
               markerEnd={`url(#${pid}-arrow-ink)`}
             />
             <rect
               x="560"
-              y="460"
+              y="530"
               width="180"
               height="52"
               rx="2"
@@ -340,7 +452,7 @@ export function BuildVerifyDiagram() {
             />
             <text
               x="650"
-              y="482"
+              y="552"
               textAnchor="middle"
               fontWeight="700"
               fontSize="11"
@@ -348,21 +460,21 @@ export function BuildVerifyDiagram() {
             >
               APPROVE
             </text>
-            <text x="650" y="500" textAnchor="middle" fontSize="11">
+            <text x="650" y="570" textAnchor="middle" fontSize="11">
               merge → next Builder
             </text>
           </g>
 
           <g>
             <path
-              d="M 470 358 C 300 358, 240 300, 240 240"
+              d="M 470 438 C 300 438, 240 360, 240 284"
               fill="none"
               stroke={red}
               strokeWidth="2"
               strokeDasharray="6 4"
               markerEnd={`url(#${pid}-arrow)`}
             />
-            <text x="320" y="330" fontSize="11" fontWeight="700" fill={red}>
+            <text x="272" y="408" fontSize="11" fontWeight="700" fill={red}>
               REJECT — send verdict back
             </text>
           </g>
