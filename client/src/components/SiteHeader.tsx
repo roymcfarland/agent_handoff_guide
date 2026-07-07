@@ -56,6 +56,46 @@ const NEXT_THEME: Record<Theme, Theme> = {
   system: "light",
 };
 
+/*
+ * RobotMark — the brand glyph: a lego-minifig-ish robot head. Draws with
+ * currentColor only, so the boxes' existing hover inversion and both
+ * palettes work unchanged. Static SVG: prerender- and hydration-safe.
+ */
+function RobotMark({ className }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="square"
+      xmlns="http://www.w3.org/2000/svg"
+      className={className}
+      aria-hidden
+    >
+      <path d="M9.5 4V2h5v2" />
+      <rect x="4" y="4" width="16" height="15.5" rx="2.5" />
+      <rect
+        x="7.75"
+        y="8.75"
+        width="2.7"
+        height="2.7"
+        fill="currentColor"
+        stroke="none"
+      />
+      <rect
+        x="13.55"
+        y="8.75"
+        width="2.7"
+        height="2.7"
+        fill="currentColor"
+        stroke="none"
+      />
+      <path d="M9 15v1.6M12 15v1.6M15 15v1.6" strokeWidth="1.7" />
+    </svg>
+  );
+}
+
 function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
 
@@ -109,9 +149,9 @@ export function SiteHeader() {
         <a href="#overview" className="flex shrink-0 items-center gap-3 group">
           <span
             aria-hidden
-            className="grid h-9 w-9 place-items-center border border-foreground bg-background font-mono text-[11px] font-bold tracking-widest text-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary"
+            className="grid h-9 w-9 place-items-center border border-foreground bg-background text-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary"
           >
-            AHF
+            <RobotMark className="h-[22px] w-[22px]" />
           </span>
           {/* Wordmark visibility: shown below lg (hamburger mode has room),
               hidden lg → xl where the inline nav is densest, shown again on
@@ -176,9 +216,9 @@ export function SiteHeader() {
                 <div className="flex items-center gap-3">
                   <span
                     aria-hidden
-                    className="grid h-8 w-8 place-items-center border border-foreground bg-background font-mono text-[10px] font-bold tracking-widest text-foreground"
+                    className="grid h-8 w-8 place-items-center border border-foreground bg-background text-foreground"
                   >
-                    AHF
+                    <RobotMark className="h-5 w-5" />
                   </span>
                   <SheetTitle className="font-display text-sm font-bold leading-tight">
                     Agent Handoff Framework
