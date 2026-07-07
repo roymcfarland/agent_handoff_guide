@@ -1,42 +1,42 @@
-# Current Slice: Prompts as files — generated prompts/ directory, llms.txt, content license
+# Current Slice: Prerender — ship the content in the HTML
 
 ## Context
 
-The product is copy-paste prompts, but the prompts exist only as strings inside content.ts — contributors cannot diff them, agents cannot fetch them raw, teams cannot vendor them. This slice makes the library consumable as artifacts: a `prompts/` directory generated FROM content.ts (single source of truth stays in the app), an `llms.txt` so AI assistants can read the methodology canonically, and an explicit license note for the content so companies know they can vendor it.
+All ten sections' prose currently lives in the JS bundle behind one URL; view-source shows an empty root div. Google renders JS, but non-Google scrapers and LLM crawlers never see the content, and the empty source undercuts credibility with exactly this site's audience. This slice prerenders the single page at build time so the full content ships in the HTML — the minimum structural SEO fix, deliberately NOT the per-section-URL split (that would cross PROJECT.md's "single-page reference document" identity and needs its own spec conversation first).
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] A generator script (`scripts/generate-prompts.ts`, run via `tsx`) reads `PROMPT_LIBRARY`, `HANDOFF_TEMPLATE`, `BUILD_VERIFY_MARKDOWN`, and the META prompts from `client/src/lib/content.ts` and writes each to `prompts/<filename>` using the `filename` fields already defined in the library (plus sensible names for the non-library docs). Each file gets a small generated-file header comment (source + regeneration command).
-- [ ] A `pnpm generate:prompts` script is added to package.json; the generated files are committed.
-- [ ] CI gains a zero-diff step: regenerate and `git diff --exit-code prompts/` — the committed files can never drift from content.ts (the framework's own generated-artifact rule).
-- [ ] `client/public/llms.txt` follows the llms.txt convention: site name, one-paragraph summary, then a linked list of the raw prompt files on GitHub and the key sections; served at `https://www.worksmithlabs.com/llms.txt`.
-- [ ] A `prompts/README.md` (also generated or hand-written, but then excluded from the zero-diff glob) states the license for prompt/doc content explicitly (MIT, same as the repo) and shows the one-liner to vendor the set (`curl`/degit example).
-- [ ] README.md gains a short "Use the prompts in your repo" section pointing at `prompts/` and llms.txt.
-- [ ] `pnpm check`, `pnpm build`, and the new zero-diff step pass; CI green on the PR.
+- [ ] The production build emits `dist/public/index.html` containing the rendered page markup (all ten section ids present in the static HTML), while hydration keeps the page fully interactive (nav observer, theme toggle, copy buttons, sheet).
+- [ ] Implementation preference, in order: (a) a small build-time prerender script using `react-dom/server` `renderToString` into the built index.html + `hydrateRoot` in main.tsx; (b) an established Vite prerender/SSG plugin IF it requires no framework migration. No Next.js/Remix migration — that is out of scope.
+- [ ] The theme boot script still runs before first paint (no flash); the prerendered markup must not hard-code a theme class.
+- [ ] The NotFound noindex behavior is preserved; `/` serves prerendered content, unknown paths still render the client-side 404.
+- [ ] `curl` of the local preview/build output shows real content (grep for "Field Notes" and "Advisor triage" in the HTML, not just the bundle).
+- [ ] Hydration produces zero console errors/warnings about mismatches in the dev-tools console on load.
+- [ ] `pnpm check`, `pnpm build`, prompts zero-diff, and the 800-line cap pass; CI green on the PR.
 - Expected test delta: none (repo has no test suite).
 
 ## Constraints & Anti-Goals
 
-- DO NOT hand-write prompt content into `prompts/` — content.ts remains the single source of truth; files are generated.
-- DO NOT add runtime dependencies (tsx is already a devDependency; use node:fs in the script).
-- DO NOT build CLI scaffolding (`bin/`, commander, etc.) — the future CLI lives in a separate repo per PROJECT.md non-goal; a generated docs directory is not a CLI.
-- DO NOT change any prompt text in this slice.
+- DO NOT split into per-section routes/URLs — single page stays single page (PROJECT.md identity; changing it is a spec amendment, not an SEO reflex).
+- DO NOT migrate frameworks or add heavyweight SSG machinery; prefer a ~50-line script over a plugin with config sprawl.
+- DO NOT break the Express self-host fallback (`pnpm start` must still serve the prerendered output correctly).
+- DO NOT regress interactivity (hydration, not a static replacement).
 
 ## Pre-confirmed facts
 
-- Every `PROMPT_LIBRARY` item has a `filename` field (e.g., `prompt-04-builder.md`); there are 11 items across 3 scenarios.
-- `tsx` 4.x is a devDependency; `pnpm dlx` is not needed. TypeScript path alias `@/` is Vite-only — the script should import content.ts by relative path.
-- content.ts is pure data (no browser APIs at module scope) — safe to import from a Node script. Verify this claim before relying on it (the file is ~2,400 lines; grep for `window.` / `document.` at module scope).
-- CI workflow is `.github/workflows/ci.yml`; add the zero-diff step after the build step.
+- Entry: `client/src/main.tsx` uses `createRoot(...).render(...)`; switch to `hydrateRoot` only when the root has prerendered children (feature-detect `root.hasChildNodes()`), so dev mode keeps working unhydrated.
+- Theme contract: the head boot script applies `.dark` pre-paint; ThemeProvider re-derives on mount — prerendered HTML must stay theme-neutral. `readSystemPref` guards `typeof window === "undefined"`; `readStoredTheme` runs in a useState initializer (WILL run during renderToString) but is try/catch-wrapped and falls back to "system" — confirm during build.
+- Browser APIs at render time: IntersectionObserver (SiteHeader) and matchMedia listeners (ThemeContext) live inside useEffect — SSR-safe. The analytics injection in `main.tsx` is module-scope DOM manipulation — the prerender script must import App only, never main.tsx.
+- Vite 7 SSR: either `vite build --ssr` or a post-build node script importing the app works; the script approach matches `scripts/` conventions (tsx already a devDependency).
 
 ## Files explicitly forbidden
 
-- `client/src/**` other than reading `content.ts` — no app-code changes in this slice.
-- `server/**`, `vercel.json`.
+- `client/src/lib/content.ts` — no content changes.
+- `prompts/**`, `client/public/llms.txt` — generated; untouched by this slice.
 
 ## Starting Point
 
-- Relevant files: `scripts/generate-prompts.ts` (NEW), `prompts/**` (NEW, generated), `client/public/llms.txt` (NEW), `package.json`, `.github/workflows/ci.yml`, `README.md`
-- Known issues: none. Queued after: prerender (SEO structural), sheet index + anchor links, byline + FAQ, delight batch.
+- Relevant files: `vite.config.ts`, `client/src/main.tsx`, `scripts/prerender.ts` (NEW, likely), `package.json` (build script)
+- Known issues: none. Queued after: sheet index + anchor links, byline + FAQ, robot-head brand mark in the header (replace the "AHF" box with a lego-like robot head — proof-sheet approach like the favicon), delight batch (checklist persistence, download-as-.md, print stylesheet, reading-progress line).

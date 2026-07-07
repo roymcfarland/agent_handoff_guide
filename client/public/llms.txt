@@ -1,0 +1,35 @@
+# Agent Handoff Framework
+
+> A working guide for shipping real software with AI coding agents: three roles (an Advisor scopes slices and drafts prompts, a Builder executes, a Verifier returns evidence-backed verdicts — a human merges), a three-file document schema (PROJECT.md / CHANGELOG.md / HANDOFF.md), a copy-paste prompt library, and failure-mode guardrails. The site is maintained with the framework it documents; its merged-PR history is the public audit trail.
+
+Site: https://www.worksmithlabs.com/
+Repository: https://github.com/roymcfarland/agent_handoff_guide
+Merged-PR audit trail: https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged
+
+## Prompts (raw markdown, MIT-licensed)
+
+- [Inventory — reverse-engineer PROJECT.md](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/prompt-00-inventory.md): Run first. Read-only pass over the repo to produce a draft PROJECT.md.
+- [Edit Pass Checklist — you, not the LLM](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/edit-pass-checklist.md): Run immediately after Inventory. Treat the draft as evidence to validate, not a source of truth.
+- [PROJECT.md Sanity Check — Verifier, clean context](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/prompt-02-project-md-sanity.md): After your Edit Pass. Ask a different LLM, in a clean chat, to audit the doc against the repo.
+- [First HANDOFF.md — scoping assistant](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/prompt-03-first-handoff-scoping.md): Optional scoping aid when you write the first HANDOFF.md. Forces a small, observable slice.
+- [Builder — executes the slice](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/prompt-04-builder.md): Open each slice with this. Agent reads PROJECT.md and HANDOFF.md, writes code, runs tests.
+- [Closeout — honest self-audit, next HANDOFF.md](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/prompt-05-closeout.md): Run immediately after the Builder finishes. Same session, same context.
+- [Verifier — independent check on the PR](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/prompt-06-verifier.md): After the Builder opens the PR. A DIFFERENT LLM, in a CLEAN context window.
+- [Amendment — minimal scope extension, same slice](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/prompt-06a-amendment.md): Only when needed: the Builder STOPs on a non-allowlisted file, or a Verifier FAIL is a real but small defect. Never for expanding the slice.
+- [Builder PR description — fill-in template](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/builder-pr-description.md): Paste into the PR body when the Builder opens the PR. Fill in the self-audit, scope-of-change, and declared stubs.
+- [Verifier PR comment — fill-in template](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/verifier-report.md): The Verifier posts this as the first comment on the PR, with the verdict line at the top.
+- [Calibration Debrief — propose PROJECT.md edits](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/prompt-07-calibration-debrief.md): Run at the end of the first slice's cycle. Produces a structured proposal, not a rewrite.
+- [HANDOFF.md — slice template](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/handoff-template.md): Copy into your repo as HANDOFF.md and fill per slice.
+- [Build & Verify — drop-in workflow spec](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/build-and-verify.md): Save as docs/build-and-verify.md in your repo.
+- [META-PR Verifier — HANDOFF.md changes (Phase 1)](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/meta-verifier-phase-1.md): When the PR modifies HANDOFF.md itself; the Builder Brief in the PR body is the scope.
+- [META-PR Verifier — PROJECT.md changes (Phase 2)](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/meta-verifier-phase-2.md): When the PR modifies PROJECT.md itself; the Spec Update Proposal is the scope.
+- [Spec-Editor Builder — drafts a Spec Update Proposal](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/meta-spec-editor-builder.md): Turns a calibration or drift finding into a structured PROJECT.md change proposal.
+- [META-PR description — fill-in template](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/meta-builder-pr-description.md): PR body template for spec-doc changes.
+- [META-PR Verifier report — fill-in template](https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/meta-verifier-pr-comment.md): Verdict comment template for spec-doc changes.
+
+## Key concepts
+
+- Verdict triage: a Verifier REJECT is evidence, not a command — first ask whether the cited defect is real or the check itself is defective.
+- Ceremony sizing: the loop is a tool, not a tax — small content-only changes may be built directly, but every gate (PR, ledger, real checks, live verification) holds.
+- After the merge: verify the merge landed, confirm the ledger recorded itself, sweep branches and preview deployments, verify production — the loop closes at the live site, not the merge button.
+- Green is not shipped: code-correct is not behavior-correct; visual changes get a human eyeball on the rendered preview, and anything environment-dependent gets verified in production.

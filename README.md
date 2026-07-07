@@ -39,6 +39,22 @@ Long-form copy and prompt bodies live in **`client/src/lib/content.ts`** so UI c
 
 ---
 
+## Use the prompts in your repo
+
+Every prompt, template, and drop-in doc is emitted as plain markdown in [**`prompts/`**](./prompts/) — MIT-licensed, generated from `content.ts` (CI fails on drift, so the files always match the site).
+
+```bash
+# vendor the whole set, no git history
+npx degit roymcfarland/agent_handoff_guide/prompts prompts/ahf
+
+# or grab one file
+curl -O https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts/prompt-04-builder.md
+```
+
+AI assistants can read the methodology canonically via [`/llms.txt`](https://www.worksmithlabs.com/llms.txt).
+
+---
+
 ## Tech stack (at a glance)
 
 - **React 19** + **Vite 7** (SPA)
