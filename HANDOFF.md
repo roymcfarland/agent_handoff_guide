@@ -1,27 +1,41 @@
-# Current Slice: HANDOFF template upgrade + amendment prompt
+# Current Slice: BuildVerifyDiagram redraw — add the Advisor to the loop figure
 
 ## Context
 
-The site's HANDOFF.md template has four sections (Context, Acceptance Criteria, Constraints, Starting Point). The operating practice adds three elements that prevent the most common mid-build failures: pre-confirmed facts (the Advisor's recon, so the Builder never guesses at file paths or symbols), an explicit forbidden-files list, and an expected test-count delta. Separately, the site never says what to do when a Builder STOPs on a non-allowlisted file — the answer is a minimal amendment, not a re-issued prompt. This slice adds both.
+The Advisor is now a named role everywhere on the site except the loop diagram itself: Fig. 6 still draws HANDOFF.md → Builder → Verifier → Gatekeeper, with the Advisor acknowledged only in the legend, footer, and aria-label (deferred from the role-introduction slice). This is a VISUAL slice: SVG geometry changes, so a human must eyeball the rendered result on the PR preview before merge — code-correct is not render-correct.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] `HANDOFF_TEMPLATE` in `client/src/lib/content.ts` gains three sections after "Constraints & Anti-Goals": **Pre-confirmed facts** (file paths with line numbers, function signatures, the grep results for every symbol being deleted or renamed — with a comment that the Advisor fills this from recon, the Builder never re-derives it), **Files explicitly forbidden** (only files with zero overlap with the allowlist), and an **Expected test delta** line in the Acceptance Criteria area (baseline count ± expected change).
-- [ ] `SCHEMA_FILES`' HANDOFF.md entry's `contains` list is updated to reflect the new sections.
-- [ ] A new **Amendment prompt** is added to the `PROMPT_LIBRARY` under the "Recurring loop" scenario (after the Verifier entry): a short prompt the Advisor sends when the Builder STOPs on a non-allowlisted file or a Verifier FAIL is a real-but-small defect. It authorizes the minimal extension (named file(s), named reason), re-states that the rest of the original scope is unchanged, and forbids using the amendment to expand the slice. Include `whenToUse`/`context` copy consistent with neighboring entries.
-- [ ] The Prompt Library count stat in `client/src/pages/sections/OverviewSection.tsx` ("11 — Library prompts & templates") is updated to 12 — or better, derived from `PROMPT_LIBRARY` so it cannot drift again.
-- [ ] `FIRST_HANDOFF_PROMPT`'s embedded HANDOFF shape stays consistent with the upgraded template (add the new sections to its skeleton).
+- [ ] `client/src/components/BuildVerifyDiagram.tsx` (Fig. 6) shows the Advisor in the flow: upstream, the Advisor scopes/writes HANDOFF.md and drafts both prompts (e.g., an Advisor box or annotated bracket feeding the HANDOFF.md node); downstream, the verdict routes through the Advisor's triage before the gatekeeper's merge call (e.g., a labeled edge or node between the Verifier's verdict and the gatekeeper).
+- [ ] The diagram keeps the notebook style: paper background, grid pattern, ink/red palette from CSS variables, JetBrains Mono / IBM Plex Serif font stacks — consistent with the other figures in `client/src/components/diagrams/`.
+- [ ] Stage tags inside the SVG are updated to match the four-stage model (Advisor is Stage A per `BUILD_VERIFY_STAGES`; the SVG's current "STAGE A/B" labels for Builder/Verifier must not contradict the cards above the figure).
+- [ ] The `aria-label`, legend, and footer remain accurate after the redraw (they already name the Advisor — verify they still match what is drawn).
+- [ ] The viewBox scales to fit the added content; `min-w-[680px]` horizontal-scroll behavior on small screens is preserved.
 - [ ] `pnpm check` passes with zero errors and `pnpm build` succeeds.
+- [ ] The PR body flags explicitly: "Visual slice — human must eyeball the rendered figure on the preview before merge."
 
 ## Constraints & Anti-Goals
 
-- DO NOT change the Builder/Closeout/Verifier prompt bodies except where the HANDOFF shape is quoted inside them.
-- DO NOT add new entries to `SECTIONS`.
+- DO NOT change any other diagram in `client/src/components/diagrams/`.
+- DO NOT change `BUILD_VERIFY_STAGES` or any content.ts export in this slice.
+- DO NOT introduce new colors, gradients, or effects outside the existing token set.
 - DO NOT add dependencies.
+
+## Pre-confirmed facts
+
+- The diagram is `client/src/components/BuildVerifyDiagram.tsx` (~440 lines); it sits at `components/` top level, well under the 800-line cap.
+- Current viewBox: `0 0 920 556`. Builder box at x=100, Verifier box at x=480, both y=118, 340×158. HANDOFF.md node at x=380, y=28, 160×60. Gatekeeper/verdict flow occupies y≈300–556.
+- Colors come from CSS vars: `--ink`, `--ink-soft`, `--red`, `--paper`, `--grid-strong` (already read into consts at the top of the component).
+- `BUILD_VERIFY_STAGES` tags: A=Advisor, B=Builder, C=Verifier, D=You (gatekeeper).
+
+## Files explicitly forbidden
+
+- `client/src/components/diagrams/**` — other figures stay untouched.
+- `client/src/lib/content.ts` — no content changes in this slice.
 
 ## Starting Point
 
-- Relevant files: `client/src/lib/content.ts`, `client/src/pages/sections/OverviewSection.tsx`
-- Known issues: `content.ts` is exempt from the 800-line cap (PROJECT.md Q1). Queued after this slice: BuildVerifyDiagram redraw (visual), credibility track (Field Notes, worked example, title-block footer), hygiene track (CI workflow, dead-component prune, wouter patch removal, theme toggle).
+- Relevant files: `client/src/components/BuildVerifyDiagram.tsx`
+- Known issues: none. Queued after this slice: credibility track (Field Notes, worked example, title-block footer), hygiene track (CI workflow, dead-component prune, wouter patch removal, theme toggle).

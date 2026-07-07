@@ -205,8 +205,10 @@ export const SCHEMA_FILES = [
       "The slice-level scope document. Strict, scoped, and disposable. Contains an explicit definition of done that the agent must satisfy before claiming the slice is complete.",
     contains: [
       "Context — one or two sentences on the slice",
-      "Acceptance Criteria — the definition of done",
+      "Acceptance Criteria — the definition of done, with the expected test delta",
       "Constraints & anti-goals — what NOT to touch",
+      "Pre-confirmed facts — the Advisor's recon: paths, line numbers, symbol greps",
+      "Files explicitly forbidden — zero overlap with the allowlist",
       "Starting point — files and known issues",
     ],
   },
@@ -222,11 +224,21 @@ The agent MUST complete ALL of the following before committing:
 - [ ] Criterion 1 (e.g., "The API endpoint returns a 200 OK with the correct JSON schema.")
 - [ ] Criterion 2 (e.g., "Unit tests for the new endpoint pass.")
 - [ ] Criterion 3
+- Expected test delta: [baseline count] → [expected count] (or "no test changes expected")
 
 ## Constraints & Anti-Goals
 - DO NOT refactor code outside of \`src/api/\`.
 - DO NOT add new npm packages.
 - DO NOT attempt to build the frontend UI for this endpoint.
+
+## Pre-confirmed facts
+Filled by the Advisor from repo recon. The Builder works from these — it does not re-derive them.
+- \`src/api/routes.ts:42\` — \`registerRoutes(app)\` is the only route entry point.
+- \`git grep -n oldHelperName\` → 3 references: \`routes.ts:88\`, \`controllers.ts:14\`, \`tests/routes.test.ts:31\` — all on the allowlist. [Grep every symbol being deleted or renamed; list every file that references it.]
+
+## Files explicitly forbidden
+Only list files with ZERO overlap with the allowlist — a file that is both forbidden and plausibly needed creates a contradiction the Builder cannot resolve.
+- \`src/billing/**\` — adjacent but out of scope for this slice.
 
 ## Starting Point
 - Relevant files: \`src/api/routes.ts\`, \`src/api/controllers.ts\`
@@ -599,6 +611,7 @@ The agent MUST complete ALL of the following before committing:
 - [ ] <observable, testable criterion 1>
 - [ ] <observable, testable criterion 2>
 - [ ] <observable, testable criterion 3>
+- Expected test delta: <baseline> → <expected> (or "no test changes expected")
   (Max 5 criteria. Each must be checkable from the diff, a command,
   an HTTP/UI behavior, or repo evidence.)
 
@@ -607,6 +620,15 @@ The agent MUST complete ALL of the following before committing:
 - DO NOT add new npm/pypi/go dependencies
 - DO NOT refactor unrelated code
 - DO NOT expand the slice
+
+## Pre-confirmed facts
+<filled from repo recon — file paths with line numbers, function
+signatures, grep results for any symbol being touched. For a trivial
+first slice, "None — trivial slice." is a valid entry.>
+
+## Files explicitly forbidden
+<only files with ZERO overlap with the relevant-files list, or
+"none specified">
 
 ## Starting Point
 - Relevant files: <paths>
@@ -719,6 +741,26 @@ If the project has no CI, this local run is the only gate there is. A red gate i
 8. Return a final verdict: APPROVE (all criteria met; any minor, declared, low-risk out-of-scope changes are noted as follow-ups, not blockers) or REJECT (one or more criteria unmet, unverifiable, a red gate, or materially out of scope).
 
 Do not suggest fixes. Do not write code. Your output is a verdict report.`;
+
+export const AMENDMENT_PROMPT = `You are continuing the CURRENT slice. This is a scope amendment — not a new task, and not a re-issued prompt. Everything in the original HANDOFF.md and your original instructions still stands, except for the single change named below.
+
+Amendment type (one of):
+- ALLOWLIST EXTENSION — you stopped on a file outside the allowlist.
+- DEFECT FIX — the Verifier found a real, small defect in the PR.
+
+Authorized change:
+- File(s): <exact path(s) now added to the allowlist, or the file:line of the defect>
+- Reason: <one sentence — why this file must change, or what the defect is>
+- Edit: <the narrowest description of the change now authorized>
+
+Rules:
+1. This amendment authorizes ONLY the change named above. It is not an invitation to revisit, refactor, or "improve" anything else you noticed.
+2. All original Acceptance Criteria, constraints, and forbidden files remain in force.
+3. Apply the change on the SAME branch and push to the SAME PR. Do not open a new PR.
+4. If the amendment reveals yet another file outside the allowlist, STOP and report again. Do not chain expansions on your own authority.
+5. Re-run the project's real checks by their exact script names before pushing.
+
+When done, report: the diff summary of the amendment commit, the check results, and the PR URL.`;
 
 export const CALIBRATION_DEBRIEF_PROMPT = `You just completed the first slice of work on this repository using the
 Agent Handoff Framework. This was a calibration run — the point was not
@@ -1014,7 +1056,7 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
     scenario: "Recurring loop — every slice",
     scenarioTag: "LOOP",
     cadence:
-      "Run in order for each slice. Same Builder session for 04 and 05; different LLM, fresh context, for 06.",
+      "Run in order for each slice. Same Builder session for 04 and 05; different LLM, fresh context, for 06. 06-A only when a STOP or a small real defect calls for it.",
     intro:
       "These are the prompts your team uses on every slice once install is complete: Builder execution → Closeout (same session) → Verifier (different model, clean context window, narrow inputs). PR-body templates mirror what the Verifier grades so claims stay comparable to the diff.",
     items: [
@@ -1059,6 +1101,20 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
           "Reads only the diff and HANDOFF.md. Returns APPROVE / REJECT with evidence. Does not propose fixes.",
         body: VERIFIER_PROMPT,
         toastLabel: "Verifier prompt copied",
+      },
+      {
+        id: "amendment",
+        order: "06-A",
+        kind: "prompt",
+        actor: "builder",
+        filename: "prompt-06a-amendment.md",
+        title: "Amendment — minimal scope extension, same slice",
+        whenToUse:
+          "Only when needed: the Builder STOPs on a non-allowlisted file, or a Verifier FAIL is a real but small defect. Never for expanding the slice.",
+        context:
+          "Send in the same Builder session (or with the PR branch checked out). Names one file set and one reason; everything else in the original scope stands. The alternative — re-issuing the full prompt — throws away work that already passed.",
+        body: AMENDMENT_PROMPT,
+        toastLabel: "Amendment prompt copied",
       },
       {
         id: "builder-pr",
