@@ -192,7 +192,7 @@ export function BuildVerifyDiagram() {
             <rect
               x="100"
               y="118"
-              width="340"
+              width="330"
               height="158"
               rx="2"
               fill={paper}
@@ -225,7 +225,7 @@ export function BuildVerifyDiagram() {
             <line
               x1="120"
               y1="210"
-              x2="420"
+              x2="410"
               y2="210"
               stroke={ink}
               strokeOpacity="0.22"
@@ -244,9 +244,9 @@ export function BuildVerifyDiagram() {
 
           <g>
             <rect
-              x="480"
+              x="490"
               y="118"
-              width="340"
+              width="330"
               height="158"
               rx="2"
               fill={paper}
@@ -254,7 +254,7 @@ export function BuildVerifyDiagram() {
               strokeWidth="1.5"
             />
             <text
-              x="500"
+              x="510"
               y="148"
               fontWeight="700"
               fontSize="11"
@@ -264,7 +264,7 @@ export function BuildVerifyDiagram() {
               STAGE C
             </text>
             <text
-              x="500"
+              x="510"
               y="174"
               fontFamily="'IBM Plex Serif', ui-serif, Georgia, serif"
               fontWeight="700"
@@ -273,11 +273,11 @@ export function BuildVerifyDiagram() {
             >
               Verifier LLM
             </text>
-            <text x="500" y="198" fontSize="11" fill={inkSoft}>
+            <text x="510" y="198" fontSize="11" fill={inkSoft}>
               model B · clean context · no memory
             </text>
             <line
-              x1="500"
+              x1="510"
               y1="210"
               x2="800"
               y2="210"
@@ -285,13 +285,13 @@ export function BuildVerifyDiagram() {
               strokeOpacity="0.22"
               strokeWidth="1"
             />
-            <text x="500" y="230" fontSize="12">
+            <text x="510" y="230" fontSize="12">
               · reads PR body + diff + HANDOFF.md
             </text>
-            <text x="500" y="248" fontSize="12">
+            <text x="510" y="248" fontSize="12">
               · checks each Acceptance Criterion
             </text>
-            <text x="500" y="266" fontSize="12">
+            <text x="510" y="266" fontSize="12">
               · returns verdict + evidence (no fixes)
             </text>
           </g>
@@ -299,29 +299,29 @@ export function BuildVerifyDiagram() {
           {/* Drawn after both boxes so the label can never be covered by them. */}
           <g>
             <line
-              x1="440"
+              x1="430"
               y1="197"
-              x2="478"
+              x2="488"
               y2="197"
               stroke={red}
               strokeWidth="2"
               markerEnd={`url(#${pid}-arrow)`}
             />
             <text
-              x="458"
-              y="178"
+              x="460"
+              y="176"
               textAnchor="middle"
-              fontSize="10"
+              fontSize="11"
               fill={red}
               fontWeight="700"
             >
               PR
             </text>
             <text
-              x="458"
-              y="190"
+              x="460"
+              y="189"
               textAnchor="middle"
-              fontSize="10"
+              fontSize="11"
               fill={red}
               fontWeight="700"
             >
