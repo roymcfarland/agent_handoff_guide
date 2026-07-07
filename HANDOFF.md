@@ -1,37 +1,42 @@
-# Current Slice: Worked example — one slice end-to-end, receipts included
+# Current Slice: Prompts as files — generated prompts/ directory, llms.txt, content license
 
 ## Context
 
-The site now has doctrine (verdict triage, after-merge protocol, ceremony sizing) and evidence (Field Notes) — but a reader still never sees what a good run *looks like*. This slice adds one complete, verifiable worked example: this repo's own PR #36 (the loop-figure redraw), which conveniently exercised the whole system — a HANDOFF with pre-confirmed facts, a build, a pixel check that caught a pre-existing render bug, a human review catch ("the label is not centered"), an Advisor recon that found the real cause (the gap, not the label), and a same-branch amendment. Every artifact is public.
+The product is copy-paste prompts, but the prompts exist only as strings inside content.ts — contributors cannot diff them, agents cannot fetch them raw, teams cannot vendor them. This slice makes the library consumable as artifacts: a `prompts/` directory generated FROM content.ts (single source of truth stays in the app), an `llms.txt` so AI assistants can read the methodology canonically, and an explicit license note for the content so companies know they can vendor it.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] A new `WORKED_EXAMPLE` export in `client/src/lib/content.ts`: a stepwise narrative (6–8 steps) of PR #36 — (1) the HANDOFF scope with pre-confirmed geometry; (2) the build; (3) verification beyond green checks (text-fit measured, full-figure screenshot) catching the hidden "PR opened" label; (4) the human review catch on the preview; (5) the triage — first fix treated the symptom (nudge), reviewer pushed back, recon found the cause (a 40px gap holding a 36px label); (6) the amendment on the same branch, no re-issued slice; (7) merge + live verification. Each step names which doctrine block it exercised (pre-confirmed facts, green-is-not-shipped, verdict triage, amendment prompt, after-merge protocol).
-- [ ] Each step links its receipt: the PR, the specific commits, or the review comments (all public on github.com/roymcfarland/agent_handoff_guide/pull/36).
-- [ ] Renders as a subsection of Field Notes (no new nav section — it is the notes' capstone), in the notebook idiom, after the ten note cards.
-- [ ] The framing is honest about imperfection: the example's value is that the first fix was wrong and the loop caught it — do not sand that off.
-- [ ] `pnpm check` passes, `pnpm build` succeeds, CI green on the PR.
+- [ ] A generator script (`scripts/generate-prompts.ts`, run via `tsx`) reads `PROMPT_LIBRARY`, `HANDOFF_TEMPLATE`, `BUILD_VERIFY_MARKDOWN`, and the META prompts from `client/src/lib/content.ts` and writes each to `prompts/<filename>` using the `filename` fields already defined in the library (plus sensible names for the non-library docs). Each file gets a small generated-file header comment (source + regeneration command).
+- [ ] A `pnpm generate:prompts` script is added to package.json; the generated files are committed.
+- [ ] CI gains a zero-diff step: regenerate and `git diff --exit-code prompts/` — the committed files can never drift from content.ts (the framework's own generated-artifact rule).
+- [ ] `client/public/llms.txt` follows the llms.txt convention: site name, one-paragraph summary, then a linked list of the raw prompt files on GitHub and the key sections; served at `https://www.worksmithlabs.com/llms.txt`.
+- [ ] A `prompts/README.md` (also generated or hand-written, but then excluded from the zero-diff glob) states the license for prompt/doc content explicitly (MIT, same as the repo) and shows the one-liner to vendor the set (`curl`/degit example).
+- [ ] README.md gains a short "Use the prompts in your repo" section pointing at `prompts/` and llms.txt.
+- [ ] `pnpm check`, `pnpm build`, and the new zero-diff step pass; CI green on the PR.
 - Expected test delta: none (repo has no test suite).
 
 ## Constraints & Anti-Goals
 
-- DO NOT add a new `SECTIONS` entry (the header is at capacity below 2xl; this lives inside Field Notes).
-- DO NOT dramatize — spec voice, verifiable claims only.
-- DO NOT add dependencies.
+- DO NOT hand-write prompt content into `prompts/` — content.ts remains the single source of truth; files are generated.
+- DO NOT add runtime dependencies (tsx is already a devDependency; use node:fs in the script).
+- DO NOT build CLI scaffolding (`bin/`, commander, etc.) — the future CLI lives in a separate repo per PROJECT.md non-goal; a generated docs directory is not a CLI.
+- DO NOT change any prompt text in this slice.
 
 ## Pre-confirmed facts
 
-- The full artifact trail is public: PR #36 (branch `feat/diagram-advisor`), its three commits (redraw; draw-order fix + first centering attempt; gap-widening fix), and two Advisor comments documenting the triage.
-- The Field Notes section component is `client/src/pages/sections/FieldNotesSection.tsx`; the section id is `field-notes`.
-- Note 02 in `FIELD_NOTES` already references the hidden-label bug — the worked example should link to it as "note 02, in full" rather than repeating it.
+- Every `PROMPT_LIBRARY` item has a `filename` field (e.g., `prompt-04-builder.md`); there are 11 items across 3 scenarios.
+- `tsx` 4.x is a devDependency; `pnpm dlx` is not needed. TypeScript path alias `@/` is Vite-only — the script should import content.ts by relative path.
+- content.ts is pure data (no browser APIs at module scope) — safe to import from a Node script. Verify this claim before relying on it (the file is ~2,400 lines; grep for `window.` / `document.` at module scope).
+- CI workflow is `.github/workflows/ci.yml`; add the zero-diff step after the build step.
 
 ## Files explicitly forbidden
 
-- `client/src/components/SiteHeader.tsx`, `client/index.html`, `server/**`, `.github/**`.
+- `client/src/**` other than reading `content.ts` — no app-code changes in this slice.
+- `server/**`, `vercel.json`.
 
 ## Starting Point
 
-- Relevant files: `client/src/lib/content.ts`, `client/src/pages/sections/FieldNotesSection.tsx`
-- Known issues: none. Queued after: express 5 migration (drops the qs/path-to-regexp security overrides), small SEO/a11y batch (sitemap + robots line, viewport maximum-scale removal, VITE_SITE_URL build guard), delight batch (Edit Pass checklist persistence, per-card download-as-.md, print stylesheet).
+- Relevant files: `scripts/generate-prompts.ts` (NEW), `prompts/**` (NEW, generated), `client/public/llms.txt` (NEW), `package.json`, `.github/workflows/ci.yml`, `README.md`
+- Known issues: none. Queued after: prerender (SEO structural), sheet index + anchor links, byline + FAQ, delight batch.

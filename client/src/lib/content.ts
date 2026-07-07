@@ -2312,3 +2312,99 @@ export const FIELD_NOTES = [
     },
   },
 ] as const;
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* FIELD NOTES — WORKED EXAMPLE                                                */
+/* One slice of this repo told end to end, receipts included. The capstone:    */
+/* the first fix was wrong and the loop caught it.                             */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+export const WORKED_EXAMPLE = {
+  eyebrow: "WORKED EXAMPLE · PR #36",
+  headline: "One slice, end to end — including the wrong first fix.",
+  intro:
+    "Note 02's bug, in full. This is a real slice from this repo's own history: the redraw of the loop figure two sections up. Every step below links the public artifact it produced and names the doctrine it exercised. Its value is not that the run was clean — it is that the first fix was wrong, and the loop caught it before production did.",
+  prUrl: "https://github.com/roymcfarland/agent_handoff_guide/pull/36",
+  steps: [
+    {
+      n: "01",
+      doctrine: "Pre-confirmed facts",
+      title: "The scope pinned the geometry before any build",
+      body: "The HANDOFF for the slice carried the figure's exact state as pre-confirmed facts — viewBox 920×556, every box coordinate, the color-token names, the stage-tag mapping — so the Builder started grounded instead of re-deriving the file.",
+      receipt: {
+        label: "Slice scope, quoted in the PR body",
+        href: "https://github.com/roymcfarland/agent_handoff_guide/pull/36",
+      },
+    },
+    {
+      n: "02",
+      doctrine: "Ceremony sizing",
+      title: "Built in direct-execution mode, gates held",
+      body: "A single-file SVG edit is exactly the shape the ceremony-sizing block permits to skip the round-trip: the Advisor built it directly — on a branch, as a PR, with typecheck and build run before every push. The round-trip was dropped; no gate was.",
+      receipt: {
+        label: "Commit dc5c371 — the redraw",
+        href: "https://github.com/roymcfarland/agent_handoff_guide/commit/dc5c371",
+      },
+    },
+    {
+      n: "03",
+      doctrine: "Green is not shipped",
+      title: "Verification beyond green checks caught a dormant bug",
+      body: "Typecheck and build passed. Then every new string was measured against its box with getComputedTextLength, and a full-figure screenshot was taken — which exposed that the figure's 'PR opened' label had been half-hidden under an adjacent box since the day it first shipped. Code review had passed it for months, because in the code the label is plainly there.",
+      receipt: {
+        label: "Fix documented in the same commit",
+        href: "https://github.com/roymcfarland/agent_handoff_guide/commit/dc5c371",
+      },
+    },
+    {
+      n: "04",
+      doctrine: "The gatekeeper's eyeball",
+      title: "The human caught what the measurements graded as fine",
+      body: "On the preview, the gatekeeper flagged the repositioned label: not centered between the two boxes. The numbers said centered — the label sat at the mathematical midpoint. The render read otherwise. For visual work, the human eyeball on the rendered preview is the load-bearing gate, and it fired.",
+      receipt: {
+        label: "First fix, on the same branch",
+        href: "https://github.com/roymcfarland/agent_handoff_guide/commit/3a9d7d4",
+      },
+    },
+    {
+      n: "05",
+      doctrine: "Verdict triage",
+      title: "The first fix treated the symptom — and was wrong",
+      body: "The label was redrawn above the boxes and nudged left. The gatekeeper pushed back: still not centered, and likely invisible at mobile scale. The correct move at that point was not a third nudge — it was triage: is the defect in the label, or in the assumption behind every fix so far?",
+      receipt: {
+        label: "The Advisor's first-fix note",
+        href: "https://github.com/roymcfarland/agent_handoff_guide/pull/36#issuecomment-4907067420",
+      },
+    },
+    {
+      n: "06",
+      doctrine: "Recon before re-scoping",
+      title: "Recon found the real cause: the gap, not the label",
+      body: "Measurement, not eyeballing: the gap between the boxes was 40px and the label 36px — two pixels of air per side can never read as centered, and at the mobile render those margins vanish entirely. The fix widened the gap itself to 60px, re-measured the label to symmetric 10px margins, and proved it with a dual-scale screenshot — desktop and the 680px mobile floor side by side.",
+      receipt: {
+        label: "Commit 60e7a33 + the recon note",
+        href: "https://github.com/roymcfarland/agent_handoff_guide/pull/36#issuecomment-4907125812",
+      },
+    },
+    {
+      n: "07",
+      doctrine: "Amendment, not re-issue",
+      title: "Every fix landed on the same branch, same PR",
+      body: "Three commits, one review surface. No re-issued slice, no second PR, no thrown-away work — the amendments extended the original scope by exactly the named change each time.",
+      receipt: {
+        label: "The full three-commit history",
+        href: "https://github.com/roymcfarland/agent_handoff_guide/pull/36/commits",
+      },
+    },
+    {
+      n: "08",
+      doctrine: "After the merge",
+      title: "Merged, verified on main, then verified in production",
+      body: "After the gatekeeper merged: main synced and the merge asserted from the repo, the branch pruned only after that check, and the deployed bundle probed for the new figure. The loop closed at the live site, not at the merge button.",
+      receipt: {
+        label: "PR #36 — merged",
+        href: "https://github.com/roymcfarland/agent_handoff_guide/pull/36",
+      },
+    },
+  ],
+} as const;
