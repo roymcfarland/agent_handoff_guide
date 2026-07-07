@@ -8,6 +8,13 @@ import {
   DiagramFigureLegend,
   ReferenceArchitectureDiagram,
 } from "@/components/diagrams";
+import { PROMPT_LIBRARY } from "@/lib/content";
+
+const PROMPT_COUNT = PROMPT_LIBRARY.reduce(
+  (total, scenario) => total + scenario.items.length,
+  0,
+);
+
 export default function OverviewSection() {
   return (
     <section
@@ -84,7 +91,7 @@ export default function OverviewSection() {
                 v: "Artifacts — PROJECT.md, CHANGELOG.md, HANDOFF.md (each with one job)",
               },
               {
-                k: "11",
+                k: String(PROMPT_COUNT),
                 v: "Library prompts & templates — install, recurring loop, recovery",
               },
               {
