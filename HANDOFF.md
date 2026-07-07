@@ -1,28 +1,27 @@
-# Current Slice: Introduce the Advisor as a named third role across site content
+# Current Slice: "Interpreting verdicts" content block + two new failure modes
 
 ## Context
 
-The methodology this site documents has evolved from a dual-agent (Builder / Verifier) framing into a three-role model: an **Advisor** who scopes slices, does the recon, drafts grounded prompts, interprets verdicts, and runs post-merge housekeeping. PROJECT.md's Purpose section has been amended to authorize this (spec-amendment PR merged first, per the framework's own rule that a feature crossing the documented scope needs its docs-amendment PR before the feature PR). This slice updates every site surface that encodes the role model.
+The Advisor role is now named across the site (previous slice). This slice adds the Advisor's signature skill — reading verdicts critically — which the site currently lacks entirely: the only REJECT guidance today is the two-REJECTs escalation rule. Verifiers can FAIL on spurious grounds, and the framework needs to say so out loud.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] `BUILD_VERIFY_STAGES` in `client/src/lib/content.ts` presents four roles — Advisor, Builder, Verifier, Gatekeeper — with the Advisor described as: scopes the slice, greps the repo to pre-confirm facts (file paths, line numbers, symbols), drafts the builder and verifier prompts, interprets the verdict, and runs post-merge housekeeping. The Advisor does not write the code and does not grade the PR.
-- [ ] The roles table inside `BUILD_VERIFY_MARKDOWN` (the drop-in `docs/build-and-verify.md` spec) has four rows: Advisor / Builder / Verifier / Gatekeeper, each with accurate Reads and Writes columns.
-- [ ] The "Non-negotiable rules" list in `BUILD_VERIFY_MARKDOWN` gains a role-purity rule: the Advisor drafts prompts and interprets verdicts only — it does not build, does not verify, and does not merge on its own judgment.
-- [ ] The Overview stat card "2 — Models per slice" in `client/src/pages/sections/OverviewSection.tsx` is updated to reflect the three-role model (e.g., "3 — Roles per slice — Advisor drafts, Builder executes, Verifier grades").
-- [ ] The `BuildVerifyDiagram` legend text and `aria-label` in `client/src/components/BuildVerifyDiagram.tsx` acknowledge the Advisor's position (drafts the handoff upstream of the Builder; interprets the verdict for the gatekeeper downstream) WITHOUT changing SVG geometry. A full diagram redraw is a separate, later visual slice.
+- [ ] A new exported content block in `client/src/lib/content.ts` (e.g., `VERDICT_TRIAGE`) covering: (1) the triage question — is the cited file:line a real defect, or is the check itself defective?; (2) common spurious-FAIL shapes — a criterion the Builder was never given, an occurrence-count the recon undercounted, a shape check on behavior-correct code, a grep that cannot match across line wraps; (3) the honest path when the FAIL is a prompt bug — merge anyway with a brief note, and fix the prompt template, not the code; (4) red-CI triage — reproduce locally on the exact commit and force a no-cache rebuild before blaming the diff; (5) "PR is up" / "merged" are claims to verify against the artifact, not facts.
+- [ ] The block renders in the Build & Verify section (`client/src/pages/sections/BuildVerifySection.tsx`), positioned between the loop diagram/principles and the escalation rule — verdict triage happens BEFORE the two-REJECT escalation applies.
+- [ ] `FAILURE_MODES` gains two cards in the existing voice: "The check was wrong, not the code" (a REJECT can be a defect in the verifier prompt; triage before re-running the Builder) and "A criterion the Builder never saw" (any verifier PASS criterion absent from the builder's instructions is a guaranteed spurious REJECT; mirror every check back into the builder prompt).
+- [ ] The escalation-rule copy is untouched except, if needed, one linking sentence acknowledging triage comes first.
 - [ ] `pnpm check` passes with zero errors and `pnpm build` succeeds.
 
 ## Constraints & Anti-Goals
 
-- DO NOT redraw or restructure the `BuildVerifyDiagram` SVG (geometry, boxes, arrows). Text-level legend/aria updates only.
-- DO NOT add new entries to `SECTIONS` (no new nav sections in this slice).
-- DO NOT rewrite the operative bodies of the library prompts (Builder, Closeout, Verifier, etc.); role-attribution copy in section intros and stage descriptions only.
-- DO NOT add dependencies or touch files outside the three listed below plus this HANDOFF.md.
+- DO NOT add new entries to `SECTIONS` (no new nav section — this lives inside Build & Verify).
+- DO NOT modify the operative bodies of the library prompts in this slice.
+- DO NOT add dependencies.
+- DO NOT restyle existing components; reuse the section's existing card/list patterns.
 
 ## Starting Point
 
-- Relevant files: `client/src/lib/content.ts`, `client/src/pages/sections/OverviewSection.tsx`, `client/src/components/BuildVerifyDiagram.tsx`
-- Known issues: `content.ts` is exempt from the 800-line cap (PROJECT.md Q1). The diagram redraw, the "Interpreting verdicts" content block, the "After the merge" block, and the ceremony-sizing doctrine are separate queued slices — do not fold them in here.
+- Relevant files: `client/src/lib/content.ts`, `client/src/pages/sections/BuildVerifySection.tsx`
+- Known issues: `content.ts` is exempt from the 800-line cap (PROJECT.md Q1). Queued after this slice: "After the merge" block (Operate section), ceremony-sizing doctrine, HANDOFF template upgrade, BuildVerifyDiagram redraw (visual).

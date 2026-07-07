@@ -1116,21 +1116,27 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
 export const BUILD_VERIFY_STAGES = [
   {
     tag: "A",
-    actor: "Builder LLM",
-    role: "Executes the slice",
-    body: "Reads PROJECT.md and HANDOFF.md. Writes code that satisfies the Acceptance Criteria. Runs the Closeout prompt: appends to CHANGELOG.md, drafts the next HANDOFF.md, commits to a feature branch, and opens a PR.",
+    actor: "Advisor",
+    role: "Scopes the slice, grounds the prompts",
+    body: "Does the recon before any prompt exists: greps the repo to pre-confirm facts — file paths, line numbers, every reference to a symbol being touched — and drafts the Builder and Verifier prompts against that evidence. When the verdict returns, the Advisor interprets it (real defect, or a defect in the check itself?) and runs the post-merge housekeeping. The Advisor does not write the code and does not grade the PR.",
   },
   {
     tag: "B",
+    actor: "Builder LLM",
+    role: "Executes the slice",
+    body: "Reads PROJECT.md and the HANDOFF.md the Advisor scoped. Writes code that satisfies the Acceptance Criteria. Runs the Closeout prompt: appends to CHANGELOG.md, drafts the next HANDOFF.md, commits to a feature branch, and opens a PR.",
+  },
+  {
+    tag: "C",
     actor: "Verifier LLM",
     role: "Independent check",
     body: "A different model in a fresh context window. Reads the PR description, PR diff, and base-version HANDOFF.md. Returns APPROVE or REJECT with evidence per Acceptance Criterion. Does not write code.",
   },
   {
-    tag: "C",
+    tag: "D",
     actor: "You (gatekeeper)",
     role: "Merges or returns",
-    body: "Reviews the Verifier's verdict. APPROVE → merge to main and run the next Builder; file a follow-up issue for any minor, out-of-scope cleanup the Verifier noted. REJECT → reopen the slice and send the verdict back to the Builder.",
+    body: "Reviews the Verifier's verdict — weighed against the Advisor's read on whether any FAIL is a real defect or a defect in the check itself. APPROVE → merge to main and run the next Builder; file a follow-up issue for any minor, out-of-scope cleanup the Verifier noted. REJECT → reopen the slice and send the verdict back to the Builder.",
   },
 ] as const;
 
@@ -1206,9 +1212,9 @@ export const ESCALATION_RULE = {
 
 export const BUILD_VERIFY_MARKDOWN = `# Build & Verify — Two-LLM Workflow
 
-A disciplined loop for shipping with AI agents: one LLM writes the code,
-a *different* LLM verifies it in a clean context window before the next
-slice runs.
+A disciplined loop for shipping with AI agents: an Advisor scopes each
+slice and drafts both prompts, one LLM writes the code, and a *different*
+LLM verifies it in a clean context window before the next slice runs.
 
 ---
 
@@ -1266,11 +1272,17 @@ formats keep that signal usable.
 
 ## Roles
 
-| Role          | Model                  | Reads                         | Writes                          |
-|---------------|------------------------|-------------------------------|----------------------------------|
-| Builder       | LLM A (e.g., Claude)   | PROJECT.md, HANDOFF.md, code  | Code, CHANGELOG.md, HANDOFF.md  |
-| Verifier      | LLM B (e.g., GPT)      | PR body, diff, HANDOFF.md     | Verdict report only              |
-| Gatekeeper    | Human (you)            | Verdict + diff                | Merge / reject / revise decision |
+| Role          | Model                  | Reads                             | Writes                               |
+|---------------|------------------------|-----------------------------------|--------------------------------------|
+| Advisor       | LLM C — or you         | Repo (recon), PROJECT.md, verdicts | HANDOFF.md, Builder/Verifier prompts |
+| Builder       | LLM A (e.g., Claude)   | PROJECT.md, HANDOFF.md, code      | Code, CHANGELOG.md, HANDOFF.md       |
+| Verifier      | LLM B (e.g., GPT)      | PR body, diff, HANDOFF.md         | Verdict report only                  |
+| Gatekeeper    | Human (you)            | Verdict + diff                    | Merge / reject / revise decision     |
+
+The Advisor can be a third model, a separate session, or the human wearing
+a different hat. The "two-LLM" separation refers to Builder and Verifier —
+those two must never share a context. The Advisor drafts the prompts both
+of them run, and interprets the verdict that comes back.
 
 ---
 
@@ -1290,12 +1302,18 @@ formats keep that signal usable.
 5. **One slice in flight at a time.** Do not run a new Builder until the
    previous slice has been merged or rejected. Parallel slices defeat the
    point of a serialized handoff.
+6. **Role purity for the Advisor.** The Advisor drafts prompts, interprets
+   verdicts, and runs post-merge housekeeping — it does not build, does not
+   verify, and does not merge on its own judgment. The moment the Advisor
+   starts grading diffs or pushing commits, the independence of the other
+   two lanes is gone.
 
 ---
 
 ## Operating cadence
 
-1. **Open a slice.** You write (or the previous Builder drafts) HANDOFF.md.
+1. **Open a slice.** The Advisor scopes HANDOFF.md — grounded in repo recon
+   — or you write it; the previous Builder may have drafted a starting point.
 2. **Run the Builder.** Use Builder prompt + Closeout prompt.
 3. **Run the Verifier.** Different model, clean context, Verifier prompt.
 4. **Gatekeeper decides.** Merge, reject, or merge with follow-up.
