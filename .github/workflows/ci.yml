@@ -32,6 +32,11 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Prompts stay generated (zero drift)
+        run: |
+          pnpm generate:prompts
+          git diff --exit-code prompts/ client/public/llms.txt
+
       - name: 800-line cap (PROJECT.md Q1)
         run: |
           set -euo pipefail

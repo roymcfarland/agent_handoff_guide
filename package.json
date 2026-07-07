@@ -23,6 +23,7 @@
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
     "format": "prettier --write .",
+    "generate:prompts": "tsx scripts/generate-prompts.ts",
     "vercel:deploy": "pnpm dlx vercel@latest deploy --yes",
     "vercel:deploy:prod": "pnpm dlx vercel@latest deploy --prod --yes"
   },
