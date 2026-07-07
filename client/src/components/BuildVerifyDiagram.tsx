@@ -243,38 +243,6 @@ export function BuildVerifyDiagram() {
           </g>
 
           <g>
-            <line
-              x1="440"
-              y1="197"
-              x2="540"
-              y2="197"
-              stroke={red}
-              strokeWidth="2"
-              markerEnd={`url(#${pid}-arrow)`}
-            />
-            <text
-              x="460"
-              y="178"
-              textAnchor="middle"
-              fontSize="10.5"
-              fill={red}
-              fontWeight="700"
-            >
-              PR
-            </text>
-            <text
-              x="460"
-              y="190"
-              textAnchor="middle"
-              fontSize="10.5"
-              fill={red}
-              fontWeight="700"
-            >
-              opened
-            </text>
-          </g>
-
-          <g>
             <rect
               x="480"
               y="118"
@@ -325,6 +293,39 @@ export function BuildVerifyDiagram() {
             </text>
             <text x="500" y="266" fontSize="12">
               · returns verdict + evidence (no fixes)
+            </text>
+          </g>
+
+          {/* Drawn after both boxes so the label can never be covered by them. */}
+          <g>
+            <line
+              x1="440"
+              y1="197"
+              x2="478"
+              y2="197"
+              stroke={red}
+              strokeWidth="2"
+              markerEnd={`url(#${pid}-arrow)`}
+            />
+            <text
+              x="458"
+              y="178"
+              textAnchor="middle"
+              fontSize="10"
+              fill={red}
+              fontWeight="700"
+            >
+              PR
+            </text>
+            <text
+              x="458"
+              y="190"
+              textAnchor="middle"
+              fontSize="10"
+              fill={red}
+              fontWeight="700"
+            >
+              opened
             </text>
           </g>
 
