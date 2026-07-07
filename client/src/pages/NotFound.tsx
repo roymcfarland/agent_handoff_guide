@@ -8,12 +8,26 @@
  * page reads as part of the same document in both light and dark modes.
  */
 
+import { useEffect } from "react";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useLocation } from "wouter";
 import { ArrowLeft } from "lucide-react";
 
 export default function NotFound() {
   const [, setLocation] = useLocation();
+
+  // The SPA rewrite serves every path with HTTP 200, so unknown URLs are
+  // soft-404s to crawlers. A rendered noindex keeps them out of the index
+  // until a prerender pass can return real statuses.
+  useEffect(() => {
+    const meta = document.createElement("meta");
+    meta.name = "robots";
+    meta.content = "noindex";
+    document.head.appendChild(meta);
+    return () => {
+      document.head.removeChild(meta);
+    };
+  }, []);
 
   return (
     <div className="graph-paper relative flex min-h-screen flex-col">
