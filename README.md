@@ -1,6 +1,6 @@
 # Agent Handoff Framework
 
-**A dual-agent playbook for shipping real software with AI coding agents** — not another “prompt tips” page, but a single reference you can install on a repo: **document schema**, **copy-paste prompts** (builder, closeout, verifier), and **failure-mode guardrails** so merges stay human-gated and evidence-backed.
+**A three-role playbook (Advisor / Builder / Verifier) for shipping real software with AI coding agents** — not another “prompt tips” page, but a single reference you can install on a repo: **document schema**, **copy-paste prompts** (builder, closeout, verifier), and **failure-mode guardrails** so merges stay human-gated and evidence-backed.
 
 This repository is the **open-source** source for the **[Worksmith Labs](https://worksmithlabs.com)** reference site. The _methodology_ is the product story; the _code_ is MIT-licensed and yours to fork. The live experience is built and maintained by **[Brightline Labs](https://brightline.io)**.
 
@@ -52,8 +52,8 @@ Full architecture, design language (“Engineer’s Notebook”), **non-goals**,
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) **20+** (recommended)
-- [pnpm](https://pnpm.io/) **9+** (repo pins via `packageManager`; Corepack-friendly)
+- [Node.js](https://nodejs.org/) **22+** (pinned via `engines` and `.nvmrc`)
+- [pnpm](https://pnpm.io/) **10+** (repo pins via `packageManager`; Corepack-friendly)
 
 ---
 
@@ -112,7 +112,6 @@ For `pnpm start`, `NODE_ENV=production` applies and Express serves **`dist/publi
 | `client/src/components/diagrams/` | SVG figures and shared diagram shell                  |
 | `client/public/og.jpg`            | Social preview image (Open Graph / Twitter, 1200×630) |
 | `server/index.ts`                 | Static files + SPA fallback                           |
-| `shared/`                         | Shared types/modules                                  |
 | `dist/public/`                    | Vite build output (gitignored)                        |
 
 ---

@@ -1,41 +1,28 @@
-# Current Slice: Split Home.tsx into per-section components
+# Current Slice: Introduce the Advisor as a named third role across site content
 
-## Goal
-Refactor `client/src/pages/Home.tsx` (~1,815 lines) by extracting its nine distinct content sections into separate React components under `client/src/pages/sections/`. The goal is to bring all files in `client/src/pages/` under the 800-line cap defined in `PROJECT.md`, while maintaining exactly zero visual or functional changes to the live site.
+## Context
 
-## Scope
-**In scope:**
-- Creating a new directory: `client/src/pages/sections/`
-- Extracting the nine `<section>` blocks from `Home.tsx` into nine new `.tsx` files.
-- Updating `Home.tsx` to import and render these nine components in the exact same order.
-- Moving the relevant `import` statements from `content.ts` and `components/` out of `Home.tsx` and into the specific section files that actually use them.
+The methodology this site documents has evolved from a dual-agent (Builder / Verifier) framing into a three-role model: an **Advisor** who scopes slices, does the recon, drafts grounded prompts, interprets verdicts, and runs post-merge housekeeping. PROJECT.md's Purpose section has been amended to authorize this (spec-amendment PR merged first, per the framework's own rule that a feature crossing the documented scope needs its docs-amendment PR before the feature PR). This slice updates every site surface that encodes the role model.
 
-**Out of scope:**
-- Modifying `client/src/lib/content.ts` (this file is explicitly exempted from the 800-line rule per `PROJECT.md` updates pending this slice).
-- Changing any CSS classes, layout structures, or text content.
-- Refactoring the `<SiteHeader>` or `<SiteFooter>` components.
-- Modifying any files in `client/src/components/diagrams/`.
+## Acceptance Criteria (Definition of Done)
 
-## Acceptance Criteria
-1. **File Size:** `client/src/pages/Home.tsx` must be under 200 lines. No new file in `client/src/pages/sections/` may exceed 800 lines.
-2. **Zero Visual Diff:** The rendered HTML structure of the `<main id="main-content">` block must be identical to the pre-refactor state. All `id` attributes (e.g., `id="overview"`, `id="overview-heading"`) must be preserved exactly, as they are targets for the table of contents navigation.
-3. **Build Success:** `pnpm check` (TypeScript) must pass with zero errors. `pnpm build` must succeed.
-4. **Import Hygiene:** `Home.tsx` must no longer import the massive list of constants from `@/lib/content`. Each section component must import only the specific constants it needs.
+The agent MUST complete ALL of the following before committing:
 
-## Files Touched
-- `client/src/pages/Home.tsx` (modified heavily)
-- `client/src/pages/sections/OverviewSection.tsx` (new)
-- `client/src/pages/sections/DiagnosisSection.tsx` (new)
-- `client/src/pages/sections/SchemaSection.tsx` (new)
-- `client/src/pages/sections/InstallSection.tsx` (new)
-- `client/src/pages/sections/PromptLibrarySection.tsx` (new)
-- `client/src/pages/sections/BuildVerifySection.tsx` (new)
-- `client/src/pages/sections/PhaseTwoSection.tsx` (new)
-- `client/src/pages/sections/MetaPRsSection.tsx` (new)
-- `client/src/pages/sections/ReferencesSection.tsx` (new)
+- [ ] `BUILD_VERIFY_STAGES` in `client/src/lib/content.ts` presents four roles — Advisor, Builder, Verifier, Gatekeeper — with the Advisor described as: scopes the slice, greps the repo to pre-confirm facts (file paths, line numbers, symbols), drafts the builder and verifier prompts, interprets the verdict, and runs post-merge housekeeping. The Advisor does not write the code and does not grade the PR.
+- [ ] The roles table inside `BUILD_VERIFY_MARKDOWN` (the drop-in `docs/build-and-verify.md` spec) has four rows: Advisor / Builder / Verifier / Gatekeeper, each with accurate Reads and Writes columns.
+- [ ] The "Non-negotiable rules" list in `BUILD_VERIFY_MARKDOWN` gains a role-purity rule: the Advisor drafts prompts and interprets verdicts only — it does not build, does not verify, and does not merge on its own judgment.
+- [ ] The Overview stat card "2 — Models per slice" in `client/src/pages/sections/OverviewSection.tsx` is updated to reflect the three-role model (e.g., "3 — Roles per slice — Advisor drafts, Builder executes, Verifier grades").
+- [ ] The `BuildVerifyDiagram` legend text and `aria-label` in `client/src/components/BuildVerifyDiagram.tsx` acknowledge the Advisor's position (drafts the handoff upstream of the Builder; interprets the verdict for the gatekeeper downstream) WITHOUT changing SVG geometry. A full diagram redraw is a separate, later visual slice.
+- [ ] `pnpm check` passes with zero errors and `pnpm build` succeeds.
 
-## Verification Steps
-1. Run `pnpm check` to verify TypeScript is happy with the new component boundaries and prop types (if any).
-2. Run `pnpm build` to verify Vite can resolve all the new imports.
-3. Check the line count of `Home.tsx` and the largest new file (`PhaseTwoSection.tsx`) to confirm the 800-line rule is satisfied.
-4. (Manual/Visual) Start the dev server (`pnpm dev`), open the site, and verify that clicking every link in the left-hand navigation still scrolls to the correct section, proving the `id` attributes survived the extraction.
+## Constraints & Anti-Goals
+
+- DO NOT redraw or restructure the `BuildVerifyDiagram` SVG (geometry, boxes, arrows). Text-level legend/aria updates only.
+- DO NOT add new entries to `SECTIONS` (no new nav sections in this slice).
+- DO NOT rewrite the operative bodies of the library prompts (Builder, Closeout, Verifier, etc.); role-attribution copy in section intros and stage descriptions only.
+- DO NOT add dependencies or touch files outside the three listed below plus this HANDOFF.md.
+
+## Starting Point
+
+- Relevant files: `client/src/lib/content.ts`, `client/src/pages/sections/OverviewSection.tsx`, `client/src/components/BuildVerifyDiagram.tsx`
+- Known issues: `content.ts` is exempt from the 800-line cap (PROJECT.md Q1). The diagram redraw, the "Interpreting verdicts" content block, the "After the merge" block, and the ceremony-sizing doctrine are separate queued slices — do not fold them in here.

@@ -6,7 +6,7 @@
 
 ## Purpose
 
-`agent_handoff_guide` is the source repository for the Agent Handoff Framework reference site, published by **Worksmith Labs** at [worksmithlabs.com](https://worksmithlabs.com). The site documents a dual-agent (Builder / Verifier) workflow for shipping software with AI coding agents — the document schema, the prompt library, and the failure-mode guardrails — as a single-page, copy-paste-friendly reference. The codebase is open-source under MIT (© 2026 Roy McFarland) and is intended as an open thought-leadership artifact: the *methodology* is the brand asset, the *implementation* is freely forkable. The site is built and maintained by [Brightline Labs](https://brightline.io), Roy's dev agency. This is not a SaaS product, a hosted service, or a multi-user application; it has no backend, no accounts, and no paid tiers.
+`agent_handoff_guide` is the source repository for the Agent Handoff Framework reference site, published by **Worksmith Labs** at [worksmithlabs.com](https://worksmithlabs.com). The site documents a three-role workflow for shipping software with AI coding agents — an **Advisor** that scopes slices, drafts recon-grounded prompts, and interprets verdicts; a **Builder** that executes the slice and opens the PR; and a **Verifier** that returns an evidence-backed APPROVE/REJECT, with a human gatekeeper on every merge — covering the document schema, the prompt library, and the failure-mode guardrails as a single-page, copy-paste-friendly reference. The codebase is open-source under MIT (© 2026 Roy McFarland) and is intended as an open thought-leadership artifact: the *methodology* is the brand asset, the *implementation* is freely forkable. The site is built and maintained by [Brightline Labs](https://brightline.io), Roy's dev agency. This is not a SaaS product, a hosted service, or a multi-user application; it has no backend, no accounts, and no paid tiers.
 
 The site may, in the future, include opt-in signup forms for adjacent Worksmith Labs offerings (newsletter, courses); these are explicitly out-of-scope today and will be added via deliberate, scoped PRs. Separately, the methodology may eventually be distributed as an `npx create-agent-handoff` CLI in a *separate* repository — not as part of this site repo.
 
@@ -40,7 +40,7 @@ The **local server** entry point is `server/index.ts`. It initializes a minimal 
 ## Conventions
 
 - **Design Language ("The Engineer's Notebook"):** The site uses a strict graph-paper aesthetic. Warm paper background (`#F4EFE6`), deep ink navy text (`#0E2A47`), and drafting red (`#C8362D`) as the sole accent color. The grid is literal (24px cells). No gradients, no glassmorphism, no glow effects.
-- **Typography Hierarchy:** Section labels use monospace caps (stamped effect); titles use Fraunces (variable serif); body copy uses Inter; prompts and code blocks use JetBrains Mono.
+- **Typography Hierarchy:** Section labels use monospace caps (stamped effect); titles use IBM Plex Serif (display serif); body copy uses Inter; prompts and code blocks use JetBrains Mono.
 - **Component Pruning:** The shadcn/ui installation is strictly pruned. Components are only added to `client/src/components/ui/` if they have an active call site in the application. Speculative "for completeness" components are rejected.
 - **File Size Cap:** Files in `client/src/pages/`, `client/src/lib/`, and `client/src/components/` (top level) must stay **under 800 lines**. See Q1 below for explicit exemptions and Verifier enforcement rules.
 
