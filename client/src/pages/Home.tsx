@@ -3,16 +3,17 @@
  * Design philosophy: "The Engineer's Notebook" — graph-paper background, paper cards,
  * mono stamps, IBM Plex Serif display titles, drafting-red accent.
  *
- * IA (9 sections):
+ * IA (10 sections):
  *   01 Overview
  *   02 Diagnosis
  *   03 Document Schema
  *   04 Install on Existing Repo
  *   05 Prompt Library  (consolidated; scenario-ordered)
  *   06 Build & Verify
- *   07 After the Install (Phase 2 operation)
- *   08 META-PRs (PRs that change the spec itself)
- *   09 References
+ *   07 Field Notes (lessons from operating the framework — the receipts)
+ *   08 After the Install (Phase 2 operation)
+ *   09 META-PRs (PRs that change the spec itself)
+ *   10 References
  *
  * Each section lives in its own file under client/src/pages/sections/ to
  * stay under the 800-line cap declared in PROJECT.md. This file is the
@@ -26,6 +27,7 @@ import SchemaSection from "@/pages/sections/SchemaSection";
 import InstallSection from "@/pages/sections/InstallSection";
 import PromptLibrarySection from "@/pages/sections/PromptLibrarySection";
 import BuildVerifySection from "@/pages/sections/BuildVerifySection";
+import FieldNotesSection from "@/pages/sections/FieldNotesSection";
 import PhaseTwoSection from "@/pages/sections/PhaseTwoSection";
 import MetaPRsSection from "@/pages/sections/MetaPRsSection";
 import ReferencesSection from "@/pages/sections/ReferencesSection";
@@ -44,6 +46,7 @@ export default function Home() {
         <InstallSection />
         <PromptLibrarySection />
         <BuildVerifySection />
+        <FieldNotesSection />
         <PhaseTwoSection />
         <MetaPRsSection />
         <ReferencesSection />
