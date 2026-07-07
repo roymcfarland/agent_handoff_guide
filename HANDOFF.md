@@ -1,39 +1,37 @@
-# Current Slice: Sheet index + anchor links
+# Current Slice: Byline + FAQ — who says, and the hard objections
 
 ## Context
 
-Construction drawings open with a sheet index; this site now has ten "files" and no map. This slice adds a drawing-index block right after the hero (number, title, one-line contents, click to jump) and hover anchor-copy affordances on section headings so people can share the exact section or field note — the notes are the viral units; make them addressable.
+The site still answers "who is telling me this?" with a logo, and never answers the skeptical engineering manager's first questions. This slice adds a short byline (near the title block in the footer: operating credentials, not marketing bio) and an FAQ of the hard objections, answered without hedging. The FAQ is also a `FAQPage` JSON-LD opportunity.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] A `SHEET_INDEX` export in `client/src/lib/content.ts` derives from `SECTIONS` (never a second hand-written list) plus a one-line `contents` description per section id.
-- [ ] The index renders in the Overview section after the stats strip, styled as a drawing sheet index: bordered table/list, mono numbers, section title, contents line, whole row is an anchor link to `#<id>`.
-- [ ] Section headings (via `SectionHeader`) gain a hover-revealed anchor-copy button: click copies `<origin>/#<id>` to the clipboard and toasts (sonner already present). Keyboard-accessible (focusable, aria-label "Copy link to section").
-- [ ] Field-note cards get the same affordance per note (`#note-01` style ids on the cards; ids added to the li elements).
-- [ ] Anchor ids remain stable — no renames of existing section ids.
-- [ ] Prerendered HTML still passes: anchor buttons must be hydration-safe (no window access at render; clipboard on click only).
-- [ ] `pnpm check`, `pnpm build` (incl. prerender), prompts zero-diff, 800-line cap pass; CI green.
+- [ ] A `BYLINE` export in `client/src/lib/content.ts`: 2–3 sentences, operating-credential voice ("maintained by the person who runs this loop weekly; the PR history is the proof"), naming Roy McFarland + Worksmith Labs, linking the merged-PR audit trail. Rendered in `SiteFooter` adjacent to the revision title block. THE HUMAN WRITES OR APPROVES THE FINAL BYLINE COPY — draft it, flag it for his edit in the PR body.
+- [ ] A `FAQ` export: 5–6 hard objections with direct answers — (1) why not one model reviewing itself; (2) why not just CI + human review; (3) what a slice costs in time/tokens (honest ranges: a verifier pass on a mid-size PR runs minutes and cents-to-a-dollar; the REJECT it catches saves the afternoon); (4) doesn't the Advisor just move the trust problem (answer: the human merge gate is the trust anchor; the Advisor's outputs are all inspectable artifacts); (5) does this work solo (yes — roles are hats, not headcount); (6) which models/tools (tool-agnostic by design — non-goal).
+- [ ] FAQ renders inside an existing section (References or a new block in Overview — builder's judgment; NO new nav entry) using the notebook idiom, likely details/summary or an open list.
+- [ ] `FAQPage` JSON-LD: emitted into the prerendered HTML (a small script tag rendered by the FAQ component works — it will be serialized by renderToString) with the same Q/A text derived from the FAQ export.
+- [ ] Prerender still passes; zero hydration warnings; `pnpm check`/`build`, prompts zero-diff, 800-line cap; CI green.
 - Expected test delta: none (repo has no test suite).
 
 ## Constraints & Anti-Goals
 
-- DO NOT add a nav entry for the index (it lives in Overview).
-- DO NOT introduce a router dependency for hashes — plain anchors.
-- DO NOT add dependencies.
+- DO NOT invent numbers for the cost answer — use honest ranges hedged as ranges, or mark the figure for the human to confirm.
+- DO NOT cross the tool-agnostic non-goal in the "which models" answer.
+- DO NOT add a nav entry or dependencies.
 
 ## Pre-confirmed facts
 
-- `SECTIONS` lives in content.ts (10 entries, ids stable since #42). `SectionHeader` is `client/src/components/SectionHeader.tsx`; all ten sections use it with `id="<section>-heading"` props.
-- Toasts: `toast()` from `sonner` is already used by PromptCard's copy buttons — mirror that call pattern.
-- The site is prerendered as of the previous slice: any new component must render without window/document at render time.
+- `SiteFooter` is `client/src/components/SiteFooter.tsx` and already renders `REVISION_TABLE`; the byline slots beside/below it.
+- JSON-LD via React: `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }} />` renders fine under renderToString and hydrates without mismatch when the JSON is deterministic (derive from the FAQ export; no dates/randomness).
+- Audit-trail link pattern already exists in `FIELD_NOTES_INTRO` (auditHref).
 
 ## Files explicitly forbidden
 
-- `prompts/**`, `client/public/llms.txt` (generated), `.github/**`, `server/**`.
+- `prompts/**`, `client/public/llms.txt` (generated), `.github/**`, `server/**`, `client/index.html` (the WebSite JSON-LD there stays; FAQPage comes from the component).
 
 ## Starting Point
 
-- Relevant files: `client/src/lib/content.ts`, `client/src/pages/sections/OverviewSection.tsx`, `client/src/components/SectionHeader.tsx`, `client/src/pages/sections/FieldNotesSection.tsx`
-- Known issues: none. Queued after: byline + FAQ, robot-head brand mark (replace the "AHF" header box with a lego-like robot head — proof-sheet approach like the favicon), delight batch (checklist persistence, download-as-.md, print stylesheet, reading-progress line).
+- Relevant files: `client/src/lib/content.ts`, `client/src/components/SiteFooter.tsx`, plus the section file the FAQ lands in
+- Known issues: none. Queued after: robot-head brand mark (replace the "AHF" header box with a lego-like robot head — proof-sheet approach like the favicon), delight batch (checklist persistence, download-as-.md, print stylesheet, reading-progress line).

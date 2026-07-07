@@ -24,6 +24,7 @@ export default function SchemaSection() {
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="schema-heading"
+          anchor="schema"
           number="03"
           label="DOCUMENT SCHEMA"
           title="Stop using one handoff document. Use three."

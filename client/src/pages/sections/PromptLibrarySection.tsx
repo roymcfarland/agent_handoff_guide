@@ -23,6 +23,7 @@ export default function PromptLibrarySection() {
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="prompts-heading"
+          anchor="prompts"
           number="05"
           label="PROMPT LIBRARY"
           title="Every prompt in one place — organized in the order you run them."

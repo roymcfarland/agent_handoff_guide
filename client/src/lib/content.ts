@@ -25,6 +25,33 @@ export const SECTIONS = [
   { id: "references", label: "References", number: "10" },
 ] as const;
 
+/* Sheet index — the drawing set's table of contents, rendered in Overview.
+ * Derived from SECTIONS so a new section without a contents line is a type
+ * error, not silent drift. */
+const SHEET_CONTENTS: Record<(typeof SECTIONS)[number]["id"], string> = {
+  overview: "Framing, the three artifacts, and the reference architecture.",
+  diagnosis: "Ten failure modes — where agent handoffs actually break down.",
+  schema:
+    "PROJECT.md, CHANGELOG.md, HANDOFF.md — one job each, plus the slice template.",
+  install: "Five steps onto an existing repo, and the two anti-patterns.",
+  prompts:
+    "The full copy-paste library: install, recurring loop, amendment, recovery.",
+  "build-verify":
+    "The four-role loop, verdict triage, the escalation rule, ceremony sizing.",
+  "field-notes":
+    "Ten costly lessons and one worked example — receipts included.",
+  "phase-2":
+    "Operating cadence, what the Verifier catches, and after the merge.",
+  "meta-prs": "When the PR changes the spec itself — prompts and templates.",
+  references:
+    "The empirical anchors: LLM-as-judge, long context, merge hygiene.",
+};
+
+export const SHEET_INDEX = SECTIONS.map(section => ({
+  ...section,
+  contents: SHEET_CONTENTS[section.id],
+}));
+
 export const REFERENCE_NOTE =
   "These sources support specific claims on this page (prompt structure, evaluation hygiene, PR surfaces, LLM-as-judge limits, long-context behavior). They do not guarantee that any fixed prompt will work in every repository, stack, or policy environment. Treat prompt changes like code changes: run them against explicit acceptance criteria, review the diffs, measure failure modes on your repo, and tighten the workflow when real incidents surface.";
 
