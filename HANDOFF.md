@@ -1,37 +1,39 @@
-# Current Slice: Byline + FAQ — who says, and the hard objections
+# Current Slice: Robot-head brand mark — replace the "AHF" header box
 
 ## Context
 
-The site still answers "who is telling me this?" with a logo, and never answers the skeptical engineering manager's first questions. This slice adds a short byline (near the title block in the footer: operating credentials, not marketing bio) and an FAQ of the hard objections, answered without hedging. The FAQ is also a `FAQPage` JSON-LD opportunity.
+Owner request from the favicon review: substitute the "AHF" text in the header's brand box (top-left, and its twin in the mobile sheet header) with a lego-like robot head. This is a VISUAL slice: the mark is a taste call, so the build produces a proof sheet (like the favicon slice) and the human's eyeball on the preview is the load-bearing gate.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] A `BYLINE` export in `client/src/lib/content.ts`: 2–3 sentences, operating-credential voice ("maintained by the person who runs this loop weekly; the PR history is the proof"), naming Roy McFarland + Worksmith Labs, linking the merged-PR audit trail. Rendered in `SiteFooter` adjacent to the revision title block. THE HUMAN WRITES OR APPROVES THE FINAL BYLINE COPY — draft it, flag it for his edit in the PR body.
-- [ ] A `FAQ` export: 5–6 hard objections with direct answers — (1) why not one model reviewing itself; (2) why not just CI + human review; (3) what a slice costs in time/tokens (honest ranges: a verifier pass on a mid-size PR runs minutes and cents-to-a-dollar; the REJECT it catches saves the afternoon); (4) doesn't the Advisor just move the trust problem (answer: the human merge gate is the trust anchor; the Advisor's outputs are all inspectable artifacts); (5) does this work solo (yes — roles are hats, not headcount); (6) which models/tools (tool-agnostic by design — non-goal).
-- [ ] FAQ renders inside an existing section (References or a new block in Overview — builder's judgment; NO new nav entry) using the notebook idiom, likely details/summary or an open list.
-- [ ] `FAQPage` JSON-LD: emitted into the prerendered HTML (a small script tag rendered by the FAQ component works — it will be serialized by renderToString) with the same Q/A text derived from the FAQ export.
-- [ ] Prerender still passes; zero hydration warnings; `pnpm check`/`build`, prompts zero-diff, 800-line cap; CI green.
+- [ ] A small inline SVG robot head (lego-minifig-like: rounded-square head, two square/round eyes, simple mouth or grille — friendly, not menacing) replaces the "AHF" text inside the existing bordered brand box in `client/src/components/SiteHeader.tsx` — BOTH instances (header brand box, mobile sheet header box). The box border/hover behavior stays.
+- [ ] The mark uses currentColor / theme tokens only, so the existing hover inversion (bg-primary + primary-foreground text) keeps working and both palettes render correctly.
+- [ ] Proof-sheet render at 36px (the box size), 72px, and 180px before committing; the mark must read as a robot head at 36px.
+- [ ] Accessible name preserved: the box is aria-hidden (as now) with the wordmark carrying the brand text — confirm screen-reader output is unchanged.
+- [ ] Prerender passes with zero hydration warnings (static SVG — no state).
+- [ ] `pnpm check`/`build`, prompts zero-diff, 800-line cap; CI green.
+- [ ] PR body flags: "Visual slice — human eyeballs the mark on the preview before merge."
 - Expected test delta: none (repo has no test suite).
 
 ## Constraints & Anti-Goals
 
-- DO NOT invent numbers for the cost answer — use honest ranges hedged as ranges, or mark the figure for the human to confirm.
-- DO NOT cross the tool-agnostic non-goal in the "which models" answer.
-- DO NOT add a nav entry or dependencies.
+- DO NOT change the favicon or og.jpg in this slice (the memo book stays; the robot is the header mark only — if the owner later wants them unified, that is its own slice).
+- DO NOT add dependencies or image assets — inline SVG only.
+- DO NOT restyle the header beyond the box contents.
 
 ## Pre-confirmed facts
 
-- `SiteFooter` is `client/src/components/SiteFooter.tsx` and already renders `REVISION_TABLE`; the byline slots beside/below it.
-- JSON-LD via React: `<script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(obj) }} />` renders fine under renderToString and hydrates without mismatch when the JSON is deterministic (derive from the FAQ export; no dates/randomness).
-- Audit-trail link pattern already exists in `FIELD_NOTES_INTRO` (auditHref).
+- Brand boxes: `client/src/components/SiteHeader.tsx` — header box (h-9 w-9, mono "AHF", hover inverts via group-hover) and sheet box (h-8 w-8). Both aria-hidden with adjacent text carrying the name.
+- Theme tokens available as CSS vars; the box already flips colors on hover via Tailwind group classes — an SVG using currentColor inherits correctly.
+- Proof-sheet pattern: render an HTML page with the SVG at multiple sizes, screenshot via headless Chrome (see the favicon slice in PR #44's history).
 
 ## Files explicitly forbidden
 
-- `prompts/**`, `client/public/llms.txt` (generated), `.github/**`, `server/**`, `client/index.html` (the WebSite JSON-LD there stays; FAQPage comes from the component).
+- `client/public/**` (favicon/og untouched), `prompts/**`, `.github/**`, `server/**`.
 
 ## Starting Point
 
-- Relevant files: `client/src/lib/content.ts`, `client/src/components/SiteFooter.tsx`, plus the section file the FAQ lands in
-- Known issues: none. Queued after: robot-head brand mark (replace the "AHF" header box with a lego-like robot head — proof-sheet approach like the favicon), delight batch (checklist persistence, download-as-.md, print stylesheet, reading-progress line).
+- Relevant files: `client/src/components/SiteHeader.tsx`
+- Known issues: none. Queued after: delight batch (Edit Pass checklist persistence, per-card download-as-.md, print stylesheet, reading-progress line) — the final waypoint.
