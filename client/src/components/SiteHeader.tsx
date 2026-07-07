@@ -58,13 +58,22 @@ const NEXT_THEME: Record<Theme, Theme> = {
 
 function ThemeToggle() {
   const { theme, toggleTheme } = useTheme();
-  const Icon = THEME_META[theme].icon;
+
+  // Mounted-gate the theme-dependent bits: the prerendered markup always
+  // says "system" (no localStorage at build time), so a client with a
+  // pinned theme would hydrate-mismatch on the icon and labels. Until
+  // mount, render the neutral system state both sides agree on.
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  const shown: Theme = mounted ? theme : "system";
+
+  const Icon = THEME_META[shown].icon;
   return (
     <button
       type="button"
       onClick={toggleTheme}
-      aria-label={`Theme: ${THEME_META[theme].label}. Switch to ${THEME_META[NEXT_THEME[theme]].label}.`}
-      title={`Theme: ${THEME_META[theme].label} · click for ${THEME_META[NEXT_THEME[theme]].label}`}
+      aria-label={`Theme: ${THEME_META[shown].label}. Switch to ${THEME_META[NEXT_THEME[shown]].label}.`}
+      title={`Theme: ${THEME_META[shown].label} · click for ${THEME_META[NEXT_THEME[shown]].label}`}
       className="grid h-9 w-9 shrink-0 place-items-center border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary"
     >
       <Icon className="h-4 w-4" strokeWidth={2.25} />
