@@ -32,6 +32,7 @@ export default function PhaseTwoSection() {
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="phase-2-heading"
+          anchor="phase-2"
           number="08"
           label="AFTER THE INSTALL"
           title="Closing the install does not end the Verifier. It graduates it into its real job."

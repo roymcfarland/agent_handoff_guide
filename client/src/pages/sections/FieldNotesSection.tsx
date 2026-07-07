@@ -3,12 +3,25 @@
  * framework on real repositories, including this one. Two notes cite
  * verifiable events in this repo's own PR history.
  */
+import { Link as LinkIcon } from "lucide-react";
+import { toast } from "sonner";
 import { SectionHeader } from "@/components/SectionHeader";
 import {
   FIELD_NOTES,
   FIELD_NOTES_INTRO,
   WORKED_EXAMPLE,
 } from "@/lib/content";
+
+async function copyNoteLink(n: string) {
+  try {
+    await navigator.clipboard.writeText(
+      `${window.location.origin}/#note-${n}`
+    );
+    toast.success(`Link to note ${n} copied`);
+  } catch {
+    toast.error("Copy failed — use the address bar instead");
+  }
+}
 
 export default function FieldNotesSection() {
   return (
@@ -22,6 +35,7 @@ export default function FieldNotesSection() {
           <div className="lg:col-span-4">
             <SectionHeader
               id="field-notes-heading"
+              anchor="field-notes"
               number="07"
               label="FIELD NOTES"
               title={FIELD_NOTES_INTRO.pull}
@@ -47,7 +61,8 @@ export default function FieldNotesSection() {
               {FIELD_NOTES.map(note => (
                 <li
                   key={note.n}
-                  className="paper-card flex flex-col gap-3 p-6"
+                  id={`note-${note.n}`}
+                  className="group paper-card flex flex-col gap-3 p-6"
                   style={{ boxShadow: "none" }}
                 >
                   <div className="flex items-baseline gap-3">
@@ -57,6 +72,15 @@ export default function FieldNotesSection() {
                     <h3 className="font-display text-xl font-bold leading-snug">
                       {note.title}
                     </h3>
+                    <button
+                      type="button"
+                      onClick={() => copyNoteLink(note.n)}
+                      aria-label={`Copy link to field note ${note.n}: ${note.title}`}
+                      title="Copy link to this note"
+                      className="ml-auto inline-flex h-6 w-6 shrink-0 items-center justify-center self-center border border-border text-muted-foreground opacity-0 transition-opacity hover:border-primary hover:text-primary focus-visible:opacity-100 group-hover:opacity-100"
+                    >
+                      <LinkIcon className="h-3.5 w-3.5" strokeWidth={2.25} />
+                    </button>
                   </div>
                   <p className="text-[15px] leading-relaxed text-foreground/80">
                     {note.story}

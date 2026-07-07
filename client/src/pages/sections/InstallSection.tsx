@@ -22,6 +22,7 @@ export default function InstallSection() {
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="install-heading"
+          anchor="install"
           number="04"
           label="INSTALL ON EXISTING REPO"
           title="How to bootstrap the loop on a codebase that already exists."

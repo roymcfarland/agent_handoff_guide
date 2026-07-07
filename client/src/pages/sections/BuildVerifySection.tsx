@@ -24,6 +24,7 @@ export default function BuildVerifySection() {
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="build-verify-heading"
+          anchor="build-verify"
           number="06"
           label="BUILD & VERIFY"
           title="An Advisor scopes. A Builder ships. A Verifier grades. You merge."

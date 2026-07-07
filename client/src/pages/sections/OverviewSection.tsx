@@ -8,7 +8,7 @@ import {
   DiagramFigureLegend,
   ReferenceArchitectureDiagram,
 } from "@/components/diagrams";
-import { PROMPT_LIBRARY } from "@/lib/content";
+import { PROMPT_LIBRARY, SHEET_INDEX } from "@/lib/content";
 
 const PROMPT_COUNT = PROMPT_LIBRARY.reduce(
   (total, scenario) => total + scenario.items.length,
@@ -111,6 +111,32 @@ export default function OverviewSection() {
                 </p>
               </div>
             ))}
+          </div>
+          {/* Sheet index — the drawing set's table of contents */}
+          <div className="mt-16">
+            <div className="stamp">SHEET INDEX · 10 FILES</div>
+            <nav
+              aria-label="Sheet index"
+              className="mt-4 divide-y divide-border border border-border"
+            >
+              {SHEET_INDEX.map(sheet => (
+                <a
+                  key={sheet.id}
+                  href={`#${sheet.id}`}
+                  className="group grid grid-cols-12 items-baseline gap-x-3 px-4 py-3 transition-colors hover:bg-primary/5"
+                >
+                  <span className="col-span-2 font-mono text-xs font-bold tracking-widest text-primary sm:col-span-1">
+                    {sheet.number}
+                  </span>
+                  <span className="col-span-10 font-display text-base font-bold leading-snug group-hover:text-primary sm:col-span-4">
+                    {sheet.label}
+                  </span>
+                  <span className="col-span-10 col-start-3 text-sm leading-relaxed text-muted-foreground sm:col-span-7 sm:col-start-6">
+                    {sheet.contents}
+                  </span>
+                </a>
+              ))}
+            </nav>
           </div>
         </div>
       </div>

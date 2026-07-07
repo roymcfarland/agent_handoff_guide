@@ -19,6 +19,7 @@ export default function DiagnosisSection() {
         <div className="lg:col-span-4">
           <SectionHeader
             id="diagnosis-heading"
+            anchor="diagnosis"
             number="02"
             label="DIAGNOSIS"
             title="Where agent handoffs actually break down."
