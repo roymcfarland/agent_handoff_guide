@@ -1,0 +1,60 @@
+# CI — the repo's real merge gates.
+# Mirrors what the Verifier prompt runs locally: typecheck + build, plus the
+# 800-line file cap from PROJECT.md Q1. No secrets, no deploys — Vercel
+# deployments are handled separately by the Vercel integration.
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enable Corepack (pnpm pinned via packageManager)
+        run: corepack enable
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: ".nvmrc"
+          cache: "pnpm"
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm check
+
+      - name: Build
+        run: pnpm build
+
+      - name: 800-line cap (PROJECT.md Q1)
+        run: |
+          set -euo pipefail
+          fail=0
+          # Cap applies to client/src/pages/** and client/src/lib/** (recursive)
+          # plus client/src/components/* (top level only).
+          # Exemptions per PROJECT.md Q1: client/src/lib/content.ts and
+          # client/src/components/diagrams/** (already outside top-level scan).
+          files=$( \
+            find client/src/pages client/src/lib -type f \( -name '*.ts' -o -name '*.tsx' \); \
+            find client/src/components -maxdepth 1 -type f \( -name '*.ts' -o -name '*.tsx' \) \
+          )
+          for f in $files; do
+            if [ "$f" = "client/src/lib/content.ts" ]; then
+              continue
+            fi
+            lines=$(wc -l < "$f")
+            if [ "$lines" -gt 800 ]; then
+              echo "::error file=$f::$f is $lines lines — exceeds the 800-line cap (PROJECT.md Q1)"
+              fail=1
+            fi
+          done
+          if [ "$fail" -eq 0 ]; then
+            echo "800-line cap: all files within limit."
+          fi
+          exit "$fail"
