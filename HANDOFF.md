@@ -1,39 +1,39 @@
-# Current Slice: Robot-head brand mark — replace the "AHF" header box
+# Current Slice: Delight batch — the notebook remembers, prints, and shows progress
 
 ## Context
 
-Owner request from the favicon review: substitute the "AHF" text in the header's brand box (top-left, and its twin in the mobile sheet header) with a lego-like robot head. This is a VISUAL slice: the mark is a taste call, so the build produces a proof sheet (like the favicon slice) and the human's eyeball on the preview is the load-bearing gate.
+The final roadmap waypoint: four small delight features that deepen the notebook metaphor. Each is independent; if any one fights the prerender or grows past its box, drop it and note it in the PR rather than expanding the slice.
 
 ## Acceptance Criteria (Definition of Done)
 
-The agent MUST complete ALL of the following before committing:
+The agent MUST complete ALL of the following before committing (or explicitly drop-and-declare per item):
 
-- [ ] A small inline SVG robot head (lego-minifig-like: rounded-square head, two square/round eyes, simple mouth or grille — friendly, not menacing) replaces the "AHF" text inside the existing bordered brand box in `client/src/components/SiteHeader.tsx` — BOTH instances (header brand box, mobile sheet header box). The box border/hover behavior stays.
-- [ ] The mark uses currentColor / theme tokens only, so the existing hover inversion (bg-primary + primary-foreground text) keeps working and both palettes render correctly.
-- [ ] Proof-sheet render at 36px (the box size), 72px, and 180px before committing; the mark must read as a robot head at 36px.
-- [ ] Accessible name preserved: the box is aria-hidden (as now) with the wordmark carrying the brand text — confirm screen-reader output is unchanged.
-- [ ] Prerender passes with zero hydration warnings (static SVG — no state).
-- [ ] `pnpm check`/`build`, prompts zero-diff, 800-line cap; CI green.
-- [ ] PR body flags: "Visual slice — human eyeballs the mark on the preview before merge."
+- [ ] **Checklist persistence** — the Edit Pass checklist card (Prompt Library, `edit-pass` item) gets real checkboxes for its `[ ]` lines, persisted to localStorage (key like `ahf-editpass-v1`), restored on load. Hydration-safe: initial render unchecked (matching prerender), restore in an effect. "The notebook remembers your pencil marks."
+- [ ] **Download-as-.md** — each PromptCard gets a download button beside Copy, saving the body as its `filename` (Blob + anchor-download; client-only handler). No new dependencies.
+- [ ] **Print stylesheet** — `@media print` in index.css: hide header/toggle/copy buttons/toasts, black-on-white with the grid dropped, sensible page breaks between sections (`break-inside: avoid` on cards), URLs NOT expanded after links (too noisy). The PDF should read like a printed spec.
+- [ ] **Reading-progress line** — a thin drafting-red progress line under the sticky header tracking scroll depth (transform scaleX from scroll ratio; rAF-throttled; hydration-safe initial 0). No layout shift.
+- [ ] Prerender passes, zero hydration warnings, all existing CI gates green.
 - Expected test delta: none (repo has no test suite).
 
 ## Constraints & Anti-Goals
 
-- DO NOT change the favicon or og.jpg in this slice (the memo book stays; the robot is the header mark only — if the owner later wants them unified, that is its own slice).
-- DO NOT add dependencies or image assets — inline SVG only.
-- DO NOT restyle the header beyond the box contents.
+- DO NOT add dependencies.
+- DO NOT persist anything beyond the checklist key; no analytics, no fingerprinting.
+- DO NOT let the progress line animate with smooth-scroll easing — it tracks scroll directly (and remember: rAF is throttled in hidden tabs; verification uses instant scroll).
+- DO NOT redesign the PromptCard row — the download button matches the existing copy-button styling.
 
 ## Pre-confirmed facts
 
-- Brand boxes: `client/src/components/SiteHeader.tsx` — header box (h-9 w-9, mono "AHF", hover inverts via group-hover) and sheet box (h-8 w-8). Both aria-hidden with adjacent text carrying the name.
-- Theme tokens available as CSS vars; the box already flips colors on hover via Tailwind group classes — an SVG using currentColor inherits correctly.
-- Proof-sheet pattern: render an HTML page with the SVG at multiple sizes, screenshot via headless Chrome (see the favicon slice in PR #44's history).
+- Edit Pass checklist body lives in `EDIT_PASS_CHECKLIST` (content.ts) rendered via PromptCard/MarkdownBlock — recon the actual renderer before building; if the checklist renders as a plain `<pre>`, the checkbox layer needs its own small renderer for that one card (builder's judgment, keep it contained).
+- PromptCard already has `filename` on every library item and a working clipboard+toast pattern.
+- The header is sticky (`sticky top-0 z-40`) — the progress line can be its `::after` or a child div; `shadow-[inset...]` already draws a bottom accent, so place the line INSIDE the border-b.
+- localStorage access must live in effects/handlers only (prerender).
 
 ## Files explicitly forbidden
 
-- `client/public/**` (favicon/og untouched), `prompts/**`, `.github/**`, `server/**`.
+- `prompts/**`, `client/public/llms.txt` (generated), `.github/**`, `server/**`.
 
 ## Starting Point
 
-- Relevant files: `client/src/components/SiteHeader.tsx`
-- Known issues: none. Queued after: delight batch (Edit Pass checklist persistence, per-card download-as-.md, print stylesheet, reading-progress line) — the final waypoint.
+- Relevant files: `client/src/components/PromptCard.tsx`, `client/src/index.css`, `client/src/components/SiteHeader.tsx`, possibly a small new `client/src/components/` file for the checklist
+- Known issues: none. After this slice the July 2026 roadmap is complete; remaining backlog lives in memory (express 5, paging decision, community items).
