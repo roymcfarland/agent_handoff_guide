@@ -6,11 +6,26 @@
 import { ChevronRight, ExternalLink } from "lucide-react";
 import { SectionHeader } from "@/components/SectionHeader";
 import {
+  FAQ,
+  FAQ_INTRO,
   REFERENCES,
   REFERENCE_NOTE,
   REFERENCE_READING_ORDER,
   REFERENCE_READING_ORDER_INTRO,
 } from "@/lib/content";
+
+/* FAQPage structured data — derived from the same FAQ export the cards
+ * render, so the markup and the schema can never disagree. Deterministic
+ * JSON keeps it hydration-safe under the prerender. */
+const FAQ_JSON_LD = JSON.stringify({
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: FAQ.map(item => ({
+    "@type": "Question",
+    name: item.q,
+    acceptedAnswer: { "@type": "Answer", text: item.a },
+  })),
+});
 export default function ReferencesSection() {
   return (
     <section
@@ -35,6 +50,44 @@ export default function ReferencesSection() {
             </>
           }
         />
+
+        {/* FAQ — the hard objections, answered plainly */}
+        <div className="mt-14">
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: FAQ_JSON_LD }}
+          />
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="stamp">FAQ · THE HARD QUESTIONS</div>
+              <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+                {FAQ_INTRO.headline}
+              </h3>
+            </div>
+            <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
+              {FAQ_INTRO.body}
+            </p>
+          </div>
+          <div className="mt-8 divide-y divide-border border-y border-border">
+            {FAQ.map((item, i) => (
+              <details key={item.q} className="group/faq">
+                <summary className="flex cursor-pointer items-baseline gap-4 py-5 font-display text-lg font-bold leading-snug text-foreground transition-colors hover:text-primary [&::-webkit-details-marker]:hidden">
+                  <span className="font-mono text-xs font-bold tracking-widest text-primary">
+                    Q{String(i + 1).padStart(2, "0")}
+                  </span>
+                  <span className="flex-1">{item.q}</span>
+                  <ChevronRight
+                    aria-hidden
+                    className="h-4 w-4 shrink-0 self-center text-muted-foreground transition-transform group-open/faq:rotate-90"
+                  />
+                </summary>
+                <p className="max-w-prose pb-6 pl-11 text-[15px] leading-relaxed text-foreground/85">
+                  {item.a}
+                </p>
+              </details>
+            ))}
+          </div>
+        </div>
 
         <div className="mt-14 grid gap-px bg-border md:grid-cols-2 xl:grid-cols-3">
           {REFERENCES.map(reference => (

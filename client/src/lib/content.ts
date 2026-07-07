@@ -2435,3 +2435,51 @@ export const WORKED_EXAMPLE = {
     },
   ],
 } as const;
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* BYLINE — who maintains this, in operating-credential voice                  */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+export const BYLINE = {
+  text: "Written and maintained by Roy McFarland of Worksmith Labs — with the framework it documents. Every change to this site ships as an Advisor-scoped slice, an independent verification, and a human merge.",
+  proofLabel: "The merged-PR history is the résumé",
+  proofHref:
+    "https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged",
+} as const;
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* FAQ — the hard objections, answered without hedging                         */
+/* Rendered in References; also emitted as FAQPage JSON-LD.                    */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+export const FAQ_INTRO = {
+  headline: "Objections, answered plainly.",
+  body: "The questions a skeptical engineering lead should ask before adopting any of this. Short answers here; the sections above carry the evidence.",
+} as const;
+
+export const FAQ = [
+  {
+    q: "Why two models? Can't one model review its own work?",
+    a: "It can, and it will grade generously. A model reviewing its own output inherits its own framing — the blind spot that produced the bug also reviews the bug. A second model in a clean context, reading only the PR body, diff, and scope doc, breaks that correlation. Not perfectly — which is why verdicts must cite evidence and a human holds the merge button — but the documented failure modes of LLM-as-judge setups are exactly why the Verifier's inputs stay narrow and its verdicts stay evidence-bound.",
+  },
+  {
+    q: "Why isn't CI plus human review enough?",
+    a: "CI checks what you already encoded: types, tests, builds. Human review catches what a person has attention left to catch — and attention is the resource agent-speed development exhausts first. The Verifier sits between: it reads every PR against the project's declared intent (non-goals, conventions, architecture) at machine patience. It replaces neither; it turns the human's merge decision into a review of evidence instead of a re-derivation of it.",
+  },
+  {
+    q: "What does a slice actually cost?",
+    a: "Minutes and cents, mostly. A verifier pass on a mid-size PR is a few minutes of wall clock, and token spend measured in cents to a few dollars depending on the model. The comparison that matters: one caught REJECT — an unmet criterion, a scope violation, a green-but-dead feature — routinely saves the afternoon that debugging it after merge would have cost. And ceremony sizing exists precisely so small changes never pay the full round-trip.",
+  },
+  {
+    q: "Doesn't the Advisor just move the trust problem up a level?",
+    a: "The Advisor's outputs are all inspectable artifacts — a scope document, two prompts, a triage note. Nothing it produces is trusted blindly: the Builder's work is verified independently, the Verifier's verdict is itself triaged against the diff, and a human makes every merge call. The trust anchor never moves; what changes is how much evidence reaches it.",
+  },
+  {
+    q: "Does this work for a solo developer?",
+    a: "Yes — the roles are hats, not headcount. A solo operator runs the Builder in one session, the Verifier in a fresh context of a different model, and wears the Advisor and gatekeeper hats personally. The discipline that matters survives intact: fresh context for review, evidence-bound verdicts, one slice in flight, a human on the merge button.",
+  },
+  {
+    q: "Which models and tools should I use?",
+    a: "The framework is deliberately tool-agnostic — a documented non-goal, not an oversight. Any coding-capable model can build; any different model family can verify; the prompts are plain markdown. Prefer different model families for Builder and Verifier to reduce correlated blind spots, and re-evaluate your picks as models change — the loop is designed to outlive any particular model.",
+  },
+] as const;

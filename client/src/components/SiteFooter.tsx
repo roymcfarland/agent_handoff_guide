@@ -3,7 +3,7 @@
  * No social-link spam, no gradient. Mono attribution, a drawing title block
  * (the methodology's revision history), and a final ruled line.
  */
-import { REVISION_TABLE } from "@/lib/content";
+import { BYLINE, REVISION_TABLE } from "@/lib/content";
 
 const CURRENT_REV = REVISION_TABLE[REVISION_TABLE.length - 1];
 
@@ -100,6 +100,23 @@ export function SiteFooter() {
               </tbody>
             </table>
           </div>
+        </div>
+
+        {/* Byline — operating credentials, not a marketing bio */}
+        <div className="mt-8 max-w-2xl">
+          <div className="stamp">DRAWN BY</div>
+          <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
+            {BYLINE.text}{" "}
+            <a
+              className="underline decoration-primary underline-offset-4 hover:text-foreground"
+              href={BYLINE.proofHref}
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              {BYLINE.proofLabel}
+            </a>
+            .
+          </p>
         </div>
 
         <div className="ruled mt-10" />
