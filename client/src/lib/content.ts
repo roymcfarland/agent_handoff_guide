@@ -19,9 +19,10 @@ export const SECTIONS = [
   { id: "install", label: "Install on Repo", number: "04" },
   { id: "prompts", label: "Prompt Library", number: "05" },
   { id: "build-verify", label: "Build & Verify", number: "06" },
-  { id: "phase-2", label: "Operate the framework", number: "07" },
-  { id: "meta-prs", label: "META-PRs", number: "08" },
-  { id: "references", label: "References", number: "09" },
+  { id: "field-notes", label: "Field Notes", number: "07" },
+  { id: "phase-2", label: "Operate the framework", number: "08" },
+  { id: "meta-prs", label: "META-PRs", number: "09" },
+  { id: "references", label: "References", number: "10" },
 ] as const;
 
 export const REFERENCE_NOTE =
@@ -1919,7 +1920,7 @@ export const PHASE_TWO_DORMANT = {
 // =============================================================================
 
 export const META_INTRO = {
-  eyebrow: "FILE 08 / META",
+  eyebrow: "FILE 09 / META",
   headline: "When the PR changes the spec itself.",
   body: `Most PRs add features. Some PRs change the document the framework runs against — HANDOFF.md mid-slice, or PROJECT.md after a Calibration Debrief. These need their own verifier loop because the normal Verifier reads the spec as ground truth, and in a META-PR the spec is the thing being changed. The prompts below close that loop.`,
 };
@@ -2213,5 +2214,101 @@ export const REVISION_TABLE = [
       "The Advisor named as a third role — verdict triage, after-the-merge protocol, ceremony sizing, HANDOFF template upgrade, loop figure redrawn (PRs #30–#36).",
     drawn: "Advisor",
     checked: "RM",
+  },
+] as const;
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* SECTION 07 — FIELD NOTES                                                    */
+/* Curated lessons from operating the framework on real repositories,         */
+/* including this one. Tool-agnostic, no client identifiers. Notes carrying    */
+/* a `receipt` cite verifiable events in this repo's own PR history.           */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+export const FIELD_NOTES_INTRO = {
+  pull: "Prescriptions are cheap. These are the lessons that cost something.",
+  body: "Every note below came out of operating this framework on real repositories — including this one. The site you are reading is built and maintained through the loop it documents, and its merged-PR history is the audit trail. Two of these notes cite defects you can go verify there.",
+  auditHref:
+    "https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged",
+  auditLabel: "Read the merged-PR history",
+} as const;
+
+export const FIELD_NOTES = [
+  {
+    n: "01",
+    title: "The invisible particle layer",
+    story:
+      "A decorative visual effect passed typecheck, build, code review, and an independent verifier — and shipped to production rendering invisibly. Every check was green; the feature did not exist on screen. Code-correct is not render-correct.",
+    rule: "The Verifier checks code, not pixels. A human eyeballs every visual change on the rendered preview before merge.",
+  },
+  {
+    n: "02",
+    title: "The label under the box",
+    story:
+      "The loop diagram on this very page shipped with its 'PR opened' label half-hidden: an adjacent box was drawn after the text and covered it, so it rendered as just 'PR' from day one. Every review passed it — because every review read the code, where the label is plainly present.",
+    rule: "DOM presence is not visible rendering. For 'is it showing?' questions, get pixel truth: screenshot the render.",
+    receipt: {
+      label: "Fixed in PR #36",
+      href: "https://github.com/roymcfarland/agent_handoff_guide/pull/36",
+    },
+  },
+  {
+    n: "03",
+    title: "The criterion the Builder never saw",
+    story:
+      "A verifier prompt picked up a requirement that was never in the builder prompt. The REJECT it produced was guaranteed from the moment the prompts diverged — no Builder can satisfy a rule it was never given. The work was fine; the paperwork disagreed with itself.",
+    rule: "Before a verifier prompt is final, diff its checklist against the builder prompt. Every check must trace to an instruction.",
+  },
+  {
+    n: "04",
+    title: "Tests with teeth",
+    story:
+      "A slice shipped regression tests for a fix — and the suite stayed green when the fix was reverted. The tests could not fail, so the green proved nothing. It surfaced only because someone tried to make them fail.",
+    rule: "Negative-control every new test: revert the fix, confirm red, restore. A test that cannot fail is decoration.",
+  },
+  {
+    n: "05",
+    title: "The mock that swallowed the point",
+    story:
+      "An acceptance test passed by mocking the very data source its invariants were about. The test verified the mock, not the behavior — vacuously green, indefinitely.",
+    rule: "Pin the mock boundary in the builder prompt: mock only the environment shim that cannot load in the test runner, never the data under test.",
+  },
+  {
+    n: "06",
+    title: "'Approved and merged' was neither",
+    story:
+      "Post-merge housekeeping ran off a report instead of the repository, and a branch was force-deleted whose PR had never actually merged. It was recoverable — git prints the orphaned commit — but only luck made anyone look.",
+    rule: "Reports are claims. Before anything destructive, sync main and assert the commit is actually there.",
+  },
+  {
+    n: "07",
+    title: "Temporal proximity, the most seductive wrong lead",
+    story:
+      "A deploy check went red minutes after a merge, and the diff took the blame. It was the platform's build cache. Another week it was a security advisory published that morning; another, a date-dependent test that picked its victim by the calendar. None of them were the code.",
+    rule: "Reproduce the failure on the exact commit and force a clean rebuild before blaming the diff you just merged.",
+  },
+  {
+    n: "08",
+    title: "The non-goal discovered at verify time",
+    story:
+      "A feature crossed a boundary the project's own rules document had already drawn, and the verifier correctly rejected it. A full build cycle was spent discovering a sentence that had been sitting in the spec the whole time.",
+    rule: "Grep the non-goals for the feature's keywords at scoping. If it crosses one, the docs-amendment PR merges first.",
+  },
+  {
+    n: "09",
+    title: "Three hundred eighty orphaned previews",
+    story:
+      "Per-branch preview deployments quietly outlive the branches that created them. On one project, roughly three hundred eighty had accumulated across two hundred seventy-five deleted branches before anyone looked.",
+    rule: "After-merge housekeeping includes the hosting platform, not just git. Confirm the dead branch's previews died with it.",
+  },
+  {
+    n: "10",
+    title: "The stat that counted itself wrong",
+    story:
+      "The overview of this site claimed eleven prompts and templates; the library contained ten. Nobody lied — a hand-written number simply outlived the thing it counted. It now derives from the data and cannot drift.",
+    rule: "Derive every public number from the codebase at build time. A hand-written count is a drift bomb with a fuse of unknown length.",
+    receipt: {
+      label: "Fixed in PR #35",
+      href: "https://github.com/roymcfarland/agent_handoff_guide/pull/35",
+    },
   },
 ] as const;

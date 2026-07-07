@@ -21,7 +21,7 @@ export default function ReferencesSection() {
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="references-heading"
-          number="09"
+          number="10"
           label="REFERENCES"
           title="References and source notes."
           kicker={

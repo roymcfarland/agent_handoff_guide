@@ -25,7 +25,7 @@ export default function MetaPRsSection() {
       <div className="container py-20 lg:py-24">
         <SectionHeader
           id="meta-prs-heading"
-          number="08"
+          number="09"
           label={META_INTRO.eyebrow}
           title={META_INTRO.headline}
           kicker={<>{META_INTRO.body}</>}

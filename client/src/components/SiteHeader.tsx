@@ -2,12 +2,15 @@
  * SiteHeader — sticky top nav. Mono "stamp" links, drafting-red active marker.
  *
  * Responsive strategy:
- *   - md+ (≥ 768px): inline nav, no horizontal scroll. Short labels swap in
- *     for full labels below 2xl. Brand wordmark hidden when the nav is densest
- *     (md → lg) so the full nav fits a half-laptop window.
- *   - < md (≤ 767px, includes phones and narrow split windows): hamburger
- *     button on the right opens a slide-in Sheet. Active section is mirrored
- *     in both the inline nav and the sheet menu via IntersectionObserver.
+ *   - lg+ (≥ 1024px): inline nav, no horizontal scroll. Short labels at every
+ *     width; number prefixes only at 2xl (the full-label swap retired when
+ *     the tenth section arrived). Brand wordmark hidden lg → xl where the
+ *     nav is densest.
+ *   - < lg (includes phones, tablets, and narrow split windows): hamburger
+ *     button on the right opens a slide-in Sheet. Ten sections plus the theme
+ *     toggle no longer fit a 768px row without cramping — the hamburger is
+ *     the escape valve, per this header's own design philosophy. Active
+ *     section is mirrored in both navs via IntersectionObserver.
  *
  * Design philosophy: the header is graph-paper precise. No wrapping, no
  * horizontal scroll, no cramped labels. The hamburger is the escape valve;
@@ -34,6 +37,7 @@ const SHORT_LABEL: Record<string, string> = {
   install: "Install",
   prompts: "Prompts",
   "build-verify": "Build & Verify",
+  "field-notes": "Notes",
   "phase-2": "Operate",
   "meta-prs": "META-PRs",
   references: "Refs",
@@ -100,17 +104,17 @@ export function SiteHeader() {
           >
             AHF
           </span>
-          {/* Wordmark visibility: shown on phones (sm hidden = block by default
-              up through sm), hidden on md/lg where the inline nav is densest,
-              shown again on xl+ where there's plenty of horizontal room. */}
-          <span className="font-display text-base font-bold leading-tight md:hidden xl:block">
+          {/* Wordmark visibility: shown below lg (hamburger mode has room),
+              hidden lg → xl where the inline nav is densest, shown again on
+              xl+ where there's plenty of horizontal room. */}
+          <span className="font-display text-base font-bold leading-tight lg:hidden xl:block">
             Agent Handoff Framework
           </span>
         </a>
 
         <div className="flex items-center gap-2 md:gap-3">
-          {/* Desktop nav: inline from md up. No overflow, no scroll. */}
-          <nav className="hidden items-center md:flex">
+          {/* Desktop nav: inline from lg up. No overflow, no scroll. */}
+          <nav className="hidden items-center lg:flex">
             {SECTIONS.map(({ id, label, number }) => {
               const isActive = active === id;
               const short = SHORT_LABEL[id] ?? label;
@@ -125,10 +129,14 @@ export function SiteHeader() {
                       : "text-muted-foreground hover:text-foreground"
                   }`}
                 >
-                  <span className="opacity-60">{number}</span>
-                  {/* Short label up to 2xl; full label only on widest screens. */}
-                  <span className="ml-1 2xl:hidden">{short}</span>
-                  <span className="ml-1 hidden 2xl:inline">{label}</span>
+                  {/* Number prefix on the widest screens only — below 2xl the
+                      ten entries share the row with the wordmark and theme
+                      toggle, and the label alone disambiguates. */}
+                  <span className="hidden opacity-60 2xl:inline">{number}</span>
+                  {/* Short labels at every width: ten sections plus the theme
+                      toggle no longer leave room for the full-label swap.
+                      Full names live in the sheet and the section headers. */}
+                  <span className="2xl:ml-1">{short}</span>
                   {isActive && (
                     <span className="absolute inset-x-1.5 -bottom-px h-px bg-primary lg:inset-x-2" />
                   )}
@@ -140,13 +148,13 @@ export function SiteHeader() {
           {/* Theme toggle: visible at every breakpoint. */}
           <ThemeToggle />
 
-          {/* Mobile menu trigger: visible below md. */}
+          {/* Mobile/tablet menu trigger: visible below lg. */}
           <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
             <SheetTrigger asChild>
               <button
                 type="button"
                 aria-label="Open navigation menu"
-                className="grid h-9 w-9 place-items-center border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary md:hidden"
+                className="grid h-9 w-9 place-items-center border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary lg:hidden"
               >
                 <Menu className="h-4 w-4" strokeWidth={2.25} />
               </button>
