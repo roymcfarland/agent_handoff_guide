@@ -1,38 +1,36 @@
-# Current Slice: Title-block footer — methodology revision table
+# Current Slice: CI workflow — make the repo's own gates real
 
 ## Context
 
-Engineering drawings carry a title block: revision, date, description, drawn-by, checked-by. The site should carry a literal one in the footer — it is the methodology's changelog (credibility: the framework is alive and versioned) rendered in the site's own drafting idiom (delight). This is the first slice of the credibility track. NOTE: the Field Notes section (curated lessons from the operating ledger) is queued next but needs the human to pick which lessons go public — do not start it without that input.
+The repo publishing a methodology built on "green checks" has no CI at all — no `.github/` directory. The Verifier's evidence and the after-merge protocol both assume checks exist on the PR's own commit. This slice adds a minimal, honest gate: typecheck, build, and the repo's own 800-line-cap rule from PROJECT.md Q1, enforced automatically.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] A new exported content block in `client/src/lib/content.ts` (e.g., `REVISION_TABLE`) holding an array of revisions: `{ rev, date, description }` — seeded with real history: v1.0 (initial publication: dual-agent loop, schema, prompt library), v1.x entries for the operational-rigor and failure-mode expansions (PRs #15–#22), and v2.0 (2026-07: Advisor named as third role; verdict triage; after-merge protocol; ceremony sizing; template upgrade).
-- [ ] `client/src/components/SiteFooter.tsx` renders it as a drawing title block: bordered table, monospace caps headers (REV / DATE / DESCRIPTION / DRAWN / CHECKED), rows from the data, with DRAWN and CHECKED cells reading like a drawing stamp (e.g., DRAWN: RM · CHECKED: Verifier LLM). Keep it compact — the footer must not double in height on desktop.
-- [ ] The table is responsive: no horizontal page scroll at 375px (wrap or hide low-priority columns via existing Tailwind patterns).
-- [ ] Dark mode renders correctly (tokens only — no hardcoded colors).
-- [ ] `pnpm check` passes with zero errors and `pnpm build` succeeds.
+- [ ] `.github/workflows/ci.yml` runs on `pull_request` and on `push` to `main`: checkout → pnpm via Corepack (respecting the `packageManager` pin) → Node from `.nvmrc` → `pnpm install --frozen-lockfile` → `pnpm check` → `pnpm build`.
+- [ ] A line-cap job (or step) enforces PROJECT.md Q1: fail if any file in `client/src/pages/`, `client/src/lib/`, or `client/src/components/` (top level) exceeds 800 lines — with the two documented exemptions (`client/src/lib/content.ts`, `client/src/components/diagrams/**`). A small shell script inline in the workflow is fine; no new dependencies.
+- [ ] The workflow has no secrets, no deploy steps, and does not run the Vercel build — Vercel deploys are separate and stay that way.
+- [ ] The decisive check for this PR is the new workflow running green on the PR's own CI (`gh pr checks`), not a static YAML read.
 
 ## Constraints & Anti-Goals
 
-- DO NOT add new entries to `SECTIONS` — this is footer chrome, not a section.
-- DO NOT add dependencies.
-- DO NOT invent revision history — every row must correspond to real merged work (PR numbers in the description strings are welcome).
-- DO NOT restyle the rest of the footer beyond integrating the block.
+- DO NOT add lint/test jobs for tools the repo does not have configured (there is no test suite and no eslint config — do not invent them).
+- DO NOT add dependencies or new package.json scripts unless the cap check genuinely needs one (prefer inline shell).
+- DO NOT touch application source in this slice.
 
 ## Pre-confirmed facts
 
-- The footer component is `client/src/components/SiteFooter.tsx`.
-- Real revision anchors from git history: initial public release (PRs #1–#14 era), failure modes + operational rigor (PRs #15–#22), security/hygiene (PRs #23–#28), Advisor era: #30 (spec), #31 (role rollout), #32 (verdict triage), #33 (after-merge), #34 (ceremony sizing), #35 (template + amendment), #36 (diagram redraw).
-- Design tokens: `--ink`, `--ink-soft`, `--red`, `--paper`, borders via `border-border`; stamps use the `.stamp` utility; mono size conventions ~10.5–11px with widest tracking.
+- Exact script names from package.json: `check` (tsc --noEmit), `build` (vite build + esbuild server). There is NO `test` or `lint` script.
+- `packageManager: pnpm@10.4.1` (Corepack); `.nvmrc` exists (Node 22); `engines.node >= 22`.
+- The 800-line rule and its two exemptions are PROJECT.md Q1, verbatim.
+- Expected test delta: no test changes (repo has no test suite).
 
 ## Files explicitly forbidden
 
-- `client/src/components/diagrams/**` — untouched.
-- `client/src/pages/sections/**` — untouched; footer only.
+- `client/**`, `server/**`, `vercel.json` — no app or deploy changes in this slice.
 
 ## Starting Point
 
-- Relevant files: `client/src/lib/content.ts`, `client/src/components/SiteFooter.tsx`
-- Known issues: none. Queued after this slice: Field Notes (needs human lesson curation), worked example, hygiene track (CI workflow, dead-component prune, wouter patch removal, theme toggle).
+- Relevant files: `.github/workflows/ci.yml` (NEW)
+- Known issues: none. Queued after this slice: Field Notes section (WAITING ON HUMAN — pick which lessons from the operating ledger go public), worked example, hygiene track (dead-component prune, wouter patch removal, theme toggle).

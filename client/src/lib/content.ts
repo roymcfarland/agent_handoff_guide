@@ -2174,3 +2174,44 @@ The Verifier read ONLY the PR diff and the Builder Brief / Spec Update Proposal 
 The Verifier did NOT propose alternative edits. The Verifier did NOT modify the spec doc. The Verifier did NOT write code.
 If the Proposal itself appears under-specified, the verdict is REJECT (proposal-insufficient) (Phase 2) and the PR should NOT be merged until the human revises the Proposal.
 `;
+
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* TITLE BLOCK — METHODOLOGY REVISION HISTORY                                  */
+/* Rendered as a drawing title block in the site footer. Every row corresponds */
+/* to real merged work; do not add a row without a shipped anchor.             */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+export const REVISION_TABLE = [
+  {
+    rev: "1.0",
+    date: "2026-04",
+    description:
+      "Initial publication — dual-agent loop, document schema, prompt library, Engineer's Notebook design.",
+    drawn: "RM",
+    checked: "—",
+  },
+  {
+    rev: "1.1",
+    date: "2026-06",
+    description:
+      "Failure modes expanded; operational rigor embedded in the loop, Phase 2, and META prompt bodies (PRs #15–#22).",
+    drawn: "Builder LLM",
+    checked: "Verifier LLM",
+  },
+  {
+    rev: "1.2",
+    date: "2026-06",
+    description:
+      "Security and hygiene hardening — response headers, dependency overrides, dead scaffolding removed, Node pinned (PRs #23–#28).",
+    drawn: "Builder LLM",
+    checked: "Verifier LLM",
+  },
+  {
+    rev: "2.0",
+    date: "2026-07",
+    description:
+      "The Advisor named as a third role — verdict triage, after-the-merge protocol, ceremony sizing, HANDOFF template upgrade, loop figure redrawn (PRs #30–#36).",
+    drawn: "Advisor",
+    checked: "RM",
+  },
+] as const;
