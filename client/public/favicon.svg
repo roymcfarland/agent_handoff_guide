@@ -1,31 +1,29 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
   <style>
     .paper { fill: #f4efe6; }
-    .grid { stroke: #7da2b8; stroke-opacity: 0.35; }
-    .frame { stroke: #0e2a47; }
-    .mark { fill: #c8362d; }
+    .cover { fill: #f4efe6; stroke: #0e2a47; }
+    .grid { stroke: #7da2b8; stroke-opacity: 0.45; }
+    .band { fill: #c8362d; }
+    .staple { stroke: #0e2a47; }
     @media (prefers-color-scheme: dark) {
       .paper { fill: #0c1524; }
-      .grid { stroke: #3d5a78; stroke-opacity: 0.5; }
-      .frame { stroke: #a8c6dd; }
-      .mark { fill: #e05545; }
+      .cover { fill: #0c1524; stroke: #a8c6dd; }
+      .grid { stroke: #3d5a78; stroke-opacity: 0.6; }
+      .band { fill: #e05545; }
+      .staple { stroke: #a8c6dd; }
     }
   </style>
   <rect class="paper" width="64" height="64" />
+  <!-- memo book: rounded cover, graph-grid face -->
+  <rect class="cover" x="13" y="5" width="40" height="54" rx="5.5" stroke-width="5" />
   <path
     class="grid"
-    d="M16 0V64M32 0V64M48 0V64M0 16H64M0 32H64M0 48H64"
+    d="M23 8V56M33 8V56M43 8V56M16 15H50M16 25H50M16 45H50"
     fill="none"
-    stroke-width="1"
+    stroke-width="1.5"
   />
-  <rect class="frame" x="3" y="3" width="58" height="58" fill="none" stroke-width="5" />
-  <text
-    class="mark"
-    x="32"
-    y="45"
-    font-family="ui-monospace, Menlo, Consolas, monospace"
-    font-size="36"
-    font-weight="700"
-    text-anchor="middle"
-  >A</text>
+  <!-- brand band across the lower third -->
+  <rect class="band" x="16" y="33" width="34" height="9" />
+  <!-- staple binding on the spine -->
+  <path class="staple" d="M8 19H18M8 45H18" fill="none" stroke-width="3.5" />
 </svg>
