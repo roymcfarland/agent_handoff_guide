@@ -625,11 +625,11 @@ Pre-flight — run this before writing any code:
 \`\`\`bash
 git checkout main
 git fetch origin --prune
-git pull --ff-only origin main
+git merge --ff-only origin/main
 git branch --merged main --format='%(refname:short)' | grep -vxF main | while read -r br; do git branch -d "$br" 2>/dev/null || true; done
-git checkout -b <type>/<slice-name>
+git checkout -B <type>/<slice-name> origin/main
 \`\`\`
-If \`git pull --ff-only\` fails, main has diverged locally — STOP and report. Do not force, merge, or build on a stale main.
+If \`git merge --ff-only\` fails, main has diverged locally — STOP and report. Do not force, merge, or build on a stale main.
 
 Operating contract:
 1. Read PROJECT.md for the project-level rules, then read HANDOFF.md for the slice-level scope.
@@ -1411,11 +1411,11 @@ Pre-flight — run this before writing any code:
 \`\`\`bash
 git checkout main
 git fetch origin --prune
-git pull --ff-only origin main
+git merge --ff-only origin/main
 git branch --merged main --format='%(refname:short)' | grep -vxF main | while read -r br; do git branch -d "$br" 2>/dev/null || true; done
-git checkout -b <type>/<short-name>
+git checkout -B <type>/<short-name> origin/main
 \`\`\`
-If \`git pull --ff-only\` fails, STOP and report — do not force or merge.
+If \`git merge --ff-only\` fails, STOP and report — do not force or merge.
 
 What I want from you:
 1. Read PROJECT.md before you write any code. If the task appears
