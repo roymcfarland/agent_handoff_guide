@@ -7,6 +7,7 @@ import { PromptCard } from "@/components/PromptCard";
 import { SectionHeader } from "@/components/SectionHeader";
 import { PhaseModelDiagram } from "@/components/diagrams";
 import {
+  AFTER_MERGE,
   PHASE_TWO_BUILDER_PROMPT,
   PHASE_TWO_BUILDER_PR_DESCRIPTION,
   PHASE_TWO_CALIBRATION,
@@ -378,6 +379,40 @@ export default function PhaseTwoSection() {
           <div className="lg:col-span-8">
             <ol className="divide-y divide-border border-y border-border">
               {PHASE_TWO_WIRING.map(step => (
+                <li key={step.n} className="grid grid-cols-12 gap-6 py-6">
+                  <div className="col-span-12 sm:col-span-2">
+                    <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+                      Step {step.n}
+                    </span>
+                  </div>
+                  <div className="col-span-12 sm:col-span-10">
+                    <h4 className="font-display text-xl font-bold leading-snug text-foreground">
+                      {step.title}
+                    </h4>
+                    <p className="mt-2 max-w-prose text-[15px] leading-relaxed text-foreground/85">
+                      {step.body}
+                    </p>
+                  </div>
+                </li>
+              ))}
+            </ol>
+          </div>
+        </div>
+
+        {/* After the merge — the post-merge protocol */}
+        <div className="mt-16 grid gap-8 lg:grid-cols-12">
+          <div className="lg:col-span-4">
+            <div className="stamp">AFTER THE MERGE · EVERY TIME</div>
+            <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+              {AFTER_MERGE.headline}
+            </h3>
+            <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
+              {AFTER_MERGE.intro}
+            </p>
+          </div>
+          <div className="lg:col-span-8">
+            <ol className="divide-y divide-border border-y border-border">
+              {AFTER_MERGE.steps.map(step => (
                 <li key={step.n} className="grid grid-cols-12 gap-6 py-6">
                   <div className="col-span-12 sm:col-span-2">
                     <span className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
