@@ -1,29 +1,37 @@
-# Current Slice: Field Notes section — lessons from operating the framework
+# Current Slice: Worked example — one slice end-to-end, receipts included
 
 ## Context
 
-The site prescribes but never shows receipts. The operating practice has produced a large ledger of hard-won lessons, and this repo itself is run with the framework it documents (PRs #15–#41 are a public audit trail). A curated Field Notes section converts the site from opinion to evidence — the single highest-credibility addition identified in the July 2026 review.
-
-**STATUS: BLOCKED ON HUMAN CURATION.** A candidate list of notes has been drafted by the Advisor and is awaiting the owner's veto/selection. Do not build this slice until the owner has approved the final set. Once approved, the ACs below apply to the approved subset.
+The site now has doctrine (verdict triage, after-merge protocol, ceremony sizing) and evidence (Field Notes) — but a reader still never sees what a good run *looks like*. This slice adds one complete, verifiable worked example: this repo's own PR #36 (the loop-figure redraw), which conveniently exercised the whole system — a HANDOFF with pre-confirmed facts, a build, a pixel check that caught a pre-existing render bug, a human review catch ("the label is not centered"), an Advisor recon that found the real cause (the gap, not the label), and a same-branch amendment. Every artifact is public.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] A new `FIELD_NOTES` export in `client/src/lib/content.ts`: the approved notes, each `{ n, title, story, rule }` — a numbered note with a 2–4 sentence war story (tool-agnostic, no client identifiers) and a one-line operating rule it produced.
-- [ ] A new section renders them (placement decision at build time: either its own nav section between Build & Verify and Operate, or a subsection of Build & Verify — owner's call when approving the notes). Cards in the notebook idiom, numbered like the failure-mode cards.
-- [ ] An intro line establishes provenance without over-claiming: these are lessons from operating the framework on real repositories, including this one — with a link to the repo's merged-PR history as the live audit trail.
-- [ ] At least two notes reference verifiable events in THIS repo (e.g., the "PR opened" label hidden under the Verifier box since first ship, fixed in #36; the prompt-count stat that claimed 11 with 10 items, fixed in #35) so a skeptical reader can check the receipts.
+- [ ] A new `WORKED_EXAMPLE` export in `client/src/lib/content.ts`: a stepwise narrative (6–8 steps) of PR #36 — (1) the HANDOFF scope with pre-confirmed geometry; (2) the build; (3) verification beyond green checks (text-fit measured, full-figure screenshot) catching the hidden "PR opened" label; (4) the human review catch on the preview; (5) the triage — first fix treated the symptom (nudge), reviewer pushed back, recon found the cause (a 40px gap holding a 36px label); (6) the amendment on the same branch, no re-issued slice; (7) merge + live verification. Each step names which doctrine block it exercised (pre-confirmed facts, green-is-not-shipped, verdict triage, amendment prompt, after-merge protocol).
+- [ ] Each step links its receipt: the PR, the specific commits, or the review comments (all public on github.com/roymcfarland/agent_handoff_guide/pull/36).
+- [ ] Renders as a subsection of Field Notes (no new nav section — it is the notes' capstone), in the notebook idiom, after the ten note cards.
+- [ ] The framing is honest about imperfection: the example's value is that the first fix was wrong and the loop caught it — do not sand that off.
 - [ ] `pnpm check` passes, `pnpm build` succeeds, CI green on the PR.
 - Expected test delta: none (repo has no test suite).
 
 ## Constraints & Anti-Goals
 
-- DO NOT publish any note the owner has not explicitly approved.
-- DO NOT include client names, private repo details, or model-vendor rankings (PROJECT.md non-goal: tool-agnostic).
-- DO NOT exceed ~12 notes — curation is the point; the ledger stays private.
+- DO NOT add a new `SECTIONS` entry (the header is at capacity below 2xl; this lives inside Field Notes).
+- DO NOT dramatize — spec voice, verifiable claims only.
+- DO NOT add dependencies.
+
+## Pre-confirmed facts
+
+- The full artifact trail is public: PR #36 (branch `feat/diagram-advisor`), its three commits (redraw; draw-order fix + first centering attempt; gap-widening fix), and two Advisor comments documenting the triage.
+- The Field Notes section component is `client/src/pages/sections/FieldNotesSection.tsx`; the section id is `field-notes`.
+- Note 02 in `FIELD_NOTES` already references the hidden-label bug — the worked example should link to it as "note 02, in full" rather than repeating it.
+
+## Files explicitly forbidden
+
+- `client/src/components/SiteHeader.tsx`, `client/index.html`, `server/**`, `.github/**`.
 
 ## Starting Point
 
-- Relevant files: `client/src/lib/content.ts`, new/edited section component, `client/src/pages/Home.tsx` + `SECTIONS` (only if a new nav section is approved)
-- Known issues: candidate list delivered to the owner 2026-07-07; waiting on selection. Queued after: worked example, express 5 migration.
+- Relevant files: `client/src/lib/content.ts`, `client/src/pages/sections/FieldNotesSection.tsx`
+- Known issues: none. Queued after: express 5 migration (drops the qs/path-to-regexp security overrides), small SEO/a11y batch (sitemap + robots line, viewport maximum-scale removal, VITE_SITE_URL build guard), delight batch (Edit Pass checklist persistence, per-card download-as-.md, print stylesheet).
