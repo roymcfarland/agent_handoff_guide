@@ -23,7 +23,7 @@ export function FailureModesMatrixDiagram() {
     <DiagramShell
       figure="Fig. 2"
       title="Failure-mode index"
-      legend="Eight classes · workflow, not model"
+      legend={`${FAILURE_MODES.length} classes · workflow, not model`}
       caption="Skim the map first; each numbered card below expands the same idea in full."
     >
       <svg
@@ -31,7 +31,7 @@ export function FailureModesMatrixDiagram() {
         xmlns="http://www.w3.org/2000/svg"
         className="mx-auto block h-auto w-full max-w-3xl"
         role="img"
-        aria-label="Grid of eight numbered failure mode titles from committing to main through trusting the report over the repo."
+        aria-label={`Grid of ${FAILURE_MODES.length} numbered failure mode titles, from "${FAILURE_MODES[0].title}" through "${FAILURE_MODES[FAILURE_MODES.length - 1].title}".`}
       >
         <defs>
           <pattern
