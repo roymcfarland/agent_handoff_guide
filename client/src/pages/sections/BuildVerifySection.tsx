@@ -10,6 +10,7 @@ import {
   BUILD_VERIFY_MARKDOWN,
   BUILD_VERIFY_PRINCIPLES,
   BUILD_VERIFY_STAGES,
+  CEREMONY_SIZING,
   ESCALATION_RULE,
   VERDICT_TRIAGE,
 } from "@/lib/content";
@@ -273,6 +274,92 @@ export default function BuildVerifySection() {
                   </li>
                 ))}
               </ul>
+            </div>
+          </div>
+        </div>
+
+        {/* Ceremony sizing — which changes enter the loop */}
+        <div className="mt-16">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <div className="stamp">CEREMONY SIZING · MATCH RIGOR TO RISK</div>
+              <h3 className="mt-3 font-display text-3xl font-bold leading-tight">
+                {CEREMONY_SIZING.headline}
+              </h3>
+            </div>
+            <p className="max-w-md text-[15px] leading-relaxed text-muted-foreground">
+              {CEREMONY_SIZING.intro}
+            </p>
+          </div>
+
+          <div className="mt-8 paper-card overflow-hidden">
+            <div className="grid divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+              <div className="px-6 py-6">
+                <div className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+                  {CEREMONY_SIZING.fullLoop.label}
+                </div>
+                <ul className="mt-3 space-y-2.5">
+                  {CEREMONY_SIZING.fullLoop.items.map((item, i) => (
+                    <li
+                      key={i}
+                      className="flex gap-2 text-[14px] leading-relaxed text-foreground/85"
+                    >
+                      <span
+                        aria-hidden
+                        className="mt-1 font-mono text-[11px] font-bold text-primary"
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="px-6 py-6">
+                <div className="font-mono text-xs font-bold uppercase tracking-widest text-primary">
+                  {CEREMONY_SIZING.direct.label}
+                </div>
+                <ul className="mt-3 space-y-2.5">
+                  {CEREMONY_SIZING.direct.items.map((item, i) => (
+                    <li
+                      key={i}
+                      className="flex gap-2 text-[14px] leading-relaxed text-foreground/85"
+                    >
+                      <span
+                        aria-hidden
+                        className="mt-1 font-mono text-[11px] font-bold text-primary"
+                      >
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+                <p className="mt-4 text-[13px] leading-relaxed text-muted-foreground">
+                  {CEREMONY_SIZING.direct.caveat}
+                </p>
+              </div>
+            </div>
+
+            <div className="border-t border-border bg-primary/5 px-6 py-5">
+              <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+                The invariant
+              </div>
+              <p className="mt-2 font-display text-2xl font-bold leading-snug text-foreground">
+                {CEREMONY_SIZING.invariant.title}
+              </p>
+              <p className="mt-3 max-w-prose text-[14px] leading-relaxed text-foreground/85">
+                {CEREMONY_SIZING.invariant.body}
+              </p>
+            </div>
+
+            <div className="border-t border-border bg-secondary/40 px-6 py-5">
+              <div className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+                {CEREMONY_SIZING.trap.title}
+              </div>
+              <p className="mt-2 max-w-prose text-[14px] leading-relaxed text-foreground/85">
+                {CEREMONY_SIZING.trap.body}
+              </p>
             </div>
           </div>
         </div>
