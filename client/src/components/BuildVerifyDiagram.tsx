@@ -19,9 +19,13 @@ export function BuildVerifyDiagram() {
     <DiagramShell
       figure="Fig. 6"
       title="The two-LLM loop (per slice)"
-      legend="Builder → Verifier → Gatekeeper"
+      legend="Advisor → Builder → Verifier → Gatekeeper"
       footer={
         <>
+          The{" "}
+          <code className="font-mono text-foreground">HANDOFF.md</code> at the
+          top is scoped by the Advisor, which drafts both prompts and — when
+          the verdict comes back — reads it critically before the merge call.
           The Verifier is a different model in a clean context. It reads the PR
           body, diff, and{" "}
           <code className="font-mono text-foreground">HANDOFF.md</code>, returns
@@ -36,7 +40,7 @@ export function BuildVerifyDiagram() {
         xmlns="http://www.w3.org/2000/svg"
         className="mx-auto block h-auto min-w-[680px] w-full max-w-5xl"
         role="img"
-        aria-label="Diagram of the two-LLM build-and-verify loop: HANDOFF.md feeds the Builder LLM, which opens a PR. A different Verifier LLM in a clean context reads the PR body, diff, and HANDOFF.md, returns an APPROVE or REJECT verdict, and the human gatekeeper merges on APPROVE or sends the verdict back on REJECT."
+        aria-label="Diagram of the build-and-verify loop: HANDOFF.md — scoped by the Advisor, which drafts both prompts — feeds the Builder LLM, which opens a PR. A different Verifier LLM in a clean context reads the PR body, diff, and HANDOFF.md and returns an APPROVE or REJECT verdict. The Advisor interprets the verdict, and the human gatekeeper merges on APPROVE or sends the verdict back on REJECT."
       >
         <defs>
           <pattern

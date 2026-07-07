@@ -88,8 +88,8 @@ export default function OverviewSection() {
                 v: "Library prompts & templates — install, recurring loop, recovery",
               },
               {
-                k: "2",
-                v: "Models per slice — Builder session, then independent Verifier",
+                k: "3",
+                v: "Roles per slice — Advisor drafts, Builder executes, Verifier grades",
               },
             ].map(item => (
               <div

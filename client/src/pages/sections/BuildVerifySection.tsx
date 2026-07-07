@@ -24,13 +24,16 @@ export default function BuildVerifySection() {
           id="build-verify-heading"
           number="06"
           label="BUILD & VERIFY"
-          title="One LLM builds. A different LLM verifies. You merge."
+          title="An Advisor scopes. A Builder ships. A Verifier grades. You merge."
           kicker={
             <>
               The Builder can overstate completion on its own work. A second LLM
               in a clean context, reading the PR description, diff, and{" "}
               <code className="font-mono text-foreground">HANDOFF.md</code>,
-              catches what the Builder may miss or under-report. The prompts and
+              catches what the Builder may miss or under-report. Upstream of
+              both, an Advisor greps the repo, scopes the slice, and drafts the
+              prompts the other two run — so neither ever works from guesswork.
+              The prompts and
               PR templates for this loop live in the{" "}
               <a
                 href="#scenario-loop"
@@ -43,8 +46,8 @@ export default function BuildVerifySection() {
           }
         />
 
-        {/* Stages A → B → C */}
-        <div className="mt-14 grid gap-px bg-border md:grid-cols-3">
+        {/* Stages A → D */}
+        <div className="mt-14 grid gap-px bg-border md:grid-cols-2 xl:grid-cols-4">
           {BUILD_VERIFY_STAGES.map(stage => (
             <article
               key={stage.tag}
