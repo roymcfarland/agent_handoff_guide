@@ -1258,6 +1258,46 @@ export const ESCALATION_RULE = {
 } as const;
 
 /* ─────────────────────────────────────────────────────────────────────────── */
+/* BUILD & VERIFY — CEREMONY SIZING                                            */
+/* The loop is a tool, not a tax: which changes enter it, and which gates      */
+/* never bend either way.                                                      */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+export const CEREMONY_SIZING = {
+  headline: "The loop is a tool, not a tax.",
+  intro:
+    "Not every change earns the full round-trip. Size the ceremony to the risk — and hold the gates constant no matter which path a change takes.",
+  fullLoop: {
+    label: "Run the full loop when…",
+    items: [
+      "The change is large, multi-file, or logic-heavy — a fresh-context Builder brings none of your blind spots to it.",
+      "The change is destructive or hard to reverse — migrations, deletions, auth, anything that touches data.",
+      "An adversarial reviewer genuinely de-risks it — subtle invariants, security boundaries, tricky edge cases.",
+      "You cannot state the acceptance criteria crisply — the round-trip forces the scoping discipline you are missing.",
+    ],
+  },
+  direct: {
+    label: "Direct execution is fine when…",
+    items: [
+      "A few-line config or environment fix.",
+      "A markdown, copy, or content-only edit.",
+      "A one-line policy tweak — a header, a redirect, a rule.",
+      "A file rename or comment correction.",
+    ],
+    caveat:
+      "Small, well-understood, and self-verifiable on the live surface — all three, not any one.",
+  },
+  invariant: {
+    title: "Drop the round-trip, never the gates",
+    body: "Direct mode changes who builds; it changes nothing about the evidence. The work still lands as a PR — never a push to main — still updates the ledger in the same diff, still runs the project's real build, typecheck, and test gates by their exact script names, and still gets verified on the live surface before anyone recommends merge.",
+  },
+  trap: {
+    title: "The direct-mode trap",
+    body: "Green local plus green preview is not green production when the change keys on an environment-specific value — a config, a credential, a domain. Verify production after the merge, and keep any fail-open fallback in place until you have.",
+  },
+} as const;
+
+/* ─────────────────────────────────────────────────────────────────────────── */
 /* BUILD & VERIFY — DROP-IN MARKDOWN SPEC                                      */
 /* Self-contained doc teams can paste into a repo as docs/build-and-verify.md. */
 /* ─────────────────────────────────────────────────────────────────────────── */
