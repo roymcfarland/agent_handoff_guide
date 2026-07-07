@@ -1,42 +1,39 @@
-# Current Slice: Prerender — ship the content in the HTML
+# Current Slice: Sheet index + anchor links
 
 ## Context
 
-All ten sections' prose currently lives in the JS bundle behind one URL; view-source shows an empty root div. Google renders JS, but non-Google scrapers and LLM crawlers never see the content, and the empty source undercuts credibility with exactly this site's audience. This slice prerenders the single page at build time so the full content ships in the HTML — the minimum structural SEO fix, deliberately NOT the per-section-URL split (that would cross PROJECT.md's "single-page reference document" identity and needs its own spec conversation first).
+Construction drawings open with a sheet index; this site now has ten "files" and no map. This slice adds a drawing-index block right after the hero (number, title, one-line contents, click to jump) and hover anchor-copy affordances on section headings so people can share the exact section or field note — the notes are the viral units; make them addressable.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] The production build emits `dist/public/index.html` containing the rendered page markup (all ten section ids present in the static HTML), while hydration keeps the page fully interactive (nav observer, theme toggle, copy buttons, sheet).
-- [ ] Implementation preference, in order: (a) a small build-time prerender script using `react-dom/server` `renderToString` into the built index.html + `hydrateRoot` in main.tsx; (b) an established Vite prerender/SSG plugin IF it requires no framework migration. No Next.js/Remix migration — that is out of scope.
-- [ ] The theme boot script still runs before first paint (no flash); the prerendered markup must not hard-code a theme class.
-- [ ] The NotFound noindex behavior is preserved; `/` serves prerendered content, unknown paths still render the client-side 404.
-- [ ] `curl` of the local preview/build output shows real content (grep for "Field Notes" and "Advisor triage" in the HTML, not just the bundle).
-- [ ] Hydration produces zero console errors/warnings about mismatches in the dev-tools console on load.
-- [ ] `pnpm check`, `pnpm build`, prompts zero-diff, and the 800-line cap pass; CI green on the PR.
+- [ ] A `SHEET_INDEX` export in `client/src/lib/content.ts` derives from `SECTIONS` (never a second hand-written list) plus a one-line `contents` description per section id.
+- [ ] The index renders in the Overview section after the stats strip, styled as a drawing sheet index: bordered table/list, mono numbers, section title, contents line, whole row is an anchor link to `#<id>`.
+- [ ] Section headings (via `SectionHeader`) gain a hover-revealed anchor-copy button: click copies `<origin>/#<id>` to the clipboard and toasts (sonner already present). Keyboard-accessible (focusable, aria-label "Copy link to section").
+- [ ] Field-note cards get the same affordance per note (`#note-01` style ids on the cards; ids added to the li elements).
+- [ ] Anchor ids remain stable — no renames of existing section ids.
+- [ ] Prerendered HTML still passes: anchor buttons must be hydration-safe (no window access at render; clipboard on click only).
+- [ ] `pnpm check`, `pnpm build` (incl. prerender), prompts zero-diff, 800-line cap pass; CI green.
 - Expected test delta: none (repo has no test suite).
 
 ## Constraints & Anti-Goals
 
-- DO NOT split into per-section routes/URLs — single page stays single page (PROJECT.md identity; changing it is a spec amendment, not an SEO reflex).
-- DO NOT migrate frameworks or add heavyweight SSG machinery; prefer a ~50-line script over a plugin with config sprawl.
-- DO NOT break the Express self-host fallback (`pnpm start` must still serve the prerendered output correctly).
-- DO NOT regress interactivity (hydration, not a static replacement).
+- DO NOT add a nav entry for the index (it lives in Overview).
+- DO NOT introduce a router dependency for hashes — plain anchors.
+- DO NOT add dependencies.
 
 ## Pre-confirmed facts
 
-- Entry: `client/src/main.tsx` uses `createRoot(...).render(...)`; switch to `hydrateRoot` only when the root has prerendered children (feature-detect `root.hasChildNodes()`), so dev mode keeps working unhydrated.
-- Theme contract: the head boot script applies `.dark` pre-paint; ThemeProvider re-derives on mount — prerendered HTML must stay theme-neutral. `readSystemPref` guards `typeof window === "undefined"`; `readStoredTheme` runs in a useState initializer (WILL run during renderToString) but is try/catch-wrapped and falls back to "system" — confirm during build.
-- Browser APIs at render time: IntersectionObserver (SiteHeader) and matchMedia listeners (ThemeContext) live inside useEffect — SSR-safe. The analytics injection in `main.tsx` is module-scope DOM manipulation — the prerender script must import App only, never main.tsx.
-- Vite 7 SSR: either `vite build --ssr` or a post-build node script importing the app works; the script approach matches `scripts/` conventions (tsx already a devDependency).
+- `SECTIONS` lives in content.ts (10 entries, ids stable since #42). `SectionHeader` is `client/src/components/SectionHeader.tsx`; all ten sections use it with `id="<section>-heading"` props.
+- Toasts: `toast()` from `sonner` is already used by PromptCard's copy buttons — mirror that call pattern.
+- The site is prerendered as of the previous slice: any new component must render without window/document at render time.
 
 ## Files explicitly forbidden
 
-- `client/src/lib/content.ts` — no content changes.
-- `prompts/**`, `client/public/llms.txt` — generated; untouched by this slice.
+- `prompts/**`, `client/public/llms.txt` (generated), `.github/**`, `server/**`.
 
 ## Starting Point
 
-- Relevant files: `vite.config.ts`, `client/src/main.tsx`, `scripts/prerender.ts` (NEW, likely), `package.json` (build script)
-- Known issues: none. Queued after: sheet index + anchor links, byline + FAQ, robot-head brand mark in the header (replace the "AHF" box with a lego-like robot head — proof-sheet approach like the favicon), delight batch (checklist persistence, download-as-.md, print stylesheet, reading-progress line).
+- Relevant files: `client/src/lib/content.ts`, `client/src/pages/sections/OverviewSection.tsx`, `client/src/components/SectionHeader.tsx`, `client/src/pages/sections/FieldNotesSection.tsx`
+- Known issues: none. Queued after: byline + FAQ, robot-head brand mark (replace the "AHF" header box with a lego-like robot head — proof-sheet approach like the favicon), delight batch (checklist persistence, download-as-.md, print stylesheet, reading-progress line).
