@@ -15,13 +15,14 @@
  */
 
 import { useEffect, useState } from "react";
-import { Menu, X } from "lucide-react";
+import { Menu, Monitor, Moon, Sun, X } from "lucide-react";
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { useTheme, type Theme } from "@/contexts/ThemeContext";
 import { SECTIONS } from "@/lib/content";
 
 // Short labels swap in below 2xl on desktop. The number prefix carries the
@@ -37,6 +38,35 @@ const SHORT_LABEL: Record<string, string> = {
   "meta-prs": "META-PRs",
   references: "Refs",
 };
+
+const THEME_META = {
+  light: { icon: Sun, label: "light" },
+  dark: { icon: Moon, label: "dark" },
+  system: { icon: Monitor, label: "system" },
+} as const;
+
+// Mirrors ThemeContext's toggle cycle: light -> dark -> system -> light.
+const NEXT_THEME: Record<Theme, Theme> = {
+  light: "dark",
+  dark: "system",
+  system: "light",
+};
+
+function ThemeToggle() {
+  const { theme, toggleTheme } = useTheme();
+  const Icon = THEME_META[theme].icon;
+  return (
+    <button
+      type="button"
+      onClick={toggleTheme}
+      aria-label={`Theme: ${THEME_META[theme].label}. Switch to ${THEME_META[NEXT_THEME[theme]].label}.`}
+      title={`Theme: ${THEME_META[theme].label} · click for ${THEME_META[NEXT_THEME[theme]].label}`}
+      className="grid h-9 w-9 shrink-0 place-items-center border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary"
+    >
+      <Icon className="h-4 w-4" strokeWidth={2.25} />
+    </button>
+  );
+}
 
 export function SiteHeader() {
   const [active, setActive] = useState<string>(SECTIONS[0].id);
@@ -78,98 +108,103 @@ export function SiteHeader() {
           </span>
         </a>
 
-        {/* Desktop nav: inline from md up. No overflow, no scroll. */}
-        <nav className="hidden items-center md:flex">
-          {SECTIONS.map(({ id, label, number }) => {
-            const isActive = active === id;
-            const short = SHORT_LABEL[id] ?? label;
-            return (
-              <a
-                key={id}
-                href={`#${id}`}
-                aria-current={isActive ? "true" : undefined}
-                className={`relative whitespace-nowrap px-1.5 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.1em] transition-colors duration-150 ease-out lg:px-2 lg:text-[10.5px] lg:tracking-[0.12em] ${
-                  isActive
-                    ? "text-primary"
-                    : "text-muted-foreground hover:text-foreground"
-                }`}
-              >
-                <span className="opacity-60">{number}</span>
-                {/* Short label up to 2xl; full label only on widest screens. */}
-                <span className="ml-1 2xl:hidden">{short}</span>
-                <span className="ml-1 hidden 2xl:inline">{label}</span>
-                {isActive && (
-                  <span className="absolute inset-x-1.5 -bottom-px h-px bg-primary lg:inset-x-2" />
-                )}
-              </a>
-            );
-          })}
-        </nav>
-
-        {/* Mobile menu trigger: visible below md. */}
-        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
-          <SheetTrigger asChild>
-            <button
-              type="button"
-              aria-label="Open navigation menu"
-              className="grid h-9 w-9 place-items-center border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary md:hidden"
-            >
-              <Menu className="h-4 w-4" strokeWidth={2.25} />
-            </button>
-          </SheetTrigger>
-          <SheetContent
-            side="right"
-            className="w-[78%] max-w-sm border-l border-border bg-background p-0"
-          >
-            <div className="flex items-center justify-between border-b border-border px-5 py-4">
-              <div className="flex items-center gap-3">
-                <span
-                  aria-hidden
-                  className="grid h-8 w-8 place-items-center border border-foreground bg-background font-mono text-[10px] font-bold tracking-widest text-foreground"
+        <div className="flex items-center gap-2 md:gap-3">
+          {/* Desktop nav: inline from md up. No overflow, no scroll. */}
+          <nav className="hidden items-center md:flex">
+            {SECTIONS.map(({ id, label, number }) => {
+              const isActive = active === id;
+              const short = SHORT_LABEL[id] ?? label;
+              return (
+                <a
+                  key={id}
+                  href={`#${id}`}
+                  aria-current={isActive ? "true" : undefined}
+                  className={`relative whitespace-nowrap px-1.5 py-2 font-mono text-[10px] font-bold uppercase tracking-[0.1em] transition-colors duration-150 ease-out lg:px-2 lg:text-[10.5px] lg:tracking-[0.12em] ${
+                    isActive
+                      ? "text-primary"
+                      : "text-muted-foreground hover:text-foreground"
+                  }`}
                 >
-                  AHF
-                </span>
-                <SheetTitle className="font-display text-sm font-bold leading-tight">
-                  Agent Handoff Framework
-                </SheetTitle>
-              </div>
+                  <span className="opacity-60">{number}</span>
+                  {/* Short label up to 2xl; full label only on widest screens. */}
+                  <span className="ml-1 2xl:hidden">{short}</span>
+                  <span className="ml-1 hidden 2xl:inline">{label}</span>
+                  {isActive && (
+                    <span className="absolute inset-x-1.5 -bottom-px h-px bg-primary lg:inset-x-2" />
+                  )}
+                </a>
+              );
+            })}
+          </nav>
+
+          {/* Theme toggle: visible at every breakpoint. */}
+          <ThemeToggle />
+
+          {/* Mobile menu trigger: visible below md. */}
+          <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+            <SheetTrigger asChild>
               <button
                 type="button"
-                aria-label="Close menu"
-                onClick={() => setMobileOpen(false)}
-                className="grid h-8 w-8 place-items-center text-muted-foreground transition-colors hover:text-foreground"
+                aria-label="Open navigation menu"
+                className="grid h-9 w-9 place-items-center border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary md:hidden"
               >
-                <X className="h-4 w-4" strokeWidth={2.25} />
+                <Menu className="h-4 w-4" strokeWidth={2.25} />
               </button>
-            </div>
-            <nav className="flex flex-col py-2">
-              {SECTIONS.map(({ id, label, number }) => {
-                const isActive = active === id;
-                return (
-                  <a
-                    key={id}
-                    href={`#${id}`}
-                    onClick={() => setMobileOpen(false)}
-                    aria-current={isActive ? "true" : undefined}
-                    className={`flex items-baseline gap-3 border-l-2 px-5 py-3 font-mono text-[12px] font-bold uppercase tracking-[0.12em] transition-colors ${
-                      isActive
-                        ? "border-primary bg-muted/40 text-primary"
-                        : "border-transparent text-muted-foreground hover:border-border hover:bg-muted/20 hover:text-foreground"
-                    }`}
+            </SheetTrigger>
+            <SheetContent
+              side="right"
+              className="w-[78%] max-w-sm border-l border-border bg-background p-0"
+            >
+              <div className="flex items-center justify-between border-b border-border px-5 py-4">
+                <div className="flex items-center gap-3">
+                  <span
+                    aria-hidden
+                    className="grid h-8 w-8 place-items-center border border-foreground bg-background font-mono text-[10px] font-bold tracking-widest text-foreground"
                   >
-                    <span className="w-8 shrink-0 opacity-60">{number}</span>
-                    <span>{label}</span>
-                  </a>
-                );
-              })}
-            </nav>
-            <div className="mt-2 border-t border-border px-5 py-4">
-              <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
-                Tap a section to jump.
-              </p>
-            </div>
-          </SheetContent>
-        </Sheet>
+                    AHF
+                  </span>
+                  <SheetTitle className="font-display text-sm font-bold leading-tight">
+                    Agent Handoff Framework
+                  </SheetTitle>
+                </div>
+                <button
+                  type="button"
+                  aria-label="Close menu"
+                  onClick={() => setMobileOpen(false)}
+                  className="grid h-8 w-8 place-items-center text-muted-foreground transition-colors hover:text-foreground"
+                >
+                  <X className="h-4 w-4" strokeWidth={2.25} />
+                </button>
+              </div>
+              <nav className="flex flex-col py-2">
+                {SECTIONS.map(({ id, label, number }) => {
+                  const isActive = active === id;
+                  return (
+                    <a
+                      key={id}
+                      href={`#${id}`}
+                      onClick={() => setMobileOpen(false)}
+                      aria-current={isActive ? "true" : undefined}
+                      className={`flex items-baseline gap-3 border-l-2 px-5 py-3 font-mono text-[12px] font-bold uppercase tracking-[0.12em] transition-colors ${
+                        isActive
+                          ? "border-primary bg-muted/40 text-primary"
+                          : "border-transparent text-muted-foreground hover:border-border hover:bg-muted/20 hover:text-foreground"
+                      }`}
+                    >
+                      <span className="w-8 shrink-0 opacity-60">{number}</span>
+                      <span>{label}</span>
+                    </a>
+                  );
+                })}
+              </nav>
+              <div className="mt-2 border-t border-border px-5 py-4">
+                <p className="font-mono text-[10px] uppercase tracking-[0.12em] text-muted-foreground">
+                  Tap a section to jump.
+                </p>
+              </div>
+            </SheetContent>
+          </Sheet>
+        </div>
       </div>
     </header>
   );

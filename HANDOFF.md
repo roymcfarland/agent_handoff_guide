@@ -1,38 +1,29 @@
-# Current Slice: Theme toggle — day/night switch in the header
+# Current Slice: Field Notes section — lessons from operating the framework
 
 ## Context
 
-Dark mode ("blueprint") already exists and works via `prefers-color-scheme`, and the head boot script + ThemeContext were explicitly built anticipating a toggle ("the override key is intentionally readable so a future toggle UI can write to it") — but no UI writes to it, so users cannot reach the other palette deliberately. This is the last hygiene-track slice and the most visible user-facing improvement queued.
+The site prescribes but never shows receipts. The operating practice has produced a large ledger of hard-won lessons, and this repo itself is run with the framework it documents (PRs #15–#41 are a public audit trail). A curated Field Notes section converts the site from opinion to evidence — the single highest-credibility addition identified in the July 2026 review.
+
+**STATUS: BLOCKED ON HUMAN CURATION.** A candidate list of notes has been drafted by the Advisor and is awaiting the owner's veto/selection. Do not build this slice until the owner has approved the final set. Once approved, the ACs below apply to the approved subset.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] A toggle control in `client/src/components/SiteHeader.tsx` (desktop header AND visible in/near the mobile sheet) cycles theme via the existing `ThemeContext` (`useTheme`), persisting to the existing `localStorage.theme` key with values `light` | `dark` | `system` — exactly the contract the boot script in `client/index.html` reads. Cycle order: system → light → dark → system (or a two-state toggle with long-press/context for system — keep it simple; three-state cycle preferred).
-- [ ] The control shows the CURRENT state distinctly (e.g., sun / moon / monitor glyphs from `lucide-react` — already a dependency) with an `aria-label` naming the current theme and next action.
-- [ ] No flash-of-wrong-theme: the boot script contract is untouched; toggling applies the `.dark` class immediately via the context (verify by toggling and checking `document.documentElement.classList`).
-- [ ] Styling matches the notebook idiom: bordered mono button, no glow, tokens only; renders correctly in BOTH palettes.
+- [ ] A new `FIELD_NOTES` export in `client/src/lib/content.ts`: the approved notes, each `{ n, title, story, rule }` — a numbered note with a 2–4 sentence war story (tool-agnostic, no client identifiers) and a one-line operating rule it produced.
+- [ ] A new section renders them (placement decision at build time: either its own nav section between Build & Verify and Operate, or a subsection of Build & Verify — owner's call when approving the notes). Cards in the notebook idiom, numbered like the failure-mode cards.
+- [ ] An intro line establishes provenance without over-claiming: these are lessons from operating the framework on real repositories, including this one — with a link to the repo's merged-PR history as the live audit trail.
+- [ ] At least two notes reference verifiable events in THIS repo (e.g., the "PR opened" label hidden under the Verifier box since first ship, fixed in #36; the prompt-count stat that claimed 11 with 10 items, fixed in #35) so a skeptical reader can check the receipts.
 - [ ] `pnpm check` passes, `pnpm build` succeeds, CI green on the PR.
 - Expected test delta: none (repo has no test suite).
 
 ## Constraints & Anti-Goals
 
-- DO NOT modify the boot script in `client/index.html` or the localStorage contract.
-- DO NOT add dependencies (lucide-react icons only).
-- DO NOT restyle the header beyond adding the control.
-- DO NOT touch `client/src/lib/content.ts`.
-
-## Pre-confirmed facts
-
-- `client/src/contexts/ThemeContext.tsx` exports `ThemeProvider` and `useTheme`; localStorage key is `theme`, values `light` | `dark` | `system` (absent = system). The boot script and context already agree on this contract (documented in index.html comment and README "Theme persistence").
-- `client/src/components/ui/sonner.tsx` already consumes `useTheme` — working import example.
-- The mobile nav sheet lives in `client/src/components/SiteHeader.tsx`.
-
-## Files explicitly forbidden
-
-- `client/index.html`, `client/src/lib/content.ts`, `server/**`, `.github/**`.
+- DO NOT publish any note the owner has not explicitly approved.
+- DO NOT include client names, private repo details, or model-vendor rankings (PROJECT.md non-goal: tool-agnostic).
+- DO NOT exceed ~12 notes — curation is the point; the ledger stays private.
 
 ## Starting Point
 
-- Relevant files: `client/src/components/SiteHeader.tsx`, `client/src/contexts/ThemeContext.tsx` (read; extend only if the cycle helper is missing)
-- Known issues: none. Queued after: Field Notes (WAITING ON HUMAN — lesson curation), worked example, express 5 migration.
+- Relevant files: `client/src/lib/content.ts`, new/edited section component, `client/src/pages/Home.tsx` + `SECTIONS` (only if a new nav section is approved)
+- Known issues: candidate list delivered to the owner 2026-07-07; waiting on selection. Queued after: worked example, express 5 migration.
