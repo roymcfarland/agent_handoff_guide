@@ -1732,6 +1732,39 @@ export const PHASE_TWO_WIRING = [
   },
 ] as const;
 
+/* ─────────────────────────────────────────────────────────────────────────── */
+/* PHASE 2 — AFTER THE MERGE                                                   */
+/* The post-merge protocol; the loop is not closed when the button is clicked. */
+/* ─────────────────────────────────────────────────────────────────────────── */
+
+export const AFTER_MERGE = {
+  headline: "The merge is not the finish line.",
+  intro:
+    "'Approved and merged' is a claim until the repo confirms it. The Advisor owns this protocol; run it on every merge, in order — the loop is closed at step four, not at the merge button.",
+  steps: [
+    {
+      n: "01",
+      title: "Verify the merge actually landed.",
+      body: "Sync main and assert the expected commit is really there before anything else. Gate every destructive step — especially branch deletion — on that verified state, not on the report. If the repo contradicts the claim, surface the discrepancy with evidence and stop.",
+    },
+    {
+      n: "02",
+      title: "Confirm the ledger recorded itself.",
+      body: "Every PR adds its own entry to CHANGELOG.md (or the roadmap ledger) in its own diff, so the ledger is never more than zero PRs behind. If the just-merged PR is missing, the loop is not finished — scope a small reconciliation slice now, before the gap compounds.",
+    },
+    {
+      n: "03",
+      title: "Sweep branches and preview deployments.",
+      body: "Prune the merged local branch, confirm the remote head is gone, and check that your host's per-branch preview deployments died with the branch. On most platforms they silently outlive it — orphaned previews pile up by the hundreds before anyone notices.",
+    },
+    {
+      n: "04",
+      title: "Verify production, not just the preview.",
+      body: "The preview proves the code path; production proves environment-specific behavior — config, credentials, data, runtime. Any slice that touches something the environment can change is not done until a live check against the real deployment comes back correct.",
+    },
+  ],
+} as const;
+
 export const PHASE_TWO_TRIAGE = {
   headline: "Amend PROJECT.md vs. reject the PR",
   intro:
