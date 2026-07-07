@@ -1,38 +1,38 @@
-# Current Slice: Drop the vestigial wouter patch + dependency refresh
+# Current Slice: Theme toggle — day/night switch in the header
 
 ## Context
 
-`patches/wouter@3.7.1.patch` only injects route-collection into `window.__WOUTER_ROUTES__` — leftover instrumentation from the original site-builder tooling, same family as the `@builder.io/vite-plugin-jsx-loc` plugin removed in PR #26. Nothing in the app reads it. Dropping the patch removes the `patches/` directory, resolves the confusing `"wouter": "^3.3.5"` declared vs `3.7.1` patched mismatch, and unblocks upgrading wouter. While the lockfile is open, take the outstanding minor/patch dependency updates.
+Dark mode ("blueprint") already exists and works via `prefers-color-scheme`, and the head boot script + ThemeContext were explicitly built anticipating a toggle ("the override key is intentionally readable so a future toggle UI can write to it") — but no UI writes to it, so users cannot reach the other palette deliberately. This is the last hygiene-track slice and the most visible user-facing improvement queued.
 
 ## Acceptance Criteria (Definition of Done)
 
 The agent MUST complete ALL of the following before committing:
 
-- [ ] `pnpm.patchedDependencies` removed from `package.json`; `patches/` directory deleted.
-- [ ] `git grep -n "__WOUTER_ROUTES__"` returns zero matches (confirming nothing consumed it).
-- [ ] wouter upgraded to the current 3.x line; client-side routing still works (all three routes: `/`, `/404`, wildcard → NotFound).
-- [ ] Minor/patch updates taken for: react + react-dom (19.2.x latest), the two surviving @radix-ui packages, tailwindcss + @tailwindcss/vite (4.x latest), tailwind-merge, prettier, tsx, postcss, autoprefixer, @types/*. Do NOT take @types/express 5.x (express is 4); do NOT change express, esbuild, vite, or typescript majors.
-- [ ] `pnpm audit --prod` reports no known vulnerabilities after the refresh.
+- [ ] A toggle control in `client/src/components/SiteHeader.tsx` (desktop header AND visible in/near the mobile sheet) cycles theme via the existing `ThemeContext` (`useTheme`), persisting to the existing `localStorage.theme` key with values `light` | `dark` | `system` — exactly the contract the boot script in `client/index.html` reads. Cycle order: system → light → dark → system (or a two-state toggle with long-press/context for system — keep it simple; three-state cycle preferred).
+- [ ] The control shows the CURRENT state distinctly (e.g., sun / moon / monitor glyphs from `lucide-react` — already a dependency) with an `aria-label` naming the current theme and next action.
+- [ ] No flash-of-wrong-theme: the boot script contract is untouched; toggling applies the `.dark` class immediately via the context (verify by toggling and checking `document.documentElement.classList`).
+- [ ] Styling matches the notebook idiom: bordered mono button, no glow, tokens only; renders correctly in BOTH palettes.
 - [ ] `pnpm check` passes, `pnpm build` succeeds, CI green on the PR.
 - Expected test delta: none (repo has no test suite).
 
 ## Constraints & Anti-Goals
 
-- DO NOT upgrade any major versions (vite 7 stays, express 4 stays, typescript 5.6 stays).
-- DO NOT remove the `qs` / `express>path-to-regexp` security overrides (they guard the express 4 tree; removing them is the future express-5 slice's job).
-- DO NOT touch application source except where a dependency update forces a type-level fix.
+- DO NOT modify the boot script in `client/index.html` or the localStorage contract.
+- DO NOT add dependencies (lucide-react icons only).
+- DO NOT restyle the header beyond adding the control.
+- DO NOT touch `client/src/lib/content.ts`.
 
 ## Pre-confirmed facts
 
-- The patch content is ONLY the `__WOUTER_ROUTES__` collection block in `Switch` (verified by reading the patch); no app code references `__WOUTER_ROUTES__`.
-- Routes live in `client/src/App.tsx` (`/`, `/404`, fallback). Wouter usage is minimal: `Route`, `Switch` imports.
-- Outdated list as of 2026-07-07 included: react 19.2.7, radix minors, tailwindcss 4.3.2, prettier 3.9.4, tailwind-merge 3.6.0, wouter 3.10.0.
+- `client/src/contexts/ThemeContext.tsx` exports `ThemeProvider` and `useTheme`; localStorage key is `theme`, values `light` | `dark` | `system` (absent = system). The boot script and context already agree on this contract (documented in index.html comment and README "Theme persistence").
+- `client/src/components/ui/sonner.tsx` already consumes `useTheme` — working import example.
+- The mobile nav sheet lives in `client/src/components/SiteHeader.tsx`.
 
 ## Files explicitly forbidden
 
-- `client/src/lib/content.ts`, `server/**`, `vercel.json`, `.github/**`.
+- `client/index.html`, `client/src/lib/content.ts`, `server/**`, `.github/**`.
 
 ## Starting Point
 
-- Relevant files: `package.json`, `pnpm-lock.yaml`, `patches/` (deleted)
-- Known issues: none. Queued after: theme toggle (delight), Field Notes (WAITING ON HUMAN — lesson curation), worked example, express 5 migration (drops the security overrides).
+- Relevant files: `client/src/components/SiteHeader.tsx`, `client/src/contexts/ThemeContext.tsx` (read; extend only if the cycle helper is missing)
+- Known issues: none. Queued after: Field Notes (WAITING ON HUMAN — lesson curation), worked example, express 5 migration.
