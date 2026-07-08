@@ -7,7 +7,18 @@
  *
  * Design: paper-card dialog, mono stamps for category, drafting-red active
  * row. No bouncy springs — same mechanical timing as the rest of the site.
+ *
+ * Mobile trigger: below sm (< 640px) there is no room in the header's icon
+ * row for a fourth control (search + theme + hamburger already crowd a
+ * 375–414px viewport, and did — the icon-only trigger that used to live
+ * here pushed the hamburger button half off-screen). Below sm, the only
+ * visible trigger is the "Search" row inside SiteHeader's mobile Sheet nav,
+ * which opens this dialog via the OPEN_EVENT custom event instead of a
+ * Radix Dialog.Trigger (the Sheet and the palette are two independent
+ * Dialog.Root trees, so a shared trigger isn't an option).
  */
+
+export const OPEN_EVENT = "ahf:open-command-palette";
 
 import {
   useEffect,
@@ -115,6 +126,14 @@ export function CommandPalette() {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open]);
 
+  // The mobile Sheet nav's "Search" row lives in a separate Dialog.Root
+  // tree, so it opens this one over a plain window event.
+  useEffect(() => {
+    const onOpenEvent = () => setOpen(true);
+    window.addEventListener(OPEN_EVENT, onOpenEvent);
+    return () => window.removeEventListener(OPEN_EVENT, onOpenEvent);
+  }, []);
+
   const jumpTo = (item: PaletteItem) => {
     setOpen(false);
     setQuery("");
@@ -152,15 +171,6 @@ export function CommandPalette() {
           <kbd className="hidden border border-border px-1 py-0.5 text-[10px] leading-none lg:inline">
             ⌘K
           </kbd>
-        </button>
-      </Dialog.Trigger>
-      <Dialog.Trigger asChild>
-        <button
-          type="button"
-          aria-label="Search — jump to a section, field note, or prompt"
-          className="grid h-9 w-9 shrink-0 place-items-center border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary sm:hidden"
-        >
-          <Search className="h-4 w-4" strokeWidth={2.25} />
         </button>
       </Dialog.Trigger>
       <Dialog.Portal>

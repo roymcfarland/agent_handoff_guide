@@ -18,7 +18,7 @@
  */
 
 import { useEffect, useRef, useState } from "react";
-import { Menu, Monitor, Moon, Sun, X } from "lucide-react";
+import { Menu, Monitor, Moon, Search, Sun, X } from "lucide-react";
 import { toast } from "sonner";
 import {
   Sheet,
@@ -26,7 +26,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { CommandPalette } from "@/components/CommandPalette";
+import { CommandPalette, OPEN_EVENT } from "@/components/CommandPalette";
 import { RobotMark } from "@/components/RobotMark";
 import { useTheme, type Theme } from "@/contexts/ThemeContext";
 import { SECTIONS } from "@/lib/content";
@@ -159,6 +159,15 @@ export function SiteHeader() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const { spinning, registerClick } = useRobotEasterEgg();
 
+  const openPaletteFromSheet = () => {
+    setMobileOpen(false);
+    // Wait out the Sheet's own close transition (300ms, see sheet.tsx)
+    // before opening the palette — otherwise two dialogs animate at once.
+    window.setTimeout(() => {
+      window.dispatchEvent(new Event(OPEN_EVENT));
+    }, 300);
+  };
+
   useEffect(() => {
     const observer = new IntersectionObserver(
       entries => {
@@ -193,10 +202,13 @@ export function SiteHeader() {
           >
             <RobotMark className="h-[22px] w-[22px]" />
           </span>
-          {/* Wordmark visibility: shown below lg (hamburger mode has room),
-              hidden lg → xl where the inline nav is densest, shown again on
-              xl+ where there's plenty of horizontal room. */}
-          <span className="font-display text-base font-bold leading-tight lg:hidden xl:block">
+          {/* Wordmark visibility: hidden below sm — a 375px viewport has no
+              room for the full wordmark plus the theme toggle and hamburger
+              at full touch-target size (proved out live: without this, the
+              hamburger button got squeezed to half-width). Shown sm → lg
+              (tablet has room), hidden lg → xl where the inline nav is
+              densest, shown again on xl+ where there's plenty of room. */}
+          <span className="hidden font-display text-base font-bold leading-tight sm:block lg:hidden xl:block">
             Agent Handoff Framework
           </span>
         </a>
@@ -234,7 +246,11 @@ export function SiteHeader() {
             })}
           </nav>
 
-          {/* Command palette: visible at every breakpoint, ⌘K / "/" opens it. */}
+          {/* Command palette trigger: sm+ only. Below sm there's no room in
+              this row (search + theme + hamburger crowded a 375px viewport
+              and pushed the hamburger off-screen) — the "Search" row inside
+              the mobile Sheet nav below covers that width instead. ⌘K / "/"
+              still open it from anywhere, any width. */}
           <CommandPalette />
 
           {/* Theme toggle: visible at every breakpoint. */}
@@ -246,7 +262,7 @@ export function SiteHeader() {
               <button
                 type="button"
                 aria-label="Open navigation menu"
-                className="grid h-9 w-9 place-items-center border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary lg:hidden"
+                className="grid h-9 w-9 shrink-0 place-items-center border border-border bg-background text-foreground transition-colors hover:border-primary hover:text-primary lg:hidden"
               >
                 <Menu className="h-4 w-4" strokeWidth={2.25} />
               </button>
@@ -276,6 +292,17 @@ export function SiteHeader() {
                   <X className="h-4 w-4" strokeWidth={2.25} />
                 </button>
               </div>
+              <button
+                type="button"
+                onClick={openPaletteFromSheet}
+                className="flex items-center gap-3 border-b border-border px-5 py-3 font-mono text-[12px] font-bold uppercase tracking-[0.12em] text-muted-foreground transition-colors hover:bg-muted/20 hover:text-foreground"
+              >
+                <Search
+                  className="h-4 w-4 shrink-0 opacity-60"
+                  strokeWidth={2.25}
+                />
+                <span>Search sections, notes &amp; prompts</span>
+              </button>
               <nav className="flex flex-col py-2">
                 {SECTIONS.map(({ id, label, number }) => {
                   const isActive = active === id;
