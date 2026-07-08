@@ -60,14 +60,14 @@
 
 :root {
   /* PAPER + INK palette (light / day mode) — Engineer's notebook on cream stock. */
-  --paper: oklch(0.955 0.018 80);          /* warm cream #F4EFE6-ish */
-  --paper-deep: oklch(0.925 0.022 80);     /* slightly darker fold */
-  --ink: oklch(0.235 0.045 250);           /* deep navy ink */
-  --ink-soft: oklch(0.42 0.04 250);        /* secondary ink */
-  --ink-faint: oklch(0.62 0.03 250);       /* tertiary */
-  --grid: oklch(0.78 0.04 230);            /* faint cyan grid line */
-  --grid-strong: oklch(0.68 0.06 230);     /* every 5th line */
-  --red: oklch(0.55 0.18 28);              /* drafting red */
+  --paper: oklch(0.955 0.018 80); /* warm cream #F4EFE6-ish */
+  --paper-deep: oklch(0.925 0.022 80); /* slightly darker fold */
+  --ink: oklch(0.235 0.045 250); /* deep navy ink */
+  --ink-soft: oklch(0.42 0.04 250); /* secondary ink */
+  --ink-faint: oklch(0.62 0.03 250); /* tertiary */
+  --grid: oklch(0.78 0.04 230); /* faint cyan grid line */
+  --grid-strong: oklch(0.68 0.06 230); /* every 5th line */
+  --red: oklch(0.55 0.18 28); /* drafting red */
   --red-deep: oklch(0.46 0.18 28);
   /* Card depth shadow — color-aware so it can flip in dark mode without
      reading as a foreign black halo on a deep navy background. */
@@ -136,18 +136,19 @@
      visibly off the page (was too close to --paper), kept the cyan grid bright but
      legible, and added a 1px inner ring on cards via --card-shadow so they read
      as physical surfaces rather than ghost panels. */
-  --paper: oklch(0.195 0.04 245);           /* deep blueprint navy (page) */
-  --paper-deep: oklch(0.31 0.05 245);       /* elevated panel surface — distinct from page */
-  --ink: oklch(0.96 0.018 80);              /* warm off-white text */
-  --ink-soft: oklch(0.82 0.022 80);         /* secondary text */
-  --ink-faint: oklch(0.66 0.022 80);        /* tertiary */
-  --grid: oklch(0.74 0.06 215);             /* cyan grid line */
-  --grid-strong: oklch(0.84 0.08 210);      /* every 5th line, brighter */
-  --red: oklch(0.68 0.18 28);               /* drafting red carries on dark */
+  --paper: oklch(0.195 0.04 245); /* deep blueprint navy (page) */
+  --paper-deep: oklch(
+    0.31 0.05 245
+  ); /* elevated panel surface — distinct from page */
+  --ink: oklch(0.96 0.018 80); /* warm off-white text */
+  --ink-soft: oklch(0.82 0.022 80); /* secondary text */
+  --ink-faint: oklch(0.66 0.022 80); /* tertiary */
+  --grid: oklch(0.74 0.06 215); /* cyan grid line */
+  --grid-strong: oklch(0.84 0.08 210); /* every 5th line, brighter */
+  --red: oklch(0.68 0.18 28); /* drafting red carries on dark */
   --red-deep: oklch(0.58 0.18 28);
   --card-shadow:
-    inset 0 0 0 1px oklch(0.5 0.04 240 / 0.35),
-    0 1px 0 oklch(0 0 0 / 0.4),
+    inset 0 0 0 1px oklch(0.5 0.04 240 / 0.35), 0 1px 0 oklch(0 0 0 / 0.4),
     0 12px 32px -16px oklch(0 0 0 / 0.7);
 
   --background: var(--paper);
@@ -213,12 +214,16 @@
      so the switch is instant for users who prefer that. */
   @media (prefers-reduced-motion: no-preference) {
     body {
-      transition: background-color 220ms ease-out, color 220ms ease-out;
+      transition:
+        background-color 220ms ease-out,
+        color 220ms ease-out;
     }
   }
   /* Honour reduced-motion across our own animations (ink-in, etc.). */
   @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after {
+    *,
+    *::before,
+    *::after {
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
@@ -248,7 +253,8 @@
      in this guide are all prose-style — wrapping is fine and preferred over
      forcing horizontal scroll on phone. */
   @media (max-width: 767px) {
-    table th, table td {
+    table th,
+    table td {
       white-space: normal;
     }
   }
@@ -257,7 +263,8 @@
      parent flex/grid item is allowed to shrink below the wrapper's intrinsic
      content width. Without this, the wrapper passes its content's natural
      width up to the parent and the page widens on mobile. */
-  .overflow-x-auto, .overflow-x-scroll {
+  .overflow-x-auto,
+  .overflow-x-scroll {
     min-width: 0;
   }
   /* Stage-3 mobile fix: grid items and direct children of common layout
@@ -266,10 +273,14 @@
      the grid cell at the label's min-content width and overflows the page.
      Setting min-width: 0 lets the cell shrink and the wrap rules on the h4
      take effect. */
-  [class*="grid-cols"] > *, [class*="col-span"] {
+  [class*="grid-cols"] > *,
+  [class*="col-span"] {
     min-width: 0;
   }
-  h1, h2, h3, h4 {
+  h1,
+  h2,
+  h3,
+  h4 {
     font-family: var(--font-display);
     font-weight: 700;
     letter-spacing: -0.02em;
@@ -279,7 +290,10 @@
        fits, preserving typographic hierarchy at most widths. */
     overflow-wrap: anywhere;
   }
-  code, pre, kbd, samp {
+  code,
+  pre,
+  kbd,
+  samp {
     font-family: var(--font-mono);
   }
   ::selection {
@@ -316,12 +330,22 @@
     padding-right: 1.25rem;
   }
   @media (min-width: 640px) {
-    .container { padding-left: 2rem; padding-right: 2rem; }
+    .container {
+      padding-left: 2rem;
+      padding-right: 2rem;
+    }
   }
   @media (min-width: 1024px) {
-    .container { padding-left: 2.5rem; padding-right: 2.5rem; max-width: 1320px; }
+    .container {
+      padding-left: 2.5rem;
+      padding-right: 2.5rem;
+      max-width: 1320px;
+    }
   }
-  .flex { min-height: 0; min-width: 0; }
+  .flex {
+    min-height: 0;
+    min-width: 0;
+  }
 
   /* The signature graph-paper background.
      Two layered linear-gradients give a 24px grid with a stronger every-5th
@@ -334,12 +358,36 @@
   .graph-paper {
     background-color: var(--paper);
     background-image:
-      linear-gradient(to right,  color-mix(in oklch, var(--grid) 18%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 18%, transparent) 1px, transparent 1px),
-      linear-gradient(to right,  color-mix(in oklch, var(--grid-strong) 26%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklch, var(--grid-strong) 26%, transparent) 1px, transparent 1px);
-    background-size: 24px 24px, 24px 24px, 120px 120px, 120px 120px;
-    background-position: -1px -1px, -1px -1px, -1px -1px, -1px -1px;
+      linear-gradient(
+        to right,
+        color-mix(in oklch, var(--grid) 18%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--grid) 18%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to right,
+        color-mix(in oklch, var(--grid-strong) 26%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--grid-strong) 26%, transparent) 1px,
+        transparent 1px
+      );
+    background-size:
+      24px 24px,
+      24px 24px,
+      120px 120px,
+      120px 120px;
+    background-position:
+      -1px -1px,
+      -1px -1px,
+      -1px -1px,
+      -1px -1px;
     /* Hairline-thin radial vignette so the grid recedes as the eye moves
        toward the edges of the page. Keeps the centre crisp where content
        lives, prevents the corners from feeling like a CAD blueprint. */
@@ -348,7 +396,7 @@
       black 60%,
       color-mix(in oklch, black 60%, transparent) 100%
     );
-            mask-image: radial-gradient(
+    mask-image: radial-gradient(
       ellipse 80% 80% at 50% 35%,
       black 60%,
       color-mix(in oklch, black 60%, transparent) 100%
@@ -360,23 +408,55 @@
   .graph-paper-dense {
     background-color: var(--paper);
     background-image:
-      linear-gradient(to right,  color-mix(in oklch, var(--grid) 22%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 22%, transparent) 1px, transparent 1px);
+      linear-gradient(
+        to right,
+        color-mix(in oklch, var(--grid) 22%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--grid) 22%, transparent) 1px,
+        transparent 1px
+      );
     background-size: 16px 16px;
   }
   /* Dark-mode tightening: the cyan grid is brighter on deep navy than the
      same alpha on cream, so we drop another step. */
   .dark .graph-paper {
     background-image:
-      linear-gradient(to right,  color-mix(in oklch, var(--grid) 14%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 14%, transparent) 1px, transparent 1px),
-      linear-gradient(to right,  color-mix(in oklch, var(--grid-strong) 22%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklch, var(--grid-strong) 22%, transparent) 1px, transparent 1px);
+      linear-gradient(
+        to right,
+        color-mix(in oklch, var(--grid) 14%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--grid) 14%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to right,
+        color-mix(in oklch, var(--grid-strong) 22%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--grid-strong) 22%, transparent) 1px,
+        transparent 1px
+      );
   }
   .dark .graph-paper-dense {
     background-image:
-      linear-gradient(to right,  color-mix(in oklch, var(--grid) 16%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in oklch, var(--grid) 16%, transparent) 1px, transparent 1px);
+      linear-gradient(
+        to right,
+        color-mix(in oklch, var(--grid) 16%, transparent) 1px,
+        transparent 1px
+      ),
+      linear-gradient(
+        to bottom,
+        color-mix(in oklch, var(--grid) 16%, transparent) 1px,
+        transparent 1px
+      );
   }
 
   /* Stamped, monospace section labels. */
@@ -445,7 +525,8 @@
       border-color: color-mix(in oklch, var(--border) 72%, var(--primary) 28%);
       box-shadow:
         0 1px 0 color-mix(in oklch, var(--foreground) 8%, transparent),
-        0 18px 42px -18px color-mix(in oklch, var(--foreground) 28%, transparent);
+        0 18px 42px -18px
+          color-mix(in oklch, var(--foreground) 28%, transparent);
     }
     .dark .paper-card-lift:hover {
       box-shadow:
@@ -463,7 +544,9 @@
     text-underline-offset: 3px;
     transition: color 150ms ease-out;
   }
-  .ink-link:hover { color: var(--red); }
+  .ink-link:hover {
+    color: var(--red);
+  }
   /* Skip-to-content link: visually hidden until focused, then promoted to a
      drafting-red stamp at top-left so a keyboard user can jump past the
      8-item nav. Pure CSS, no JS. */
@@ -503,10 +586,18 @@
 
   /* Mechanical, deliberate fade-in for sections. */
   @keyframes ink-in {
-    from { opacity: 0; transform: translateY(8px); }
-    to   { opacity: 1; transform: translateY(0); }
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
-  .ink-in { animation: ink-in 220ms ease-out both; }
+  .ink-in {
+    animation: ink-in 220ms ease-out both;
+  }
 }
 
 /* ───────────────────────────────────────────────────────────────────────────
@@ -598,6 +689,26 @@
 :target {
   scroll-margin-top: 96px;
 }
+
+/* A checklist that hits 100% earns a hand-stamped mark, same drafting-red
+   ink and irregular ring as the pen-circle. Base look is unconditional; only
+   the pop-in entrance is reduced-motion gated below. */
+.complete-stamp {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3em;
+  border: 1.5px solid var(--red);
+  border-radius: 48% 52% 51% 49% / 49% 47% 53% 51%;
+  padding: 0.15em 0.6em;
+  font-family: var(--font-mono);
+  font-weight: 700;
+  font-size: 0.68rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--red);
+  transform: rotate(-3deg);
+}
+
 @media (prefers-reduced-motion: no-preference) {
   @keyframes target-flash {
     0%,
@@ -626,5 +737,32 @@
     animation: robot-blink 260ms ease-in-out 1;
     transform-box: fill-box;
     transform-origin: center;
+  }
+
+  /* Click the brand mark 5x fast and the robot spins once — mechanical,
+     one revolution, no bounce. */
+  @keyframes robot-spin {
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  .robot-spin {
+    animation: robot-spin 550ms cubic-bezier(0.4, 0, 0.2, 1) 1;
+  }
+
+  /* A checklist that hits 100% earns a hand-stamped mark, same drafting-red
+     ink as the pen-circle. */
+  @keyframes stamp-in {
+    0% {
+      opacity: 0;
+      transform: scale(1.6) rotate(-8deg);
+    }
+    100% {
+      opacity: 1;
+      transform: scale(1) rotate(-3deg);
+    }
+  }
+  .complete-stamp {
+    animation: stamp-in 220ms ease-out both;
   }
 }
