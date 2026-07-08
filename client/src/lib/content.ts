@@ -2450,6 +2450,11 @@ export const BYLINE = {
   proofLabel: "The merged-PR history is the résumé",
   proofHref:
     "https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged",
+  bio: "Roy is a software engineer and the founder of Worksmith Labs. He operates multi-agent development workflows daily; this framework — and the @llm-workbench tooling on npm — is distilled from that practice, not theorized about it.",
+  availability:
+    "Open to senior engineering and AI-tooling roles.",
+  ctaLabel: "Reach out on LinkedIn",
+  ctaHref: "https://www.linkedin.com/in/roymcfarland/",
   profiles: [
     { label: "LinkedIn", href: "https://www.linkedin.com/in/roymcfarland/" },
     { label: "GitHub", href: "https://github.com/roymcfarland" },
