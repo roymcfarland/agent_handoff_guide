@@ -2452,7 +2452,7 @@ export const BYLINE = {
     "https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged",
   bio: "Roy is a software engineer and the founder of Worksmith Labs. He operates multi-agent development workflows daily; this framework — and the @llm-workbench tooling on npm — is distilled from that practice, not theorized about it.",
   availability:
-    "Open to senior engineering and AI-tooling roles.",
+    "Contact re: executive management roles, specifically operations + AI implementation. Licensed Colorado attorney. PMP + PMI-CPMAI, expected July/Aug 2026.",
   ctaLabel: "Reach out on LinkedIn",
   ctaHref: "https://www.linkedin.com/in/roymcfarland/",
   profiles: [
