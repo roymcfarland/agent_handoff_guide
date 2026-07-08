@@ -1,7 +1,8 @@
 # Agent Handoff Framework
 
-> A working guide for shipping real software with AI coding agents: three roles (an Advisor scopes slices and drafts prompts, a Builder executes, a Verifier returns evidence-backed verdicts — a human merges), a three-file document schema (PROJECT.md / CHANGELOG.md / HANDOFF.md), a copy-paste prompt library, and failure-mode guardrails. The site is maintained with the framework it documents; its merged-PR history is the public audit trail.
+> A working guide for shipping real software with AI coding agents: three roles (an Advisor scopes slices and drafts prompts, a Builder executes, a Verifier returns evidence-backed verdicts — a human merges), a three-file document schema (PROJECT.md / CHANGELOG.md / HANDOFF.md), a copy-paste prompt library, and failure-mode guardrails. Created by Roy McFarland (Worksmith Labs); the site is maintained with the framework it documents, and its merged-PR history is the public audit trail.
 
+Author: Roy McFarland (https://github.com/roymcfarland)
 Site: https://www.worksmithlabs.com/
 Repository: https://github.com/roymcfarland/agent_handoff_guide
 Merged-PR audit trail: https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged

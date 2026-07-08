@@ -27,6 +27,20 @@ export default function OverviewSection() {
           <div className="stamp">FILE 00 / OVERVIEW</div>
           <dl className="mt-6 space-y-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
             <div>
+              <dt className="text-foreground/60">Author</dt>
+              <dd className="mt-1 text-foreground">
+                <a
+                  href="https://github.com/roymcfarland"
+                  rel="noopener noreferrer"
+                  target="_blank"
+                  className="underline decoration-primary underline-offset-4 hover:text-primary"
+                >
+                  Roy McFarland
+                </a>{" "}
+                · Worksmith Labs
+              </dd>
+            </div>
+            <div>
               <dt className="text-foreground/60">Subject</dt>
               <dd className="mt-1 text-foreground">Agent handoff loop</dd>
             </div>
@@ -65,6 +79,31 @@ export default function OverviewSection() {
               References
             </a>
             .
+          </p>
+
+          {/* Author byline — above the fold, where a hiring manager reads */}
+          <p className="mt-6 font-mono text-[11.5px] font-bold uppercase tracking-widest text-muted-foreground">
+            <span className="text-primary">Created by</span>{" "}
+            <a
+              href="https://github.com/roymcfarland"
+              rel="noopener noreferrer"
+              target="_blank"
+              className="text-foreground underline decoration-primary underline-offset-4 hover:text-primary"
+            >
+              Roy McFarland
+            </a>{" "}
+            <span className="normal-case tracking-normal font-normal">
+              — designed, operated, and maintained with the framework itself;{" "}
+              <a
+                href="https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged"
+                rel="noopener noreferrer"
+                target="_blank"
+                className="underline decoration-muted-foreground/60 underline-offset-4 hover:text-foreground"
+              >
+                every merged PR is the audit trail
+              </a>
+              .
+            </span>
           </p>
 
           <div className="mt-10 flex flex-wrap items-center gap-4">
