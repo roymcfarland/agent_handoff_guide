@@ -8,7 +8,7 @@ import {
   DiagramFigureLegend,
   ReferenceArchitectureDiagram,
 } from "@/components/diagrams";
-import { PROMPT_LIBRARY, SHEET_INDEX } from "@/lib/content";
+import { BYLINE, PROMPT_LIBRARY, SHEET_INDEX } from "@/lib/content";
 
 const PROMPT_COUNT = PROMPT_LIBRARY.reduce(
   (total, scenario) => total + scenario.items.length,
@@ -30,7 +30,7 @@ export default function OverviewSection() {
               <dt className="text-foreground/60">Author</dt>
               <dd className="mt-1 text-foreground">
                 <a
-                  href="https://github.com/roymcfarland"
+                  href={BYLINE.ctaHref}
                   rel="noopener noreferrer"
                   target="_blank"
                   className="underline decoration-primary underline-offset-4 hover:text-primary"
@@ -39,6 +39,23 @@ export default function OverviewSection() {
                 </a>{" "}
                 · Worksmith Labs
               </dd>
+              <dd className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1">
+                {BYLINE.profiles.map(profile => (
+                  <a
+                    key={profile.href}
+                    href={profile.href}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    className="text-muted-foreground underline decoration-muted-foreground/50 underline-offset-4 hover:text-primary hover:decoration-primary"
+                  >
+                    {profile.label}
+                  </a>
+                ))}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-foreground/60">Status</dt>
+              <dd className="mt-1 text-primary">{BYLINE.availability}</dd>
             </div>
             <div>
               <dt className="text-foreground/60">Subject</dt>
@@ -55,6 +72,14 @@ export default function OverviewSection() {
               <dd className="mt-1 text-foreground">Execution over drift</dd>
             </div>
           </dl>
+          <a
+            href={BYLINE.ctaHref}
+            rel="noopener noreferrer"
+            target="_blank"
+            className="mt-6 inline-flex items-center gap-2 border border-foreground bg-foreground px-4 py-2.5 font-mono text-[10.5px] font-bold uppercase tracking-widest text-background transition-colors duration-150 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+          >
+            {BYLINE.ctaLabel} ↗
+          </a>
         </aside>
 
         <div className="lg:col-span-9 lg:border lg:border-border lg:bg-card/35 lg:p-8 lg:shadow-[var(--card-shadow)] xl:p-10">
