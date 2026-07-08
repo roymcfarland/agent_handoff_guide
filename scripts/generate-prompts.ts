@@ -159,7 +159,7 @@ const llms = [
   "",
   "> A working guide for shipping real software with AI coding agents: three roles (an Advisor scopes slices and drafts prompts, a Builder executes, a Verifier returns evidence-backed verdicts — a human merges), a three-file document schema (PROJECT.md / CHANGELOG.md / HANDOFF.md), a copy-paste prompt library, and failure-mode guardrails. Created by Roy McFarland (Worksmith Labs); the site is maintained with the framework it documents, and its merged-PR history is the public audit trail.",
   "",
-  "Author: Roy McFarland (https://github.com/roymcfarland · https://www.npmjs.com/~roymcfarland)",
+  "Author: Roy McFarland (https://www.linkedin.com/in/roymcfarland/ · https://github.com/roymcfarland · https://www.npmjs.com/~roymcfarland)",
   `Site: ${SITE}/`,
   `Repository: ${REPO}`,
   `Merged-PR audit trail: ${REPO}/pulls?q=is%3Apr+is%3Amerged`,

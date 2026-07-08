@@ -2445,6 +2445,11 @@ export const BYLINE = {
   proofLabel: "The merged-PR history is the résumé",
   proofHref:
     "https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged",
+  profiles: [
+    { label: "LinkedIn", href: "https://www.linkedin.com/in/roymcfarland/" },
+    { label: "GitHub", href: "https://github.com/roymcfarland" },
+    { label: "npm", href: "https://www.npmjs.com/~roymcfarland" },
+  ],
 } as const;
 
 /* ─────────────────────────────────────────────────────────────────────────── */
