@@ -582,3 +582,49 @@
     border-color: #999 !important;
   }
 }
+
+/* ───────────────────────────────────────────────────────────────────────────
+   ALIVE — small notebook behaviors. All motion is reduced-motion guarded.
+   ─────────────────────────────────────────────────────────────────────────── */
+
+/* Text selection reads as a drafting-red highlighter pass. */
+::selection {
+  background: color-mix(in oklch, var(--red) 24%, transparent);
+  color: var(--ink);
+}
+
+/* Arriving on a shared anchor (#note-05, #field-notes …), the target gets a
+   brief highlighter flash so the reader can find what was pointed at. */
+:target {
+  scroll-margin-top: 96px;
+}
+@media (prefers-reduced-motion: no-preference) {
+  @keyframes target-flash {
+    0%,
+    35% {
+      background-color: color-mix(in oklch, var(--red) 16%, transparent);
+    }
+    100% {
+      background-color: transparent;
+    }
+  }
+  :target {
+    animation: target-flash 1.8s ease-out 1;
+  }
+
+  /* The robot blinks when you hover his box. */
+  @keyframes robot-blink {
+    0%,
+    100% {
+      transform: scaleY(1);
+    }
+    50% {
+      transform: scaleY(0.12);
+    }
+  }
+  .robot-blink:hover .robot-eye {
+    animation: robot-blink 260ms ease-in-out 1;
+    transform-box: fill-box;
+    transform-origin: center;
+  }
+}
