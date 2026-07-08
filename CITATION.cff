@@ -1,0 +1,24 @@
+cff-version: 1.2.0
+message: "If you use or reference the Agent Handoff Framework, please cite it as below."
+title: "Agent Handoff Framework"
+type: software
+authors:
+  - family-names: McFarland
+    given-names: Roy
+    website: "https://www.linkedin.com/in/roymcfarland/"
+version: "2.0"
+date-released: 2026-07-07
+url: "https://www.worksmithlabs.com"
+repository-code: "https://github.com/roymcfarland/agent_handoff_guide"
+license: MIT
+keywords:
+  - ai-agents
+  - llm
+  - prompt-engineering
+  - software-methodology
+  - code-review
+abstract: >-
+  A three-role playbook (Advisor / Builder / Verifier) for shipping real
+  software with AI coding agents: a three-file document schema, a copy-paste
+  prompt library, and failure-mode guardrails — maintained in public with the
+  methodology it documents.

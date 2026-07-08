@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: "Read the framework"
+    url: "https://www.worksmithlabs.com"
+    about: "The full reference — schema, prompts, field notes, worked example."
+  - name: "Vendor the prompts"
+    url: "https://github.com/roymcfarland/agent_handoff_guide/tree/main/prompts"
+    about: "Every prompt and template as plain markdown, MIT-licensed."
