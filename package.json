@@ -4,7 +4,7 @@
   "description": "Source for the Worksmith Labs Agent Handoff Framework reference site (worksmithlabs.com): document schema, prompt library, and failure-mode guardrails for shipping software with AI coding agents.",
   "type": "module",
   "license": "MIT",
-  "author": "Roy McFarland",
+  "author": "Roy McFarland (https://www.npmjs.com/~roymcfarland)",
   "repository": {
     "type": "git",
     "url": "https://github.com/roymcfarland/agent_handoff_guide.git"

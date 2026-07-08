@@ -2,6 +2,8 @@
 
 **A three-role playbook (Advisor / Builder / Verifier) for shipping real software with AI coding agents** — not another “prompt tips” page, but a single reference you can install on a repo: **document schema**, **copy-paste prompts** (builder, closeout, verifier), and **failure-mode guardrails** so merges stay human-gated and evidence-backed.
 
+Created by **[Roy McFarland](https://www.linkedin.com/in/roymcfarland/)** ([GitHub](https://github.com/roymcfarland) · [npm](https://www.npmjs.com/~roymcfarland) · Worksmith Labs) — and built *with* the methodology it documents: every change to this repo ships as an Advisor-scoped slice, an independent verification, and a human merge. The [merged-PR history](https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged) is the working demonstration.
+
 This repository is the **open-source** source for the **[Worksmith Labs](https://worksmithlabs.com)** reference site. The _methodology_ is the product story; the _code_ is MIT-licensed and yours to fork. The live experience is built and maintained by **[Brightline Labs](https://brightline.io)**.
 
 |                                       |                                                             |

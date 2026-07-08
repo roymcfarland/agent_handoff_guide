@@ -117,6 +117,19 @@ export function SiteFooter() {
             </a>
             .
           </p>
+          <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] font-bold uppercase tracking-widest">
+            {BYLINE.profiles.map(profile => (
+              <a
+                key={profile.href}
+                href={profile.href}
+                rel="noopener noreferrer"
+                target="_blank"
+                className="text-muted-foreground underline decoration-muted-foreground/60 underline-offset-4 hover:text-primary hover:decoration-primary"
+              >
+                {profile.label} ↗
+              </a>
+            ))}
+          </p>
         </div>
 
         <div className="ruled mt-10" />

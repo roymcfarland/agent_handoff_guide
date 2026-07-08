@@ -2,6 +2,7 @@
   GENERATED FILE — do not edit by hand.
   Source of truth: client/src/lib/content.ts (PROMPT_LIBRARY:builder-pr)
   Regenerate: pnpm generate:prompts
+  Agent Handoff Framework by Roy McFarland (github.com/roymcfarland).
   License: MIT (same as the repository) — vendor freely.
   Guide: https://www.worksmithlabs.com/
 -->

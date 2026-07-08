@@ -2,13 +2,14 @@
   GENERATED FILE — do not edit by hand.
   Source of truth: client/src/lib/content.ts (scripts/generate-prompts.ts)
   Regenerate: pnpm generate:prompts
+  Agent Handoff Framework by Roy McFarland (github.com/roymcfarland).
   License: MIT (same as the repository) — vendor freely.
   Guide: https://www.worksmithlabs.com/
 -->
 
 # Agent Handoff Framework — prompt library
 
-The copy-paste prompts, templates, and drop-in docs from [www.worksmithlabs.com](https://www.worksmithlabs.com/), emitted as plain markdown so you can vendor, diff, and fetch them directly.
+The copy-paste prompts, templates, and drop-in docs from [www.worksmithlabs.com](https://www.worksmithlabs.com/) — the Agent Handoff Framework by [Roy McFarland](https://github.com/roymcfarland) ([npm](https://www.npmjs.com/~roymcfarland)) — emitted as plain markdown so you can vendor, diff, and fetch them directly.
 
 **License:** MIT, same as the repository — use them in private repos, client work, and commercial projects. Attribution appreciated, not required.
 
