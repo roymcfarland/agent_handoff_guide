@@ -117,7 +117,23 @@ export function SiteFooter() {
             </a>
             .
           </p>
-          <p className="mt-3 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] font-bold uppercase tracking-widest">
+          <p className="mt-3 text-[15px] leading-relaxed text-foreground/85">
+            {BYLINE.bio}
+          </p>
+          <div className="mt-4 flex flex-wrap items-center gap-x-5 gap-y-3">
+            <a
+              href={BYLINE.ctaHref}
+              rel="noopener noreferrer"
+              target="_blank"
+              className="inline-flex items-center gap-2 border border-foreground bg-foreground px-4 py-2.5 font-mono text-[11px] font-bold uppercase tracking-widest text-background transition-colors duration-150 hover:border-primary hover:bg-primary hover:text-primary-foreground"
+            >
+              {BYLINE.ctaLabel} ↗
+            </a>
+            <span className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+              {BYLINE.availability}
+            </span>
+          </div>
+          <p className="mt-4 flex flex-wrap gap-x-4 gap-y-1 font-mono text-[11px] font-bold uppercase tracking-widest">
             {BYLINE.profiles.map(profile => (
               <a
                 key={profile.href}
