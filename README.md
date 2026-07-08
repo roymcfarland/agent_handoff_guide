@@ -142,7 +142,9 @@ The inline boot script in `client/index.html` and **`client/src/contexts/ThemeCo
 
 ## Contributing
 
-Intent, **out-of-scope** work, and agent precedence live in **[`PROJECT.md`](./PROJECT.md)**. If something in this README disagrees with `PROJECT.md`, **trust `PROJECT.md`** and fix the drift in the same PR.
+See **[`CONTRIBUTING.md`](./CONTRIBUTING.md)** — contributions ship through the framework itself. The fastest way to contribute is a **[field note](https://github.com/roymcfarland/agent_handoff_guide/issues/new?template=field-note.yml)**: a real, costly lesson from operating agent workflows; curated submissions are published on the site with credit.
+
+Intent, **out-of-scope** work, and agent precedence live in **[`PROJECT.md`](./PROJECT.md)**. If something in this README disagrees with `PROJECT.md`, **trust `PROJECT.md`** and fix the drift in the same PR. Citing the framework in writing or research? GitHub's "Cite this repository" button reads [`CITATION.cff`](./CITATION.cff).
 
 ---
 

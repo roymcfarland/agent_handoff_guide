@@ -160,6 +160,26 @@ export default function FieldNotesSection() {
             </ol>
           </div>
         </div>
+
+        {/* Community loop — the ledger stays open */}
+        <div className="mt-10 flex flex-col items-start justify-between gap-4 border border-border bg-primary/5 px-6 py-5 sm:flex-row sm:items-center">
+          <div>
+            <a
+              href={FIELD_NOTES_INTRO.submitHref}
+              rel="noopener noreferrer"
+              target="_blank"
+              className="font-display text-xl font-bold leading-snug text-foreground underline decoration-primary underline-offset-4 hover:text-primary"
+            >
+              {FIELD_NOTES_INTRO.submitLabel} ↗
+            </a>
+            <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">
+              {FIELD_NOTES_INTRO.submitNote}
+            </p>
+          </div>
+          <span className="shrink-0 font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+            The ledger stays open
+          </span>
+        </div>
       </div>
     </section>
   );

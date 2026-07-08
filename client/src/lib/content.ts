@@ -2257,6 +2257,11 @@ export const FIELD_NOTES_INTRO = {
   auditHref:
     "https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged",
   auditLabel: "Read the merged-PR history",
+  submitLabel: "Got a war story? Submit a field note",
+  submitHref:
+    "https://github.com/roymcfarland/agent_handoff_guide/issues/new?template=field-note.yml",
+  submitNote:
+    "Curated submissions are published here, with credit. Tool-agnostic, receipts welcome.",
 } as const;
 
 export const FIELD_NOTES = [

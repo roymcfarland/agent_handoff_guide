@@ -1,0 +1,48 @@
+name: "Field note submission"
+description: "Share a real, costly lesson from operating AI-agent workflows. Curated notes get added to the site with credit."
+title: "[Field note] "
+labels: ["field-note"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Field notes are war stories, not opinions: something that actually went wrong (or almost did),
+        what it cost, and the operating rule it produced. Read the existing notes at
+        [worksmithlabs.com → Field Notes](https://www.worksmithlabs.com/#field-notes) for the voice.
+  - type: textarea
+    id: story
+    attributes:
+      label: What happened
+      description: "2–5 sentences, concrete. Keep it tool-agnostic (no vendor rankings) and free of client identifiers."
+      placeholder: "A change passed typecheck, build, and review — and shipped rendering invisibly, because..."
+    validations:
+      required: true
+  - type: input
+    id: rule
+    attributes:
+      label: The rule it produced
+      description: "One sentence — the operating rule that prevents the recurrence."
+      placeholder: "e.g. Never wire a mark you've only seen at one size."
+    validations:
+      required: true
+  - type: input
+    id: receipt
+    attributes:
+      label: Receipt (optional)
+      description: "A public link that lets a skeptical reader verify — a PR, a commit, a postmortem."
+    validations:
+      required: false
+  - type: input
+    id: credit
+    attributes:
+      label: How to credit you (optional)
+      description: "Name/handle + link, if the note is published. Leave blank to stay anonymous."
+    validations:
+      required: false
+  - type: checkboxes
+    id: terms
+    attributes:
+      label: Submission terms
+      options:
+        - label: "This note is tool-agnostic, contains no confidential or client-identifying details, and may be edited for voice and published under the site's MIT license."
+          required: true
