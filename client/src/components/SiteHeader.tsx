@@ -25,6 +25,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { RobotMark } from "@/components/RobotMark";
 import { useTheme, type Theme } from "@/contexts/ThemeContext";
 import { SECTIONS } from "@/lib/content";
 
@@ -55,46 +56,6 @@ const NEXT_THEME: Record<Theme, Theme> = {
   dark: "system",
   system: "light",
 };
-
-/*
- * RobotMark — the brand glyph: a lego-minifig-ish robot head. Draws with
- * currentColor only, so the boxes' existing hover inversion and both
- * palettes work unchanged. Static SVG: prerender- and hydration-safe.
- */
-function RobotMark({ className }: { className?: string }) {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="square"
-      xmlns="http://www.w3.org/2000/svg"
-      className={className}
-      aria-hidden
-    >
-      <path d="M9.5 4V2h5v2" />
-      <rect x="4" y="4" width="16" height="15.5" rx="2.5" />
-      <rect
-        x="7.75"
-        y="8.75"
-        width="2.7"
-        height="2.7"
-        fill="currentColor"
-        stroke="none"
-      />
-      <rect
-        x="13.55"
-        y="8.75"
-        width="2.7"
-        height="2.7"
-        fill="currentColor"
-        stroke="none"
-      />
-      <path d="M9 15v1.6M12 15v1.6M15 15v1.6" strokeWidth="1.7" />
-    </svg>
-  );
-}
 
 /*
  * ReadingProgress — a drafting-red line under the header tracking scroll
@@ -188,7 +149,10 @@ export function SiteHeader() {
     <header className="sticky top-0 z-40 border-b border-border bg-background/95 shadow-[inset_0_-1px_0_0_color-mix(in_oklch,var(--primary)_22%,transparent)] supports-[backdrop-filter]:bg-background/88 supports-[backdrop-filter]:backdrop-blur-sm">
       <div className="container flex items-center justify-between gap-4 py-4">
         {/* Brand */}
-        <a href="#overview" className="flex shrink-0 items-center gap-3 group">
+        <a
+          href="#overview"
+          className="robot-blink group flex shrink-0 items-center gap-3"
+        >
           <span
             aria-hidden
             className="grid h-9 w-9 place-items-center border border-foreground bg-background text-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary"

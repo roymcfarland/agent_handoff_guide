@@ -9,6 +9,7 @@
  */
 
 import { useEffect } from "react";
+import { RobotMark } from "@/components/RobotMark";
 import { SiteFooter } from "@/components/SiteFooter";
 import { useLocation } from "wouter";
 import { ArrowLeft } from "lucide-react";
@@ -33,6 +34,14 @@ export default function NotFound() {
     <div className="graph-paper relative flex min-h-screen flex-col">
       <div className="flex flex-1 items-center justify-center px-4 py-16">
         <main className="paper-card relative w-full max-w-lg p-10 sm:p-12">
+          {/* The robot, equally lost — head tilted, checking the drawing. */}
+          <div
+            aria-hidden
+            className="absolute right-8 top-8 rotate-12 text-foreground/70 sm:right-10 sm:top-10"
+          >
+            <RobotMark className="h-12 w-12 sm:h-14 sm:w-14" />
+          </div>
+
           <div className="stamp">FILE NOT FOUND / 404</div>
 
           <h1 className="mt-4 text-balance font-display text-6xl font-bold leading-none tracking-tight text-foreground sm:text-7xl">
