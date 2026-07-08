@@ -13,7 +13,7 @@
  */
 
 import { useEffect, useState } from "react";
-import { Check, Copy, Download } from "lucide-react";
+import { Check, Copy, Download, Stamp } from "lucide-react";
 import { toast } from "sonner";
 
 type PromptCardProps = {
@@ -73,9 +73,17 @@ function ChecklistBody({
 
   return (
     <div className="overflow-x-auto px-6 py-6 font-mono text-[13px] leading-relaxed text-foreground sm:text-sm">
-      <p className="mb-4 font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
-        {done} of {total} checked · the notebook remembers (this browser only)
-      </p>
+      <div className="mb-4 flex flex-wrap items-center gap-3">
+        <p className="font-mono text-[10.5px] font-bold uppercase tracking-widest text-primary">
+          {done} of {total} checked · the notebook remembers (this browser only)
+        </p>
+        {total > 0 && done === total && (
+          <span className="complete-stamp">
+            <Stamp className="h-3 w-3" strokeWidth={2.5} />
+            Complete
+          </span>
+        )}
+      </div>
       {lines.map((line, lineIndex) => {
         const match = line.match(CHECKBOX_LINE);
         if (!match) {
@@ -202,7 +210,7 @@ export function PromptCard({
           <ChecklistBody body={body} storageKey={checklistKey} />
         ) : (
           <pre className="overflow-x-auto px-6 py-6 font-mono text-[13px] leading-relaxed text-foreground sm:text-sm">
-{body}
+            {body}
           </pre>
         )}
       </div>

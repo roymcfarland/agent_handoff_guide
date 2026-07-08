@@ -19,15 +19,24 @@
 
 import { useEffect, useRef, useState } from "react";
 import { Menu, Monitor, Moon, Sun, X } from "lucide-react";
+import { toast } from "sonner";
 import {
   Sheet,
   SheetContent,
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { CommandPalette } from "@/components/CommandPalette";
 import { RobotMark } from "@/components/RobotMark";
 import { useTheme, type Theme } from "@/contexts/ThemeContext";
 import { SECTIONS } from "@/lib/content";
+
+const ROBOT_TOASTS = [
+  "Beep boop. You found me.",
+  "Still just ink on paper — no servos in here.",
+  "The Advisor drew me; the Builder never touched the pen.",
+  "Every diagram on this page, my doing.",
+] as const;
 
 // Short labels swap in below 2xl on desktop. The number prefix carries the
 // wayfinding; the short text is enough to disambiguate at a glance.
@@ -70,9 +79,9 @@ function ReadingProgress() {
     let frame = 0;
     const update = () => {
       frame = 0;
-      const max =
-        document.documentElement.scrollHeight - window.innerHeight;
-      const ratio = max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      const ratio =
+        max > 0 ? Math.min(1, Math.max(0, window.scrollY / max)) : 0;
       if (lineRef.current) {
         lineRef.current.style.transform = `scaleX(${ratio})`;
       }
@@ -124,9 +133,31 @@ function ThemeToggle() {
   );
 }
 
+// Click the brand mark 5 times within 2s and the robot notices. A quiet
+// reward for anyone poking around the header — no gameplay, just a wink.
+function useRobotEasterEgg() {
+  const clicksRef = useRef<number[]>([]);
+  const [spinning, setSpinning] = useState(false);
+
+  const registerClick = () => {
+    const now = Date.now();
+    const recent = [...clicksRef.current, now].filter(t => now - t < 2000);
+    clicksRef.current = recent;
+    if (recent.length >= 5) {
+      clicksRef.current = [];
+      setSpinning(true);
+      toast(ROBOT_TOASTS[Math.floor(Math.random() * ROBOT_TOASTS.length)]);
+      window.setTimeout(() => setSpinning(false), 600);
+    }
+  };
+
+  return { spinning, registerClick };
+}
+
 export function SiteHeader() {
   const [active, setActive] = useState<string>(SECTIONS[0].id);
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { spinning, registerClick } = useRobotEasterEgg();
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -151,11 +182,14 @@ export function SiteHeader() {
         {/* Brand */}
         <a
           href="#overview"
+          onClick={registerClick}
           className="robot-blink group flex shrink-0 items-center gap-3"
         >
           <span
             aria-hidden
-            className="grid h-9 w-9 place-items-center border border-foreground bg-background text-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary"
+            className={`grid h-9 w-9 place-items-center border border-foreground bg-background text-foreground transition-colors group-hover:bg-primary group-hover:text-primary-foreground group-hover:border-primary ${
+              spinning ? "robot-spin" : ""
+            }`}
           >
             <RobotMark className="h-[22px] w-[22px]" />
           </span>
@@ -199,6 +233,9 @@ export function SiteHeader() {
               );
             })}
           </nav>
+
+          {/* Command palette: visible at every breakpoint, ⌘K / "/" opens it. */}
+          <CommandPalette />
 
           {/* Theme toggle: visible at every breakpoint. */}
           <ThemeToggle />
