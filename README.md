@@ -25,7 +25,7 @@ Under the hood it’s a **static React app** with an optional **Express** shell 
 
 ## What you’ll find on the site
 
-The page is organized as nine sections — navigation mirrors this order:
+The page is organized as ten sections — navigation mirrors this order:
 
 1. **Overview** — Framing and how the framework fits day-to-day engineering.
 2. **Diagnosis** — When ad-hoc agent use drifts and what to formalize first.
@@ -33,9 +33,10 @@ The page is organized as nine sections — navigation mirrors this order:
 4. **Install on repo** — Dropping the framework into your tree and conventions.
 5. **Prompt library** — Scenario-oriented prompts (builder / closeout / verifier).
 6. **Build & verify** — Making “green CI” part of the contract, not an afterthought.
-7. **Operate the framework** — Cadence after the first install.
-8. **META-PRs** — Meta changes to the process itself (documented, reviewable).
-9. **References** — Curated links and papers behind verifier design, long context, and merge hygiene.
+7. **Field Notes** — Lessons from operating the framework, including a worked example.
+8. **Operate the framework** — Cadence after the first install.
+9. **META-PRs** — Meta changes to the process itself (documented, reviewable).
+10. **References** — Curated links and papers behind verifier design, long context, and merge hygiene.
 
 Long-form copy and prompt bodies live in **`client/src/lib/content.ts`** so UI code stays layout-focused; sections render via **`client/src/pages/Home.tsx`** and **`client/src/pages/sections/`**.
 
@@ -43,7 +44,7 @@ Long-form copy and prompt bodies live in **`client/src/lib/content.ts`** so UI c
 
 ## Use the prompts in your repo
 
-Every prompt, template, and drop-in doc is emitted as plain markdown in [**`prompts/`**](./prompts/) — MIT-licensed, generated from `content.ts` (CI fails on drift, so the files always match the site).
+The Prompt Library, META-PR prompts and templates, HANDOFF template, and Build & Verify drop-in doc are emitted as plain Markdown in [**`prompts/`**](./prompts/). The files are MIT-licensed and generated from `content.ts`. CI fails on drift so the generated files match the site. The Phase 2 operating prompts and templates are available to copy in [Operate the framework](https://www.worksmithlabs.com/#phase-2).
 
 ```bash
 # vendor the whole set, no git history
@@ -71,7 +72,9 @@ Full architecture, design language (“Engineer’s Notebook”), **non-goals**,
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) **22+** (pinned via `engines` and `.nvmrc`)
-- [pnpm](https://pnpm.io/) **10+** (repo pins via `packageManager`; Corepack-friendly)
+- [pnpm](https://pnpm.io/) **10.4.1** (repo pins via `packageManager`, compatible with Corepack)
+
+The security overrides live in `package.json` under `pnpm.overrides`. pnpm 11 reads that configuration from `pnpm-workspace.yaml`. See the [pnpm 11 migration guide](https://pnpm.io/11.x/migration).
 
 ---
 
@@ -88,14 +91,17 @@ Vite serves the app from `client/` (see `vite.config.ts` for the port; default i
 
 ## Scripts
 
-| Command        | Purpose                                                                        |
-| -------------- | ------------------------------------------------------------------------------ |
-| `pnpm dev`     | Local development (Vite, HMR)                                                  |
-| `pnpm build`   | Production client → `dist/public` + bundle `server/index.ts` → `dist/index.js` |
-| `pnpm start`   | Production server: `NODE_ENV=production node dist/index.js`                    |
-| `pnpm preview` | Preview the built client with Vite                                             |
-| `pnpm check`   | TypeScript (`tsc --noEmit`)                                                    |
-| `pnpm format`  | Prettier                                                                       |
+| Command                   | Purpose                                                                                                                                                                    |
+| ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `pnpm dev`                | Local development (Vite, HMR)                                                                                                                                              |
+| `pnpm build`              | Build the client to `dist/public` and the SSR entry to `dist/ssr`, prerender the home page into `dist/public/index.html`, and bundle `server/index.ts` to `dist/index.js`. |
+| `pnpm start`              | Production server (`NODE_ENV=production node dist/index.js`)                                                                                                               |
+| `pnpm preview`            | Preview the built client with Vite                                                                                                                                         |
+| `pnpm check`              | TypeScript (`tsc --noEmit`)                                                                                                                                                |
+| `pnpm format`             | Format the repository with Prettier (`prettier --write .`)                                                                                                                 |
+| `pnpm generate:prompts`   | Regenerate `prompts/` and `client/public/llms.txt` from `client/src/lib/content.ts`. CI regenerates both and fails on drift.                                               |
+| `pnpm vercel:deploy`      | Create a Vercel preview deployment via `pnpm dlx vercel@latest deploy --yes`.                                                                                              |
+| `pnpm vercel:deploy:prod` | Create a Vercel production deployment via `pnpm dlx vercel@latest deploy --prod --yes`.                                                                                    |
 
 ---
 
