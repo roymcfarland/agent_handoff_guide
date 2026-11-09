@@ -29,7 +29,7 @@ The site may, in the future, include opt-in signup forms for adjacent Worksmith 
 
 The repository is structured as a single-page React application with an optional Express shell for production self-hosting.
 
-The **browser/React** entry point is `client/src/main.tsx`, which bootstraps the React DOM, the ThemeProvider, and the Wouter routing context. The entire site renders through `client/src/pages/Home.tsx`, which composes nine distinct sections (Overview, Diagnosis, Schema, Install, Prompt Library, Build & Verify, After Install, META-PRs, References).
+The **browser/React** entry point is `client/src/main.tsx`, which bootstraps the React DOM, the ThemeProvider, and the Wouter routing context. The entire site renders through `client/src/pages/Home.tsx`, which composes ten distinct sections (Overview, Diagnosis, Schema, Install, Prompt Library, Build & Verify, Field Notes, After Install, META-PRs, References).
 
 The **content layer** is separated from the presentation layer. All long-form prose, prompt bodies, and structured section data live in `client/src/lib/content.ts`. The UI components map over this data to render the page.
 
@@ -75,7 +75,7 @@ The following questions were raised by static analysis of the repository and hav
 The 800-line cap is enforced to prevent context-window exhaustion for agents working in this repository. The legacy debt in `Home.tsx` was resolved in PR #13 (Slice 01).
 
 **Exemptions:**
-1. `client/src/lib/content.ts` — This file is ~1,800 lines but is explicitly exempted because it is a single-responsibility, data-only module. Splitting it provides no runtime benefit and fragments the prompt library.
+1. `client/src/lib/content.ts` — This file is ~2,500 lines but is explicitly exempted because it is a single-responsibility, data-only module. Splitting it provides no runtime benefit and fragments the prompt library.
 2. `client/src/components/diagrams/**` — Diagram components may be intentionally large by design.
 
 **Verifier behavior:**
