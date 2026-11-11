@@ -6,17 +6,11 @@
 import { Link as LinkIcon } from "lucide-react";
 import { toast } from "sonner";
 import { SectionHeader } from "@/components/SectionHeader";
-import {
-  FIELD_NOTES,
-  FIELD_NOTES_INTRO,
-  WORKED_EXAMPLE,
-} from "@/lib/content";
+import { FIELD_NOTES, FIELD_NOTES_INTRO, WORKED_EXAMPLE } from "@/lib/content";
 
 async function copyNoteLink(n: string) {
   try {
-    await navigator.clipboard.writeText(
-      `${window.location.origin}/#note-${n}`
-    );
+    await navigator.clipboard.writeText(`${window.location.origin}/#note-${n}`);
     toast.success(`Link to note ${n} copied`);
   } catch {
     toast.error("Copy failed — use the address bar instead");

@@ -5,13 +5,8 @@
  */
 import { FileText } from "lucide-react";
 import { SectionHeader } from "@/components/SectionHeader";
-import {
-  InstallPipelineDiagram,
-} from "@/components/diagrams";
-import {
-  INSTALL_ANTI_PATTERNS,
-  INSTALL_STEPS,
-} from "@/lib/content";
+import { InstallPipelineDiagram } from "@/components/diagrams";
+import { INSTALL_ANTI_PATTERNS, INSTALL_STEPS } from "@/lib/content";
 export default function InstallSection() {
   return (
     <section

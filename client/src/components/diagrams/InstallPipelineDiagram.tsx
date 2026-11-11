@@ -14,7 +14,8 @@ export function InstallPipelineDiagram() {
   const gap = 28;
   const top = 40;
   const padX = 48;
-  const vbH = top + INSTALL_STEPS.length * cardH + (INSTALL_STEPS.length - 1) * gap + 56;
+  const vbH =
+    top + INSTALL_STEPS.length * cardH + (INSTALL_STEPS.length - 1) * gap + 56;
   const vbW = padX * 2 + cardW;
 
   return (

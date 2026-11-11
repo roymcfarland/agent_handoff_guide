@@ -6,13 +6,8 @@
 import { MarkdownBlock } from "@/components/MarkdownBlock";
 import { PromptCard } from "@/components/PromptCard";
 import { SectionHeader } from "@/components/SectionHeader";
-import {
-  PromptScenariosDiagram,
-} from "@/components/diagrams";
-import {
-  PROMPT_LIBRARY,
-  type LibraryPrompt,
-} from "@/lib/content";
+import { PromptScenariosDiagram } from "@/components/diagrams";
+import { PROMPT_LIBRARY, type LibraryPrompt } from "@/lib/content";
 export default function PromptLibrarySection() {
   return (
     <section

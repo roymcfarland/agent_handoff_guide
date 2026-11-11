@@ -22,6 +22,7 @@ export function BuildVerifyDiagram() {
       title="The two-LLM loop (per slice)"
       legend="Advisor → Builder → Verifier → Gatekeeper"
       footer={
+        /* prettier-ignore */
         <>
           The{" "}
           <code className="font-mono text-foreground">HANDOFF.md</code> at the

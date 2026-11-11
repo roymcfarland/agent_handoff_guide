@@ -65,7 +65,15 @@ export function PhaseModelDiagram() {
   const vbH = 416;
   const maxChars = 46;
 
-  function PanelHeader({ x, phase, title }: { x: number; phase: string; title: string }) {
+  function PanelHeader({
+    x,
+    phase,
+    title,
+  }: {
+    x: number;
+    phase: string;
+    title: string;
+  }) {
     return (
       <g>
         <rect

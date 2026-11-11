@@ -66,7 +66,11 @@ export function PromptScenariosDiagram() {
         {PROMPT_LIBRARY.map((group, i) => {
           const x = pad + i * (w + gap);
           const mid = x + w / 2;
-          const scenarioLines = wrapWords(group.scenario.replace(/ — /g, " · "), 36, 2);
+          const scenarioLines = wrapWords(
+            group.scenario.replace(/ — /g, " · "),
+            36,
+            2
+          );
 
           return (
             <g key={group.scenarioTag}>
