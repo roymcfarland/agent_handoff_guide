@@ -36,8 +36,7 @@ export default function BuildVerifySection() {
               catches what the Builder may miss or under-report. Upstream of
               both, an Advisor greps the repo, scopes the slice, and drafts the
               prompts the other two run — so neither ever works from guesswork.
-              The prompts and
-              PR templates for this loop live in the{" "}
+              The prompts and PR templates for this loop live in the{" "}
               <a
                 href="#scenario-loop"
                 className="underline decoration-primary underline-offset-4 hover:text-foreground"

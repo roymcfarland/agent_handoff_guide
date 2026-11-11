@@ -16,19 +16,28 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const HTML_PATH = join(ROOT, "dist/public/index.html");
 const EMPTY_ROOT = '<div id="root"></div>';
 
-const { render } = (await import(
-  join(ROOT, "dist/ssr/entry-server.js")
-)) as { render: (url: string) => string };
+const { render } = (await import(join(ROOT, "dist/ssr/entry-server.js"))) as {
+  render: (url: string) => string;
+};
 
 const markup = render("/");
 if (!markup.includes("field-notes")) {
-  throw new Error("prerender produced markup without expected sections — refusing to write");
+  throw new Error(
+    "prerender produced markup without expected sections — refusing to write"
+  );
 }
 
 const template = readFileSync(HTML_PATH, "utf8");
 if (!template.includes(EMPTY_ROOT)) {
-  throw new Error(`dist/public/index.html has no ${EMPTY_ROOT} marker — template changed?`);
+  throw new Error(
+    `dist/public/index.html has no ${EMPTY_ROOT} marker — template changed?`
+  );
 }
 
-writeFileSync(HTML_PATH, template.replace(EMPTY_ROOT, `<div id="root">${markup}</div>`));
-console.log(`Prerendered / into dist/public/index.html (${(markup.length / 1024).toFixed(0)}kB of markup)`);
+writeFileSync(
+  HTML_PATH,
+  template.replace(EMPTY_ROOT, `<div id="root">${markup}</div>`)
+);
+console.log(
+  `Prerendered / into dist/public/index.html (${(markup.length / 1024).toFixed(0)}kB of markup)`
+);

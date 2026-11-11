@@ -27,7 +27,8 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), "..");
 const OUT_DIR = join(ROOT, "prompts");
 const SITE = "https://www.worksmithlabs.com";
 const REPO = "https://github.com/roymcfarland/agent_handoff_guide";
-const RAW = "https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts";
+const RAW =
+  "https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/prompts";
 
 function header(exportName: string): string {
   return [
@@ -58,7 +59,10 @@ function emit(
   whenToUse: string,
   body: string
 ): void {
-  writeFileSync(join(OUT_DIR, filename), header(exportName) + body.trimEnd() + "\n");
+  writeFileSync(
+    join(OUT_DIR, filename),
+    header(exportName) + body.trimEnd() + "\n"
+  );
   emitted.push({ filename, title, whenToUse });
 }
 
@@ -68,7 +72,13 @@ mkdirSync(OUT_DIR, { recursive: true });
 /* Library prompts — filenames come from the library itself. */
 for (const scenario of PROMPT_LIBRARY) {
   for (const item of scenario.items) {
-    emit(item.filename, `PROMPT_LIBRARY:${item.id}`, item.title, item.whenToUse, item.body);
+    emit(
+      item.filename,
+      `PROMPT_LIBRARY:${item.id}`,
+      item.title,
+      item.whenToUse,
+      item.body
+    );
   }
 }
 
@@ -146,7 +156,10 @@ const readme = [
   "",
   "## Contents",
   "",
-  ...emitted.map(e => `- [\`${e.filename}\`](./${e.filename}) — **${e.title}.** ${e.whenToUse}`),
+  ...emitted.map(
+    e =>
+      `- [\`${e.filename}\`](./${e.filename}) — **${e.title}.** ${e.whenToUse}`
+  ),
   "",
   `These files are generated from [\`client/src/lib/content.ts\`](../client/src/lib/content.ts) by \`pnpm generate:prompts\`; CI fails on any drift. Do not edit them here — change the source and regenerate.`,
   "",
@@ -178,4 +191,6 @@ const llms = [
 ].join("\n");
 writeFileSync(join(ROOT, "client/public/llms.txt"), llms);
 
-console.log(`Wrote ${emitted.length + 1} files to prompts/ and client/public/llms.txt`);
+console.log(
+  `Wrote ${emitted.length + 1} files to prompts/ and client/public/llms.txt`
+);

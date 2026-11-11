@@ -7,13 +7,8 @@ import { useState } from "react";
 import { Check, Copy } from "lucide-react";
 import { toast } from "sonner";
 import { SectionHeader } from "@/components/SectionHeader";
-import {
-  DocumentCadenceDiagram,
-} from "@/components/diagrams";
-import {
-  HANDOFF_TEMPLATE,
-  SCHEMA_FILES,
-} from "@/lib/content";
+import { DocumentCadenceDiagram } from "@/components/diagrams";
+import { HANDOFF_TEMPLATE, SCHEMA_FILES } from "@/lib/content";
 export default function SchemaSection() {
   return (
     <section

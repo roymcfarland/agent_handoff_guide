@@ -1,5 +1,9 @@
 /** Wrap plain text into lines of at most `maxLen` characters (word-aware). */
-export function wrapWords(text: string, maxLen: number, maxLines: number): string[] {
+export function wrapWords(
+  text: string,
+  maxLen: number,
+  maxLines: number
+): string[] {
   const words = text.replace(/\s+/g, " ").trim().split(/\s+/).filter(Boolean);
   const lines: string[] = [];
   let cur = "";

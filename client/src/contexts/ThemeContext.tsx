@@ -15,7 +15,13 @@
  * which means we attach a media-query listener and flip the .dark class on
  * <html> live as the OS appearance changes.
  */
-import React, { createContext, useContext, useEffect, useState, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+  useCallback,
+} from "react";
 
 export type Theme = "light" | "dark" | "system";
 
@@ -36,7 +42,9 @@ const STORAGE_KEY = "theme";
 
 function readSystemPref(): "light" | "dark" {
   if (typeof window === "undefined" || !window.matchMedia) return "light";
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
 }
 
 function readStoredTheme(): Theme {
@@ -54,7 +62,10 @@ interface ThemeProviderProps {
   defaultTheme?: Theme;
 }
 
-export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProviderProps) {
+export function ThemeProvider({
+  children,
+  defaultTheme = "system",
+}: ThemeProviderProps) {
   // Initialize from localStorage if present, else from the provider default.
   const [theme, setThemeState] = useState<Theme>(() => {
     const stored = readStoredTheme();
@@ -97,11 +108,15 @@ export function ThemeProvider({ children, defaultTheme = "system" }: ThemeProvid
   }, []);
 
   const toggleTheme = useCallback(() => {
-    setTheme(theme === "light" ? "dark" : theme === "dark" ? "system" : "light");
+    setTheme(
+      theme === "light" ? "dark" : theme === "dark" ? "system" : "light"
+    );
   }, [theme, setTheme]);
 
   return (
-    <ThemeContext.Provider value={{ theme, resolvedTheme, toggleTheme, setTheme }}>
+    <ThemeContext.Provider
+      value={{ theme, resolvedTheme, toggleTheme, setTheme }}
+    >
       {children}
     </ThemeContext.Provider>
   );

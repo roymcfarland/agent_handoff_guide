@@ -28,9 +28,7 @@ export function DiagramShell({
   contentClassName,
 }: DiagramShellProps) {
   return (
-    <figure
-      className={`paper-card ink-in overflow-hidden ${className ?? ""}`}
-    >
+    <figure className={`paper-card ink-in overflow-hidden ${className ?? ""}`}>
       <figcaption className="flex flex-col gap-2 border-b border-border px-5 py-4 sm:flex-row sm:items-start sm:justify-between sm:gap-6">
         <div className="min-w-0">
           <span className="font-mono text-[11px] font-bold uppercase tracking-widest text-muted-foreground">

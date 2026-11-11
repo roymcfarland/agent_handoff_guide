@@ -125,14 +125,14 @@ export default function ReferencesSection() {
           <p className="mt-3 max-w-3xl text-[14px] leading-relaxed text-muted-foreground sm:text-[15px]">
             {REFERENCE_READING_ORDER_INTRO}
           </p>
-          <nav
-            className="mt-6"
-            aria-label="Suggested reference reading order"
-          >
+          <nav className="mt-6" aria-label="Suggested reference reading order">
             <ol className="m-0 flex list-none flex-col p-0 sm:flex-row sm:flex-wrap sm:items-center sm:gap-x-2 sm:gap-y-2">
               {REFERENCE_READING_ORDER.flatMap((item, index) => {
                 const row = (
-                  <li key={item.href} className="flex min-w-0 items-center gap-2">
+                  <li
+                    key={item.href}
+                    className="flex min-w-0 items-center gap-2"
+                  >
                     <span className="font-mono text-[11px] font-bold tabular-nums tracking-widest text-primary">
                       {item.step}
                     </span>

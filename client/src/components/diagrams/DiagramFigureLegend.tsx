@@ -8,10 +8,7 @@ export function DiagramFigureLegend() {
       aria-label="Diagram conventions"
     >
       <span className="flex max-w-[240px] items-center gap-3">
-        <span
-          className="h-2 w-8 shrink-0 rounded-sm bg-primary"
-          aria-hidden
-        />
+        <span className="h-2 w-8 shrink-0 rounded-sm bg-primary" aria-hidden />
         <span>Red — handoff / urgency (what moves next)</span>
       </span>
       <span className="flex max-w-[240px] items-center gap-3">

@@ -10,10 +10,10 @@ import { Check, Copy, Download, FileText } from "lucide-react";
 import { toast } from "sonner";
 
 type MarkdownBlockProps = {
-  filename: string;          // e.g. "docs/build-and-verify.md"
-  description: string;       // one-line description
-  body: string;              // raw markdown
-  toastLabel?: string;       // optional override for toast text
+  filename: string; // e.g. "docs/build-and-verify.md"
+  description: string; // one-line description
+  body: string; // raw markdown
+  toastLabel?: string; // optional override for toast text
 };
 
 export function MarkdownBlock({
@@ -62,40 +62,40 @@ export function MarkdownBlock({
           </span>
         </div>
         <div className="flex shrink-0 items-center gap-2">
-        <button
-          type="button"
-          onClick={handleDownload}
-          aria-label={`Download ${filename}`}
-          title={`Download ${filename}`}
-          className="inline-flex items-center gap-2 border border-border bg-background px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground transition-colors duration-150 hover:border-primary hover:bg-primary hover:text-primary-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          <Download className="h-3.5 w-3.5" strokeWidth={2} />
-          <span className="hidden sm:inline">.md</span>
-        </button>
-        <button
-          type="button"
-          onClick={handleCopy}
-          aria-label={`Copy ${filename} to clipboard`}
-          className="inline-flex items-center gap-2 border border-border bg-background px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground transition-colors duration-150 hover:border-primary hover:bg-primary hover:text-primary-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-        >
-          {copied ? (
-            <>
-              <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
-              Copied
-            </>
-          ) : (
-            <>
-              <Copy className="h-3.5 w-3.5" strokeWidth={2} />
-              Copy markdown
-            </>
-          )}
-        </button>
+          <button
+            type="button"
+            onClick={handleDownload}
+            aria-label={`Download ${filename}`}
+            title={`Download ${filename}`}
+            className="inline-flex items-center gap-2 border border-border bg-background px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground transition-colors duration-150 hover:border-primary hover:bg-primary hover:text-primary-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <Download className="h-3.5 w-3.5" strokeWidth={2} />
+            <span className="hidden sm:inline">.md</span>
+          </button>
+          <button
+            type="button"
+            onClick={handleCopy}
+            aria-label={`Copy ${filename} to clipboard`}
+            className="inline-flex items-center gap-2 border border-border bg-background px-3 py-1.5 font-mono text-[11px] font-bold uppercase tracking-widest text-foreground transition-colors duration-150 hover:border-primary hover:bg-primary hover:text-primary-foreground focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {copied ? (
+              <>
+                <Check className="h-3.5 w-3.5" strokeWidth={2.5} />
+                Copied
+              </>
+            ) : (
+              <>
+                <Copy className="h-3.5 w-3.5" strokeWidth={2} />
+                Copy markdown
+              </>
+            )}
+          </button>
         </div>
       </header>
 
       <div className="graph-paper-dense max-h-[640px] overflow-auto">
         <pre className="px-5 py-5 font-mono text-[12.5px] leading-relaxed text-foreground sm:text-[13px]">
-{body}
+          {body}
         </pre>
       </div>
 

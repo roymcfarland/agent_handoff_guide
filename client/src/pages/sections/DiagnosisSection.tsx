@@ -4,9 +4,7 @@
  * No JSX or copy changes; this is a pure file-move + import-trim.
  */
 import { SectionHeader } from "@/components/SectionHeader";
-import {
-  FailureModesMatrixDiagram,
-} from "@/components/diagrams";
+import { FailureModesMatrixDiagram } from "@/components/diagrams";
 import { FAILURE_MODES } from "@/lib/content";
 export default function DiagnosisSection() {
   return (

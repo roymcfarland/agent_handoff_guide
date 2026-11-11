@@ -12,7 +12,7 @@ import { BYLINE, PROMPT_LIBRARY, SHEET_INDEX } from "@/lib/content";
 
 const PROMPT_COUNT = PROMPT_LIBRARY.reduce(
   (total, scenario) => total + scenario.items.length,
-  0,
+  0
 );
 
 export default function OverviewSection() {
