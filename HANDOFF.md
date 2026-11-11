@@ -2,12 +2,13 @@
 
 ## Status
 
-No slice is in flight. The Advisor-era overhaul and follow-up work (PRs #29–#61) shipped: three-role model, verdict triage, after-merge protocol, ceremony sizing, template upgrade, diagram redraw, title-block footer, CI, hygiene prune, theme toggle, Field Notes + worked example, SEO/share hygiene, prompts-as-files + llms.txt, prerender, sheet index + anchors, byline + FAQ, robot brand mark, and the delight batch.
+No slice is in flight. The Advisor-era overhaul and follow-up work (PRs #29–#63) shipped: three-role model, verdict triage, after-merge protocol, ceremony sizing, template upgrade, diagram redraw, title-block footer, CI, hygiene prune, theme toggle, Field Notes + worked example, SEO/share hygiene, prompts-as-files + llms.txt, prerender, sheet index + anchors, byline + FAQ, robot brand mark, and the delight batch.
 
 - **#53–#55** — Roy McFarland author attribution, OSS citation and contribution files, field-note submission flow, and a footer author card.
 - **#56–#58** — Target highlighting, selection styling and robot animation, plus author profiles, status, and CTA in the overview drawing block and the owner’s revised status wording.
 - **#59–#60** — Command palette, checklist completion stamp, robot easter egg, and a header overflow fix at phone widths.
 - **#61** — Dependency audit fixes via Vite and PostCSS patch updates and transitive overrides.
+- **#63** — CI gates high and critical vulnerabilities in production dependencies.
 
 ## Backlog (unscoped — pick one and scope it into this file before building)
 

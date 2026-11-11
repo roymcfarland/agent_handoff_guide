@@ -15,7 +15,7 @@ Read [`PROJECT.md`](./PROJECT.md). It is the authoritative rules document: purpo
 ## How a change ships here
 
 1. Scope the change the way the site teaches: a small slice with observable acceptance criteria.
-2. Branch, build, and keep `pnpm check` and `pnpm build` green (CI runs both, plus the 800-line cap and the prompts zero-drift gate).
+2. Branch, build, and keep `pnpm check` and `pnpm build` green (CI runs both, plus the 800-line cap, the prompts zero-drift gate, and the production dependency audit).
 3. Open a PR — never push to `main`. A human gatekeeper reviews every merge.
 4. Visual changes get an eyeball on the Vercel preview; code-correct is not render-correct.
 
