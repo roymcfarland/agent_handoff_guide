@@ -71,7 +71,7 @@ Full architecture, design language (“Engineer’s Notebook”), **non-goals**,
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) **22+** (pinned via `engines` and `.nvmrc`)
+- [Node.js](https://nodejs.org/) **24** (pinned via `engines` and `.nvmrc`)
 - [pnpm](https://pnpm.io/) **10.4.1** (repo pins via `packageManager`, compatible with Corepack)
 
 The security overrides live in `package.json` under `pnpm.overrides`. pnpm 11 reads that configuration from `pnpm-workspace.yaml`. See the [pnpm 11 migration guide](https://pnpm.io/11.x/migration).

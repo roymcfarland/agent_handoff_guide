@@ -14,7 +14,7 @@
   },
   "homepage": "https://worksmithlabs.com",
   "engines": {
-    "node": ">=22"
+    "node": "24.x"
   },
   "scripts": {
     "dev": "vite --host",
