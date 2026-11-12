@@ -19,6 +19,8 @@ Read [`PROJECT.md`](./PROJECT.md). It is the authoritative rules document: purpo
 3. Open a PR — never push to `main`. A human gatekeeper reviews every merge.
 4. Visual changes get an eyeball on the Vercel preview; code-correct is not render-correct.
 
+Dependabot opens monthly version-update PRs for npm dependencies and GitHub Actions.
+
 ## Dev setup
 
 ```bash
