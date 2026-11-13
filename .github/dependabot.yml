@@ -23,6 +23,9 @@ updates:
       # TypeScript 7 (native compiler) is not adopted: it needs its own evaluation (the baseUrl removal and any tooling peer ranges). Minor/patch still flow through the group.
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
+      # lucide-react 1.x changes shipped markup (aria-hidden on every icon, seven redrawn icons, class changes) with no security or maintenance benefit. Refresh the icon set deliberately as its own slice (target the current latest, review the redrawn icons visually). 0.x minor/patch still flow through the group.
+      - dependency-name: "lucide-react"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
