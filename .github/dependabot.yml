@@ -24,10 +24,10 @@ updates:
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
       # Ignore lucide-react 0.x minors as well as majors. The 0.489.0 release added
-      # aria-hidden by default for decorative React icons. The upgrade review found
-      # redrawn icons and no security benefit. The merged 0.577.0 update (#76) grew
-      # the gzip JS bundle by 0.15%. Patches (currently 0.577.x) still flow through
-      # npm-minor-patch. Refresh the icon set deliberately in its own slice.
+      # aria-hidden by default for decorative React icons. The 0.577.0 bump (#76)
+      # includes redrawn icons with no security benefit. See #79 for the revert.
+      # Patches in the installed 0.x series still flow through npm-minor-patch.
+      # Refresh the icon set deliberately in its own slice.
       - dependency-name: "lucide-react"
         update-types: ["version-update:semver-major", "version-update:semver-minor"]
   - package-ecosystem: "github-actions"
