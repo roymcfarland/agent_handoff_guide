@@ -21,7 +21,7 @@ The site may, in the future, include opt-in signup forms for adjacent Worksmith 
 - **Icons:** `lucide-react`
 - **Production Server:** Express (static file fallback for self-hosting; Vercel serves SPA directly)
 - **Deployment:** Vercel (`vercel.json` configured for SPA rewrites)
-- **Package Manager:** `pnpm` (pinned via `packageManager` field; Corepack enabled)
+- **Package Manager:** `pnpm` 10.34.9 (pinned via `packageManager` field; Corepack enabled)
 
 ---
 
