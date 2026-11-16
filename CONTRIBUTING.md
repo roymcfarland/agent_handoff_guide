@@ -16,18 +16,19 @@ Read [`PROJECT.md`](./PROJECT.md). It is the authoritative rules document: purpo
 
 1. Scope the change the way the site teaches: a small slice with observable acceptance criteria.
 2. Branch, build, and keep `pnpm check` and `pnpm build` green (CI runs both, plus the 800-line cap, the prompts zero-drift gate, and the production dependency audit).
-3. Open a PR — never push to `main`. A human gatekeeper reviews every merge.
-4. Visual changes get an eyeball on the Vercel preview; code-correct is not render-correct.
-
-Dependabot opens monthly version-update PRs for npm dependencies and GitHub Actions.
+3. Update any affected docs in the same PR as the change. Use a PR for every change to `main`. A human gatekeeper reviews every merge.
+4. Review visual changes on the Vercel preview.
+5. After verifying the merge, confirm GitHub deleted the PR branch. Remove any scratch checkout with `git worktree remove <path>`, then delete the merged local branch.
 
 ## Dev setup
 
+See the [README prerequisites](./README.md#prerequisites) for Node and the pnpm pin.
+
 ```bash
-pnpm install
-pnpm dev        # Vite dev server on :3000
-pnpm check      # typecheck
-pnpm build      # production build (includes the prerender)
+corepack pnpm install --frozen-lockfile
+corepack pnpm dev        # Vite dev server, defaults to port 3000
+corepack pnpm check      # typecheck
+corepack pnpm build      # production build (includes the prerender)
 ```
 
 ## License

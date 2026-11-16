@@ -14,14 +14,14 @@ The site may, in the future, include opt-in signup forms for adjacent Worksmith 
 
 ## Stack
 
-- **Framework:** React 19 + Vite 7 (Single Page Application)
+- **Framework:** React + Vite (single-page application). See the [README stack summary](./README.md#tech-stack-at-a-glance) for the major versions.
 - **Routing:** `wouter`
-- **Styling:** Tailwind CSS 4 + `clsx` / `tailwind-merge`
+- **Styling:** Tailwind CSS + `clsx` / `tailwind-merge`
 - **UI Components:** Radix UI primitives + minimal shadcn/ui baseline (aggressively pruned to active imports only)
 - **Icons:** `lucide-react`
 - **Production Server:** Express (static file fallback for self-hosting; Vercel serves SPA directly)
 - **Deployment:** Vercel (`vercel.json` configured for SPA rewrites)
-- **Package Manager:** `pnpm` 10.34.9 (pinned via `packageManager` field; Corepack enabled)
+- **Package Manager:** `pnpm` via Corepack, pinned by the `packageManager` field in [`package.json`](./package.json)
 
 ---
 
@@ -29,9 +29,9 @@ The site may, in the future, include opt-in signup forms for adjacent Worksmith 
 
 The repository is structured as a single-page React application with an optional Express shell for production self-hosting.
 
-The **browser/React** entry point is `client/src/main.tsx`, which bootstraps the React DOM, the ThemeProvider, and the Wouter routing context. The entire site renders through `client/src/pages/Home.tsx`, which composes ten distinct sections (Overview, Diagnosis, Schema, Install, Prompt Library, Build & Verify, Field Notes, After Install, META-PRs, References).
+The **browser/React** entry point is `client/src/main.tsx`, which hydrates the prerendered home page or mounts React for other paths and development. `client/src/App.tsx` provides the theme and routes `/` to `client/src/pages/Home.tsx`, with a Not Found view for `/404` and unmatched paths. Home composes ten sections (Overview, Diagnosis, Schema, Install, Prompt Library, Build & Verify, Field Notes, Operate the Framework, META-PRs, References).
 
-The **content layer** is separated from the presentation layer. All long-form prose, prompt bodies, and structured section data live in `client/src/lib/content.ts`. The UI components map over this data to render the page.
+The **content layer** is separated from the presentation layer. Shared long-form prose, prompt bodies, and structured section data live in `client/src/lib/content.ts`. The UI components map over this data to render the page.
 
 The **local server** entry point is `server/index.ts`. It initializes a minimal Express server that serves the Vite build output (`dist/public`) and provides a wildcard fallback to `index.html` for client-side routing. It contains no business logic or API endpoints.
 
@@ -39,10 +39,10 @@ The **local server** entry point is `server/index.ts`. It initializes a minimal 
 
 ## Conventions
 
-- **Design Language ("The Engineer's Notebook"):** The site uses a strict graph-paper aesthetic. Warm paper background (`#F4EFE6`), deep ink navy text (`#0E2A47`), and drafting red (`#C8362D`) as the sole accent color. The grid is literal (24px cells). No gradients, no glassmorphism, no glow effects.
+- **Design Language ("The Engineer's Notebook"):** The site uses a strict graph-paper aesthetic. The light palette uses warm paper and navy ink. The dark palette uses blueprint navy, cyan grid lines, and warm-white ink. Both use drafting red for accents. The main grid uses 24px cells. CSS gradients draw the grid and other drafting details. Keep decorative surfaces flat and avoid glassmorphism and glow effects.
 - **Typography Hierarchy:** Section labels use monospace caps (stamped effect); titles use IBM Plex Serif (display serif); body copy uses Inter; prompts and code blocks use JetBrains Mono.
 - **Component Pruning:** The shadcn/ui installation is strictly pruned. Components are only added to `client/src/components/ui/` if they have an active call site in the application. Speculative "for completeness" components are rejected.
-- **File Size Cap:** Files in `client/src/pages/`, `client/src/lib/`, and `client/src/components/` (top level) must stay **under 800 lines**. See Q1 below for explicit exemptions and Verifier enforcement rules.
+- **File Size Cap:** Files in `client/src/pages/`, `client/src/lib/`, and `client/src/components/` (top level) are capped at **800 lines**. See Q1 below for explicit exemptions and Verifier enforcement rules.
 
 ---
 
@@ -92,11 +92,11 @@ The repository maintains a "lightweight, professional, public-ready" posture. Un
 - **Hard-fail** any PR that adds a dependency to `package.json` without a corresponding active import in the source code.
 - **Hard-fail** any PR that adds a shadcn component to `client/src/components/ui/` without adding a call site in the same PR.
 
-### Q3. The `package.json` file contains both a `packageManager` field and a `devDependencies` entry for `pnpm`. Which is authoritative?
+### Q3. Where is the pnpm version pinned?
 
 **Answer: `packageManager` is authoritative.**
 
-Modern CI (including Vercel) uses Corepack, which reads the `packageManager` field. The `devDependencies` entry is dead code and was removed prior to public release.
+GitHub Actions enables Corepack, which reads the `packageManager` field. The former `devDependencies` entry for pnpm was removed prior to public release.
 
 **Verifier behavior:**
 - **Hard-fail** any PR that re-introduces `pnpm` or `yarn` into `devDependencies` or `dependencies`.
