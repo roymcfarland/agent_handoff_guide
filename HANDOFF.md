@@ -10,7 +10,9 @@ No slice is in flight. The Advisor-era overhaul and follow-up work (PRs #29–#6
 - **#61** — Dependency audit fixes via Vite and PostCSS patch updates and transitive overrides.
 - **#63** — CI gates high and critical vulnerabilities in production dependencies.
 
-## Backlog (unscoped — pick one and scope it into this file before building)
+## Historical backlog (reference only)
+
+As of 2026-11-16, the items below are historical ideas kept for reference. Scope an item into this file or a new roadmap only if the owner decides to pursue it.
 
 - **Express 5 migration** — PR #61 kept Express 4 and retained the `qs` and Express `path-to-regexp` security overrides. Reassess those overrides during the migration and update the `app.get("*")` wildcard syntax for Express 5.
 - **Per-section URLs** — the SEO paging decision; crosses PROJECT.md's "single-page reference" identity, so the spec amendment comes first.
