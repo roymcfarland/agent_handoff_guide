@@ -2,7 +2,7 @@
 
 **A three-role playbook (Advisor / Builder / Verifier) for shipping real software with AI coding agents** — not another “prompt tips” page, but a single reference you can install on a repo: **document schema**, **copy-paste prompts** (builder, closeout, verifier), and **failure-mode guardrails** so merges stay human-gated and evidence-backed.
 
-Created by **[Roy McFarland](https://www.linkedin.com/in/roymcfarland/)** ([GitHub](https://github.com/roymcfarland) · [npm](https://www.npmjs.com/~roymcfarland) · Worksmith Labs) — and built _with_ the methodology it documents: every change to this repo ships as an Advisor-scoped slice, an independent verification, and a human merge. The [merged-PR history](https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged) is the working demonstration.
+Created by **[Roy McFarland](https://www.linkedin.com/in/roymcfarland/)** ([GitHub](https://github.com/roymcfarland) · [npm](https://www.npmjs.com/~roymcfarland) · Worksmith Labs) — and built _with_ the methodology it documents. The contributor workflow uses Advisor-scoped slices, independent verification, and a human merge. The [merged-PR history](https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged) is the working demonstration.
 
 This repository is the **open-source** source for the **[Worksmith Labs](https://worksmithlabs.com)** reference site. The _methodology_ is the product story; the _code_ is MIT-licensed and yours to fork. The live experience is built and maintained by **[Brightline Labs](https://brightline.io)**.
 
@@ -38,7 +38,7 @@ The page is organized as ten sections — navigation mirrors this order:
 9. **META-PRs** — Meta changes to the process itself (documented, reviewable).
 10. **References** — Curated links and papers behind verifier design, long context, and merge hygiene.
 
-Long-form copy and prompt bodies live in **`client/src/lib/content.ts`** so UI code stays layout-focused; sections render via **`client/src/pages/Home.tsx`** and **`client/src/pages/sections/`**.
+The shared long-form copy and prompt bodies live in **`client/src/lib/content.ts`**; sections render via **`client/src/pages/Home.tsx`** and **`client/src/pages/sections/`**.
 
 ---
 
@@ -60,9 +60,9 @@ AI assistants can read the methodology canonically via [`/llms.txt`](https://www
 
 ## Tech stack (at a glance)
 
-- **React 19** + **Vite 7** (SPA)
+- **React 19** + **Vite 8** (SPA), with **TypeScript 6**
 - **wouter** for routing, **Tailwind CSS 4** + Radix/shadcn-style primitives for UI
-- **Express** only as a static-file + SPA fallback for production self-host
+- **Express 4** for static files and SPA fallback when self-hosting
 - **Vercel** for the public deployment (`vercel.json` + SPA rewrites)
 
 Full architecture, design language (“Engineer’s Notebook”), **non-goals**, and **verifier rules** for agents are in **[`PROJECT.md`](./PROJECT.md)**.
@@ -71,18 +71,18 @@ Full architecture, design language (“Engineer’s Notebook”), **non-goals**,
 
 ## Prerequisites
 
-- [Node.js](https://nodejs.org/) **24** (pinned via `engines` and `.nvmrc`)
-- [pnpm](https://pnpm.io/) **10.34.9** (repo pins via `packageManager`, compatible with Corepack)
+- [Node.js](https://nodejs.org/) **24**, as declared in `.nvmrc` and [`package.json`](./package.json).
+- Corepack, which runs the exact **pnpm 10** release declared in `packageManager`.
 
-The security overrides live in `package.json` under `pnpm.overrides`. pnpm 11 reads that configuration from `pnpm-workspace.yaml`. See the [pnpm 11 migration guide](https://pnpm.io/11.x/migration).
+Use `corepack pnpm` or enable the Corepack shims with `corepack enable`. Avoid a globally installed pnpm that differs from the pin. pnpm 11 and later read overrides from `pnpm-workspace.yaml` and ignore the `pnpm` field in `package.json`, where this repo keeps its security overrides. See the [pnpm migration guide](https://pnpm.io/migration).
 
 ---
 
 ## Quick start
 
 ```bash
-pnpm install
-pnpm dev
+corepack pnpm install --frozen-lockfile
+corepack pnpm dev
 ```
 
 Vite serves the app from `client/` (see `vite.config.ts` for the port; default is **3000** unless something else is listening).
@@ -91,14 +91,16 @@ Vite serves the app from `client/` (see `vite.config.ts` for the port; default i
 
 ## Scripts
 
+Run these through Corepack, for example with `corepack pnpm check`. The TypeScript and build checks are the local verification commands. The repository has no separate test or lint script.
+
 | Command                   | Purpose                                                                                                                                                                    |
 | ------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `pnpm dev`                | Local development (Vite, HMR)                                                                                                                                              |
+| `pnpm dev`                | Start the Vite development server with hot reload.                                                                                                                         |
 | `pnpm build`              | Build the client to `dist/public` and the SSR entry to `dist/ssr`, prerender the home page into `dist/public/index.html`, and bundle `server/index.ts` to `dist/index.js`. |
-| `pnpm start`              | Production server (`NODE_ENV=production node dist/index.js`)                                                                                                               |
-| `pnpm preview`            | Preview the built client with Vite                                                                                                                                         |
-| `pnpm check`              | TypeScript (`tsc --noEmit`)                                                                                                                                                |
-| `pnpm format`             | Format the repository with Prettier (`prettier --write .`)                                                                                                                 |
+| `pnpm start`              | Serve the built client from the bundled Express server.                                                                                                                    |
+| `pnpm preview`            | Preview the built client with Vite.                                                                                                                                        |
+| `pnpm check`              | Run TypeScript with `tsc --noEmit`.                                                                                                                                        |
+| `pnpm format`             | Format repository files with `prettier --write .`, subject to `.prettierignore`.                                                                                           |
 | `pnpm generate:prompts`   | Regenerate `prompts/` and `client/public/llms.txt` from `client/src/lib/content.ts`. CI regenerates both and fails on drift.                                               |
 | `pnpm vercel:deploy`      | Create a Vercel preview deployment via `pnpm dlx vercel@latest deploy --yes`.                                                                                              |
 | `pnpm vercel:deploy:prod` | Create a Vercel production deployment via `pnpm dlx vercel@latest deploy --prod --yes`.                                                                                    |
@@ -107,23 +109,32 @@ Vite serves the app from `client/` (see `vite.config.ts` for the port; default i
 
 ## Environment variables
 
-Copy **`.env.example`** to **`.env`** at the **repository root** (Vite reads from the root via `envDir`).
+The default local build needs no environment setup. For optional Vite settings, copy `.env.example` to `.env` at the repository root. Vite reads that directory via `envDir`. Set Express variables in the process environment when self-hosting.
 
-| Variable                    | Used by              | Description                                                                                                                                                                                                                                       |
-| --------------------------- | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `VITE_SITE_URL`             | `index.html` (build) | Public origin **without** trailing slash (e.g. `https://example.com`). Drives `rel="canonical"`, Open Graph / Twitter image URLs, and JSON-LD. If unset, relative paths like `/og.jpg` still work; set in production for strongest link previews. |
-| `VITE_ANALYTICS_ENDPOINT`   | Client               | Base URL of an [Umami](https://umami.is/)-compatible instance, no trailing slash.                                                                                                                                                                 |
-| `VITE_ANALYTICS_WEBSITE_ID` | Client               | Umami website ID. Both analytics vars must be set for the script to load.                                                                                                                                                                         |
-| `PORT`                      | `server/index.ts`    | HTTP port (default `3000`).                                                                                                                                                                                                                       |
-| `VITE_DEV_ALLOWED_HOSTS`    | Vite dev only        | Optional comma-separated extra hosts for the dev server.                                                                                                                                                                                          |
-
-For `pnpm start`, `NODE_ENV=production` applies and Express serves **`dist/public`** next to **`dist/index.js`**.
+| Variable                    | Purpose                                                                                                                                | Required?                   | Where to set it             |
+| --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | --------------------------- |
+| `VITE_SITE_URL`             | Public origin for canonical, Open Graph, Twitter Card, and JSON-LD URLs. Vite strips trailing slashes and uses relative URLs if unset. | Optional                    | Local or Vercel build       |
+| `VITE_ANALYTICS_ENDPOINT`   | Base URL for an Umami-compatible analytics service.                                                                                    | Only with analytics enabled | Local or Vercel build       |
+| `VITE_ANALYTICS_WEBSITE_ID` | Umami website ID. The client loads the script when both analytics variables are configured.                                            | Only with analytics enabled | Local or Vercel build       |
+| `VITE_DEV_ALLOWED_HOSTS`    | Comma-separated extra hosts for the Vite development server.                                                                           | Optional                    | Local Vite dev server       |
+| `PORT`                      | HTTP listening port for the Express server.                                                                                            | Optional                    | Self-hosted Express process |
+| `NODE_ENV`                  | Selects the Express static asset path. The start script sets it automatically.                                                         | Set by `pnpm start`         | Self-hosted Express process |
 
 ---
 
 ## Deploying (Vercel)
 
-`vercel.json` sets install/build commands, **`outputDirectory`** to **`dist/public`**, and SPA rewrites to **`index.html`**. Run `pnpm run build` so client output lands there. Set **`VITE_SITE_URL`** on the project so Open Graph, Twitter Cards, and the canonical URL use absolute links. Analytics env vars, if used, need the `VITE_` prefix in Vercel.
+Vercel’s Git integration builds PR previews for review and deploys commits on `main` to production. [`vercel.json`](./vercel.json) installs with pnpm, invokes the build with `npm run build`, and serves `dist/public` with an SPA rewrite to `index.html`. Express is used for self-hosting via `pnpm start`.
+
+Set `VITE_SITE_URL` in the Vercel production environment so metadata uses absolute URLs. For analytics, configure both `VITE_ANALYTICS_*` variables. The committed Content Security Policy permits only same-origin analytics scripts and requests on Vercel.
+
+---
+
+## CI and security
+
+- [CI](./.github/workflows/ci.yml) runs on pull requests and pushes to `main`. It uses a frozen install, fails on high or critical production dependency advisories, and checks types, the build, generated prompt and `llms.txt` drift, and the [800-line cap](./PROJECT.md#q1-the-800-line-cap-and-its-exemptions). Branch protection configures the `ci` check in strict mode, which requires the PR branch to be up to date.
+- [Dependabot](./.github/dependabot.yml) checks npm dependencies and GitHub Actions monthly. It groups npm minor and patch updates and groups Actions updates. It excludes major version updates for `express`, `@types/express`, `@types/node`, and `typescript`, plus major and minor updates for `lucide-react`. The pnpm overrides are declared in [`package.json`](./package.json) and recorded in [`pnpm-lock.yaml`](./pnpm-lock.yaml).
+- GitHub CodeQL default setup, secret scanning, and secret scanning push protection are enabled. See [`SECURITY.md`](./SECURITY.md) for private vulnerability reporting instructions.
 
 ---
 
