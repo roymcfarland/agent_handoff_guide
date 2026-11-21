@@ -1,4 +1,4 @@
-# Current Slice: none — July 2026 roadmap complete
+# Current Slice: none — roadmap complete
 
 ## Status
 
