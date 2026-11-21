@@ -1,6 +1,6 @@
 # Agent Handoff Framework
 
-**A three-role playbook (Advisor / Builder / Verifier) for shipping real software with AI coding agents** — not another “prompt tips” page, but a single reference you can install on a repo: **document schema**, **copy-paste prompts** (builder, closeout, verifier), and **failure-mode guardrails** so merges stay human-gated and evidence-backed.
+**A three-role playbook (Advisor / Builder / Verifier; the human gatekeeper is the fourth seat in the site's diagrams) for shipping real software with AI coding agents** — not another “prompt tips” page, but a single reference you can install on a repo: **document schema**, **copy-paste prompts** (builder, closeout, verifier), and **failure-mode guardrails** so merges stay human-gated and evidence-backed.
 
 Created by **[Roy McFarland](https://www.linkedin.com/in/roymcfarland/)** ([GitHub](https://github.com/roymcfarland) · [npm](https://www.npmjs.com/~roymcfarland) · Worksmith Labs) — and built _with_ the methodology it documents. The contributor workflow uses Advisor-scoped slices, independent verification, and a human merge. The [merged-PR history](https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged) is the working demonstration.
 
