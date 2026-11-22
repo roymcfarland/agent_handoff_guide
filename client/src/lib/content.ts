@@ -39,7 +39,7 @@ const SHEET_CONTENTS: Record<(typeof SECTIONS)[number]["id"], string> = {
   "build-verify":
     "The four-role loop, verdict triage, the escalation rule, ceremony sizing.",
   "field-notes":
-    "Ten costly lessons and one worked example — receipts included.",
+    "Thirteen costly lessons and one worked example — receipts included.",
   "phase-2":
     "Operating cadence, what the Verifier catches, and after the merge.",
   "meta-prs": "When the PR changes the spec itself — prompts and templates.",
@@ -2413,6 +2413,27 @@ export const FIELD_NOTES = [
       label: "Fixed in PR #35",
       href: "https://github.com/roymcfarland/agent_handoff_guide/pull/35",
     },
+  },
+  {
+    n: "11",
+    title: "The file that was both allowed and forbidden",
+    story:
+      "A slice prompt allowed 'the file that owns the form state' and forbade 'any other page.' The form state lived in a page. The Builder edited the one file that satisfied both rules at once; the Verifier failed it on the more specific one. The work was correct, and a full round went to proving it.",
+    rule: "Name allowlisted files by path, never by category. Forbid only files with zero overlap with the allowlist.",
+  },
+  {
+    n: "12",
+    title: "The script that did not exist",
+    story:
+      "A verifier prompt said to run the typecheck under its conventional script name. This repository called it something else. The Verifier found the real script, ran it, watched it pass — and still logged the missing one as a FAIL, because the prompt said to run it and it could not.",
+    rule: "Open the manifest before writing a verification block. Use the exact script names defined there; a conventional name is a guess.",
+  },
+  {
+    n: "13",
+    title: "The regression guard that forbade the fix",
+    story:
+      "A verifier prompt carried a guard — default-case output must be identical to before — next to a rule requiring a new sanitizing step on that same output. The step changed the output on purpose. The Builder did as instructed and was rejected on the guard.",
+    rule: "Re-read the builder prompt before the verifier prompt is final. Prefer positive criteria — 'this path applies X' — to 'output unchanged', which backfires when the slice exists to change behavior.",
   },
 ] as const;
 
