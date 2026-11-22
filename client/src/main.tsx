@@ -1,17 +1,10 @@
+import { inject } from "@vercel/analytics";
 import { createRoot, hydrateRoot } from "react-dom/client";
 import App from "./App";
 import "./index.css";
 
-/** Optional Umami: set both VITE_ANALYTICS_ENDPOINT and VITE_ANALYTICS_WEBSITE_ID (see README.md / .env.example). */
-const analyticsEndpoint = import.meta.env.VITE_ANALYTICS_ENDPOINT;
-const analyticsWebsiteId = import.meta.env.VITE_ANALYTICS_WEBSITE_ID;
-if (analyticsEndpoint && analyticsWebsiteId) {
-  const script = document.createElement("script");
-  script.defer = true;
-  script.src = `${String(analyticsEndpoint).replace(/\/+$/, "")}/umami`;
-  script.dataset.websiteId = String(analyticsWebsiteId);
-  document.body.appendChild(script);
-}
+// Vercel Web Analytics loads same-origin from /_vercel/insights (allowed by CSP); enable Analytics in the Vercel project for production.
+inject();
 
 // Production builds are prerendered (scripts/prerender.ts), so the root
 // arrives with server markup and must hydrate; dev serves an empty root
