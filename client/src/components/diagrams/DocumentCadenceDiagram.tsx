@@ -49,11 +49,12 @@ export function DocumentCadenceDiagram() {
       title="Artifact cadence & responsibilities"
       legend="Split memory · single writer per layer"
       caption="Each file answers a different question: what is true forever, what happened, and what must be true right now."
+      contentClassName="overflow-x-auto"
     >
       <svg
         viewBox={`0 0 ${vbW} ${vbH}`}
         xmlns="http://www.w3.org/2000/svg"
-        className="mx-auto block h-auto w-full max-w-6xl"
+        className="mx-auto block h-auto w-full min-w-[760px] max-w-6xl"
         role="img"
         aria-label="Three columns describe PROJECT.md as rarely changing, CHANGELOG.md as append-only, and HANDOFF.md as per slice."
       >

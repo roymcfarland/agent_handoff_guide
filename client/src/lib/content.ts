@@ -1234,7 +1234,7 @@ export const BUILD_VERIFY_STAGES = [
     tag: "A",
     actor: "Advisor",
     role: "Scopes the slice, grounds the prompts",
-    body: "Does the recon before any prompt exists: greps the repo to pre-confirm facts — file paths, line numbers, every reference to a symbol being touched — and drafts the Builder and Verifier prompts against that evidence, both from the same Acceptance Criteria. Every line number travels with an anchor, and nothing goes into a prompt that was not observed in the repo. When the verdict returns, the Advisor interprets it (real defect, or a defect in the check itself?) and runs the post-merge housekeeping. The Advisor does not write the code and does not grade the PR.",
+    body: "Does the recon before any prompt exists: greps the repo to pre-confirm file paths, anchored line numbers, and every reference to a symbol being touched. Drafts the Builder and Verifier prompts from the same Acceptance Criteria, and puts nothing in a prompt that was not observed in the repo. When the verdict returns, the Advisor interprets it (real defect, or a defect in the check itself?) and runs the post-merge housekeeping. It does not write the code and does not grade the PR.",
   },
   {
     tag: "B",
@@ -1252,7 +1252,7 @@ export const BUILD_VERIFY_STAGES = [
     tag: "D",
     actor: "You (gatekeeper)",
     role: "Merges or returns",
-    body: "Reviews the Verifier's verdict — weighed against the Advisor's read on whether any FAIL is a real defect or a defect in the check itself. APPROVE → confirm the approved commit is still the PR head, then merge to main and run the next Builder; file a follow-up issue for any minor, out-of-scope cleanup the Verifier noted. REJECT on a real defect → a small amendment goes back to the Builder on the same PR, and the Verifier re-runs on the new head commit.",
+    body: "Reviews the Verifier's verdict alongside the Advisor's triage. APPROVE → confirm the approved commit is still the PR head, merge to main, and file a follow-up issue for any minor out-of-scope cleanup the Verifier noted. REJECT on a real defect → a small amendment goes back to the Builder on the same PR, and the Verifier re-runs on the new head commit.",
   },
 ] as const;
 
@@ -2544,7 +2544,7 @@ export const BYLINE = {
     "https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged",
   bio: "Roy is a software engineer and the founder of Worksmith Labs. He operates multi-agent development workflows daily; this framework — and the @llm-workbench tooling on npm — is distilled from that practice, not theorized about it.",
   availability:
-    "Contact re: executive management roles, specifically operations + AI implementation. Licensed Colorado attorney. PMP + PMI-CPMAI, expected July/Aug 2026.",
+    "Contact re: executive management roles, specifically operations + AI implementation. Licensed Colorado attorney.",
   ctaLabel: "Reach out on LinkedIn",
   ctaHref: "https://www.linkedin.com/in/roymcfarland/",
   profiles: [

@@ -3,19 +3,22 @@
     .paper { fill: #f4efe6; }
     .ink { stroke: #0e2a47; }
     .inkfill { fill: #0e2a47; }
-    .stud { fill: #c8362d; }
+    .tip { fill: #c8362d; }
     @media (prefers-color-scheme: dark) {
       .paper { fill: #0c1524; }
       .ink { stroke: #a8c6dd; }
       .inkfill { fill: #a8c6dd; }
-      .stud { fill: #e05545; }
+      .tip { fill: #e05545; }
     }
   </style>
   <rect class="paper" width="24" height="24" />
   <!-- the robot head — same mark as the site header (RobotMark) -->
-  <rect class="stud" x="9.5" y="1" width="5" height="3" />
-  <rect class="ink" x="4" y="4" width="16" height="15.5" rx="2.5" fill="none" stroke-width="2.2" />
-  <rect class="inkfill" x="7.75" y="8.75" width="2.7" height="2.7" />
-  <rect class="inkfill" x="13.55" y="8.75" width="2.7" height="2.7" />
-  <path class="ink" d="M9 15v1.6M12 15v1.6M15 15v1.6" fill="none" stroke-width="1.7" />
+  <path class="ink" d="M12 7V4.5" fill="none" stroke-width="1.8" />
+  <circle class="tip" cx="12" cy="3.2" r="1.9" />
+  <rect class="inkfill" x="1.2" y="11" width="2.3" height="5" rx="0.8" />
+  <rect class="inkfill" x="20.5" y="11" width="2.3" height="5" rx="0.8" />
+  <rect class="ink" x="4.2" y="7.2" width="15.6" height="13.6" rx="3" fill="none" stroke-width="2.2" />
+  <circle class="inkfill" cx="9" cy="12.6" r="1.8" />
+  <circle class="inkfill" cx="15" cy="12.6" r="1.8" />
+  <path class="ink" d="M9 17h6" fill="none" stroke-width="1.8" stroke-linecap="round" />
 </svg>
