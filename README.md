@@ -146,7 +146,7 @@ Set `VITE_SITE_URL` in the Vercel production environment so metadata uses absolu
 | `client/src/lib/content.ts`       | Guide copy, prompts, structured section data          |
 | `client/src/components/diagrams/` | SVG figures and shared diagram shell                  |
 | `client/public/og.jpg`            | Social preview image (Open Graph / Twitter, 1200×630) |
-| `scripts/og-card.html`           | Source for `og.jpg`; regeneration command inside      |
+| `scripts/og-card.html`            | Source for `og.jpg`; regeneration command inside      |
 | `server/index.ts`                 | Static files + SPA fallback                           |
 | `dist/public/`                    | Vite build output (gitignored)                        |
 
