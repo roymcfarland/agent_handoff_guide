@@ -1,0 +1,249 @@
+<!doctype html>
+<!--
+  Source for client/public/og.jpg — the 1200×630 social share card.
+  Not served by the site; it exists so the card can be regenerated.
+
+  To regenerate (needs network access for the web fonts):
+    npx playwright screenshot --viewport-size "1200, 630" --wait-for-timeout 1500 \
+      scripts/og-card.html client/public/og.jpg
+
+  Keep the REV and DATE cells in step with the last row of REVISION_TABLE
+  in client/src/lib/content.ts. The robot head is the same mark as
+  client/src/components/RobotMark.tsx and client/public/favicon.svg.
+-->
+<html>
+  <head>
+    <title>Agent Handoff Framework — share card</title>
+    <meta charset="utf-8" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Serif:wght@700&family=Inter:wght@400;600&family=JetBrains+Mono:wght@500;700&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      :root {
+        --paper: #f4efe6;
+        --ink: #0e2a47;
+        --soft: #5d7088;
+        --red: #c8362d;
+        --line: #d9d2c3;
+      }
+      * {
+        box-sizing: border-box;
+        margin: 0;
+      }
+      body {
+        width: 1200px;
+        height: 630px;
+        background: var(--paper);
+        position: relative;
+        overflow: hidden;
+        font-family: Inter, sans-serif;
+        color: var(--ink);
+        background-image:
+          linear-gradient(var(--line) 1px, transparent 1px),
+          linear-gradient(90deg, var(--line) 1px, transparent 1px);
+        background-size: 24px 24px;
+        background-position: -1px -1px;
+      }
+      .frame {
+        position: absolute;
+        inset: 24px;
+        border: 2px solid var(--ink);
+      }
+      .top {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 0;
+        height: 60px;
+        border-bottom: 1.5px solid var(--ink);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 32px;
+        font:
+          700 17px "JetBrains Mono",
+          monospace;
+        letter-spacing: 0.2em;
+      }
+      .top .l {
+        color: var(--soft);
+      }
+      .top .r {
+        color: var(--red);
+      }
+      .kick {
+        position: absolute;
+        left: 56px;
+        top: 126px;
+        font:
+          700 17px "JetBrains Mono",
+          monospace;
+        letter-spacing: 0.25em;
+        color: var(--red);
+      }
+      h1 {
+        position: absolute;
+        left: 56px;
+        top: 160px;
+        font:
+          700 86px/1.02 "IBM Plex Serif",
+          serif;
+        letter-spacing: -0.02em;
+      }
+      p {
+        position: absolute;
+        left: 56px;
+        top: 366px;
+        width: 700px;
+        font-size: 26.5px;
+        line-height: 1.36;
+        color: #3c4d63;
+      }
+      p b {
+        font-weight: 600;
+        color: var(--ink);
+      }
+      .tb {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        height: 68px;
+        border-top: 1.5px solid var(--ink);
+        display: flex;
+      }
+      .tb div {
+        padding: 14px 24px 0;
+        border-right: 1.5px solid var(--ink);
+        font:
+          700 14.5px "JetBrains Mono",
+          monospace;
+        letter-spacing: 0.1em;
+      }
+      .tb div:last-child {
+        border-right: 0;
+      }
+      .tb small {
+        display: block;
+        font:
+          700 10px "JetBrains Mono",
+          monospace;
+        letter-spacing: 0.2em;
+        color: var(--soft);
+        margin-bottom: 7px;
+      }
+      .tb .red {
+        color: var(--red);
+      }
+      svg {
+        position: absolute;
+        right: 38px;
+        top: 96px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="frame">
+      <div class="top">
+        <span class="l">FILE 00 · REFERENCE</span
+        ><span class="r">WORKSMITHLABS.COM</span>
+      </div>
+      <div class="kick">ADVISOR · BUILDER · VERIFIER — YOU MERGE</div>
+      <h1>Agent Handoff<br />Framework</h1>
+      <p>
+        A working guide for shipping real software with AI coding agents —
+        <b>document schema</b>, <b>copy-paste prompts</b>,
+        <b>failure-mode guardrails</b>.
+      </p>
+      <svg
+        width="330"
+        height="380"
+        viewBox="0 0 330 380"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <g
+          stroke="#c8362d"
+          stroke-width="1.5"
+          stroke-dasharray="14 5 3 5"
+          opacity=".75"
+        >
+          <path d="M165 6V322" />
+          <path d="M14 196H316" />
+        </g>
+        <g stroke="#5d7088" stroke-width="1.5">
+          <path d="M50 338H280M50 330v16M280 330v16" />
+          <path d="M306 96V296M298 96h16M298 296h16" />
+        </g>
+        <g
+          font-family="'JetBrains Mono',monospace"
+          font-size="11"
+          font-weight="700"
+          fill="#5d7088"
+          letter-spacing="1.5"
+        >
+          <text x="165" y="360" text-anchor="middle">
+            FIG. 0 · THE OPERATOR
+          </text>
+        </g>
+        <path d="M165 96V54" stroke="#0e2a47" stroke-width="9" />
+        <circle cx="165" cy="42" r="15" fill="#c8362d" />
+        <rect x="26" y="166" width="24" height="60" rx="6" fill="#0e2a47" />
+        <rect x="280" y="166" width="24" height="60" rx="6" fill="#0e2a47" />
+        <rect
+          x="50"
+          y="96"
+          width="230"
+          height="200"
+          rx="34"
+          fill="#fbf8f1"
+          stroke="#0e2a47"
+          stroke-width="11"
+        />
+        <circle
+          cx="116"
+          cy="176"
+          r="30"
+          fill="#f4efe6"
+          stroke="#0e2a47"
+          stroke-width="9"
+        />
+        <circle
+          cx="214"
+          cy="176"
+          r="30"
+          fill="#f4efe6"
+          stroke="#0e2a47"
+          stroke-width="9"
+        />
+        <circle cx="116" cy="176" r="13" fill="#0e2a47" />
+        <circle cx="214" cy="176" r="13" fill="#0e2a47" />
+        <circle cx="121" cy="170" r="4" fill="#fbf8f1" />
+        <circle cx="219" cy="170" r="4" fill="#fbf8f1" />
+        <rect
+          x="104"
+          y="236"
+          width="122"
+          height="32"
+          rx="8"
+          stroke="#0e2a47"
+          stroke-width="8"
+        />
+        <path
+          d="M134.5 236v32M165 236v32M195.5 236v32"
+          stroke="#0e2a47"
+          stroke-width="7"
+        />
+      </svg>
+
+      <div class="tb">
+        <div><small>REV</small><span class="red">2.1</span></div>
+        <div><small>DATE</small>2026-11</div>
+        <div><small>DRAWN</small>ROY MCFARLAND</div>
+        <div><small>CHECKED</small>VERIFIER LLM</div>
+        <div><small>SHEET</small>01 OF 01 · MIT LICENSED</div>
+      </div>
+    </div>
+  </body>
+</html>
