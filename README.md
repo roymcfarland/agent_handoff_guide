@@ -114,8 +114,6 @@ The default local build needs no environment setup. For optional Vite settings, 
 | Variable                    | Purpose                                                                                                                                | Required?                   | Where to set it             |
 | --------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | --------------------------- | --------------------------- |
 | `VITE_SITE_URL`             | Public origin for canonical, Open Graph, Twitter Card, and JSON-LD URLs. Vite strips trailing slashes and uses relative URLs if unset. | Optional                    | Local or Vercel build       |
-| `VITE_ANALYTICS_ENDPOINT`   | Base URL for an Umami-compatible analytics service.                                                                                    | Only with analytics enabled | Local or Vercel build       |
-| `VITE_ANALYTICS_WEBSITE_ID` | Umami website ID. The client loads the script when both analytics variables are configured.                                            | Only with analytics enabled | Local or Vercel build       |
 | `VITE_DEV_ALLOWED_HOSTS`    | Comma-separated extra hosts for the Vite development server.                                                                           | Optional                    | Local Vite dev server       |
 | `PORT`                      | HTTP listening port for the Express server.                                                                                            | Optional                    | Self-hosted Express process |
 | `NODE_ENV`                  | Selects the Express static asset path. The start script sets it automatically.                                                         | Set by `pnpm start`         | Self-hosted Express process |
@@ -126,7 +124,7 @@ The default local build needs no environment setup. For optional Vite settings, 
 
 Vercel’s Git integration builds PR previews for review and deploys commits on `main` to production. [`vercel.json`](./vercel.json) installs with pnpm, invokes the build with `npm run build`, and serves `dist/public` with an SPA rewrite to `index.html`. Express is used for self-hosting via `pnpm start`.
 
-Set `VITE_SITE_URL` in the Vercel production environment so metadata uses absolute URLs. For analytics, configure both `VITE_ANALYTICS_*` variables. The committed Content Security Policy permits only same-origin analytics scripts and requests on Vercel.
+Set `VITE_SITE_URL` in the Vercel production environment so metadata uses absolute URLs. Analytics uses Vercel Web Analytics, enabled per project in the Vercel dashboard. The script and beacon are same-origin under `/_vercel/insights`, so the committed Content Security Policy needs no change. Self-hosted `pnpm start` serves no analytics.
 
 ---
 
