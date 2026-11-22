@@ -147,7 +147,7 @@ export default function BuildVerifySection() {
               </p>
             </div>
 
-            <div className="grid divide-y divide-border sm:grid-cols-2 sm:divide-x sm:divide-y-0">
+            <div className="grid divide-y divide-border sm:grid-cols-3 sm:divide-x sm:divide-y-0">
               {VERDICT_TRIAGE.routes.map(route => (
                 <div key={route.label} className="px-6 py-6">
                   <div className="font-mono text-xs font-bold uppercase tracking-widest text-primary">

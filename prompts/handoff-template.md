@@ -24,12 +24,13 @@ The agent MUST complete ALL of the following before committing:
 - DO NOT attempt to build the frontend UI for this endpoint.
 
 ## Pre-confirmed facts
-Filled by the Advisor from repo recon. The Builder works from these — it does not re-derive them.
-- `src/api/routes.ts:42` — `registerRoutes(app)` is the only route entry point.
+Filled by the Advisor from repo recon. The Builder works from these — it does not re-derive them. Every entry is something the Advisor observed, not remembered.
+- Recon base: `<commit SHA of main the recon was run against>`
+- `src/api/routes.ts:42` — `registerRoutes(app)` is the only route entry point. [Pair every line number with an anchor — a function name or unique snippet. Line numbers go stale; if they have shifted, the Builder locates by anchor.]
 - `git grep -n oldHelperName` → 3 references: `routes.ts:88`, `controllers.ts:14`, `tests/routes.test.ts:31` — all on the allowlist. [Grep every symbol being deleted or renamed; list every file that references it.]
 
 ## Files explicitly forbidden
-Only list files with ZERO overlap with the allowlist — a file that is both forbidden and plausibly needed creates a contradiction the Builder cannot resolve.
+Only list files with ZERO overlap with the allowlist — a file that is both forbidden and plausibly needed creates a contradiction the Builder cannot resolve. Name files by path, never by category ("the form-state file"): a category can match both lists.
 - `src/billing/**` — adjacent but out of scope for this slice.
 
 ## Starting Point
