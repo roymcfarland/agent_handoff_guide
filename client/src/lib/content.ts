@@ -2305,6 +2305,14 @@ export const REVISION_TABLE = [
     drawn: "Advisor",
     checked: "RM",
   },
+  {
+    rev: "2.1",
+    date: "2026-11",
+    description:
+      "Verdicts tied to a head commit — merge-base diffs, evidence-first report templates, anchored pre-confirmed facts, an Unclear triage route, re-verify after amendment (PR #88).",
+    drawn: "Advisor",
+    checked: "RM",
+  },
 ] as const;
 
 /* ─────────────────────────────────────────────────────────────────────────── */

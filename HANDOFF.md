@@ -9,6 +9,7 @@ No slice is in flight. The Advisor-era overhaul and follow-up work (PRs #29–#6
 - **#59–#60** — Command palette, checklist completion stamp, robot easter egg, and a header overflow fix at phone widths.
 - **#61** — Dependency audit fixes via Vite and PostCSS patch updates and transitive overrides.
 - **#63** — CI gates high and critical vulnerabilities in production dependencies.
+- **#88** — Loop prompts, report templates, verdict triage, and Fig. 6 aligned with the revised builder-verifier skill: merge-base diffs, verdicts tied to a head commit, and revision 2.1 in the title block.
 
 ## Historical backlog (reference only)
 
