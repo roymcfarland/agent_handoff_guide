@@ -19,16 +19,17 @@ Instructions:
 5. Commit and push on the branch you created in pre-flight:
 ```bash
 git add <only the allowlisted files>
+git diff --cached --name-only   # every staged path must be on the allowlist — otherwise STOP and report
 git commit -m "<type>(<scope>): <concise summary referencing the slice>"
 git push -u origin <branch-name>
 ```
-Do not change git config. Do not use `--no-verify`. Match the repo's commit convention (check for a commitlint config).
+Do not change git config. Do not use `--no-verify`. Do not force-push or amend a commit that is already pushed. Match the repo's commit convention (check for a commitlint config).
 6. Open the PR — your final, non-optional action:
 ```bash
 gh pr create --title "<title>" --body "<self-audit, touched-file table, declared stubs, out-of-scope changes, checks run>"
-gh pr view --json url,isDraft,state
+gh pr view --json url,isDraft,state,headRefOid
 ```
-A pushed branch with no PR is an incomplete task, and the PR must NOT be a draft. Confirm `isDraft:false` in the output above and report the URL.
+A pushed branch with no PR is an incomplete task, and the PR must NOT be a draft. Confirm `isDraft:false` in the output above and report the URL and the head commit SHA (`headRefOid`) — the Verifier's verdict will be tied to that commit. If this slice depends on a PR that has not merged yet, stack it: add `--base <parent-branch>` so it cannot merge first.
 
 Rules:
 - Do not write new feature code during closeout except for minimal fixes required to satisfy the current Acceptance Criteria.

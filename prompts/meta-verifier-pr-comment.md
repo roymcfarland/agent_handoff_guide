@@ -13,8 +13,7 @@
 **PR:** #<N> — <title>
 **Spec doc affected:** <HANDOFF.md | PROJECT.md>
 **Scope used for verification:** <Builder Brief from PR description | Spec Update Proposal from PR description> — NOT the changed file in the diff
-**Verdict:** <APPROVE | REJECT>  (Phase 1)
-            <APPROVE | REJECT>  (Phase 2 — on REJECT name the route: `REJECT (fix the edits)` or `REJECT (proposal-insufficient)`)
+**PR head:** <commit SHA this verdict covers>
 
 ---
 
@@ -52,6 +51,12 @@ If none, write: "None observed."
 - "Edit 3 in the Proposal removes a non-goal but the diff retains it; this is a FAIL on Edit 3."
 - "The Proposal is internally consistent but Edit 2's 'after' text contradicts Edit 5's 'after' text. REJECT (proposal-insufficient)."
 - "All proposed edits implemented faithfully; one MINOR formatting drift in section heading capitalization (line 47).">
+
+---
+
+**Verdict:** <APPROVE | REJECT>  (Phase 1)
+            <APPROVE | REJECT>  (Phase 2 — on REJECT name the route: `REJECT (fix the edits)` or `REJECT (proposal-insufficient)`)
+Covers commit <PR head SHA> only.
 
 ---
 

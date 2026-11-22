@@ -56,7 +56,7 @@ export default function FieldNotesSection() {
                 <li
                   key={note.n}
                   id={`note-${note.n}`}
-                  className="group paper-card flex flex-col gap-3 p-6"
+                  className="group paper-card flex flex-col gap-3 p-6 sm:last:odd:col-span-2"
                   style={{ boxShadow: "none" }}
                 >
                   <div className="flex items-baseline gap-3">

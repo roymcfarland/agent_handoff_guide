@@ -12,7 +12,7 @@
 **Context:** clean — no prior slices loaded
 **Builder model:** <provider/model id from PR>
 **Slice:** <slice name from HANDOFF.md>
-**Verdict:** <APPROVE | REJECT>
+**PR head:** <commit SHA this verdict covers>
 
 ---
 
@@ -21,6 +21,15 @@
 - [PASS] <criterion 1> — evidence: `src/api/routes.ts:42`
 - [PASS] <criterion 2> — evidence: `src/api/routes.ts:67`
 - [FAIL] <criterion 3> — evidence: `src/api/routes.ts:88` (returns 500 on empty body, criterion required 400)
+
+### Gates run
+
+- [PASS] typecheck — `<exact script>`
+- [PASS] build — `<exact script>`
+- [PASS] tests — `<exact script>`: 14 passed, 0 skipped (expected 14)
+- CI on this commit: <green | red | none configured>
+
+_(Run them yourself, against the merge base: `git diff --stat origin/main...HEAD`. A gate that could not be run is a FAIL, marked "unverifiable".)_
 
 ### Out-of-scope changes
 
@@ -40,9 +49,15 @@ _(or "None observed".)_
 <2–4 sentences max. Describe WHAT is broken or out of scope, not HOW to fix it.
 Example: "Endpoint is wired up but the empty-body error path is unhandled.
 Recommend REJECT and return to Builder. The logger refactor and the new lodash
-dependency should be split into their own slices.">
+dependency should be split into their own slices."
+Prefix anything outside the Acceptance Criteria that looks like a real defect
+with "POSSIBLE DEFECT:" — it does not change the verdict, but it needs an
+answer before merge.>
 
 ---
 
-_Verifier rules: read only the diff and HANDOFF.md, return a verdict with
-evidence, do not propose code changes, do not refactor, do not write code._
+**Verdict:** <APPROVE | REJECT> — covers commit <PR head SHA> only
+
+_Verifier rules: read only the diff and HANDOFF.md, run the gates yourself,
+return a verdict with evidence, do not propose code changes, do not refactor,
+do not write code. The verdict comes last so it follows from the evidence._

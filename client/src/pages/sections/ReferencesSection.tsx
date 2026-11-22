@@ -93,7 +93,7 @@ export default function ReferencesSection() {
           {REFERENCES.map(reference => (
             <article
               key={reference.href}
-              className="paper-card flex min-h-[230px] flex-col p-6"
+              className="paper-card flex min-h-[230px] flex-col p-6 xl:[&:last-child:nth-child(3n+1)]:col-span-3 xl:[&:last-child:nth-child(3n+1)]:min-h-0 xl:[&:last-child:nth-child(3n+2)]:col-span-2"
               style={{ boxShadow: "none" }}
             >
               <div className="flex items-center justify-between gap-4 font-mono text-[10px] font-bold uppercase tracking-[0.14em] text-muted-foreground">

@@ -66,13 +66,14 @@ The agent MUST complete ALL of the following before committing:
 - DO NOT expand the slice
 
 ## Pre-confirmed facts
-<filled from repo recon — file paths with line numbers, function
+<filled from repo recon — the base commit SHA, file paths with line
+numbers and an anchor (function name or unique snippet), function
 signatures, grep results for any symbol being touched. For a trivial
 first slice, "None — trivial slice." is a valid entry.>
 
 ## Files explicitly forbidden
-<only files with ZERO overlap with the relevant-files list, or
-"none specified">
+<only files with ZERO overlap with the relevant-files list, named by
+path rather than category, or "none specified">
 
 ## Starting Point
 - Relevant files: <paths>

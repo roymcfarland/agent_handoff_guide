@@ -329,9 +329,10 @@ export default function PhaseTwoSection() {
               The Verifier PR comment — fill-in template.
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-              The Verifier posts this as the first comment on the PR, with the
-              verdict line at the top. Mirrors the Builder PR description above
-              so a human can compare claim against verdict in one scan.
+              The Verifier posts this as the first comment on the PR. The
+              verdict line comes last, after the evidence it rests on, and names
+              the commit it covers. Mirrors the Builder PR description above so
+              a human can compare claim against verdict in one scan.
             </p>
             <p className="mt-4 text-[14px] leading-relaxed text-foreground/80">
               Two verdicts —{" "}

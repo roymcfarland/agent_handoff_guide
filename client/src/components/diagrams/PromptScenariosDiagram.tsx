@@ -2,10 +2,10 @@ import { useId } from "react";
 import { PROMPT_LIBRARY } from "@/lib/content";
 import { DiagramShell } from "./DiagramShell";
 import { D } from "./diagramTokens";
-import { wrapWords } from "./svgText";
+import { wrapSentences, wrapWords } from "./svgText";
 
 function cadenceLines(s: string): string[] {
-  return wrapWords(s, 44, 4);
+  return wrapSentences(s, 38, 4);
 }
 
 /** Fig. 5 — Prompt scenarios with generous vertical rhythm. */
@@ -25,11 +25,12 @@ export function PromptScenariosDiagram() {
       title="Prompt scenario map"
       legend="Install → loop → recovery"
       caption="Work one column at a time. Artifact counts match the expandable cards further down the page."
+      contentClassName="overflow-x-auto"
     >
       <svg
         viewBox={`0 0 ${vbW} ${vbH}`}
         xmlns="http://www.w3.org/2000/svg"
-        className="mx-auto block h-auto w-full max-w-6xl"
+        className="mx-auto block h-auto w-full min-w-[760px] max-w-6xl"
         role="img"
         aria-label="Three columns for install, recurring slice loop, and recovery prompts with artifact counts."
       >
@@ -166,7 +167,7 @@ export function PromptScenariosDiagram() {
                 y="288"
                 textAnchor="middle"
                 fontFamily="'JetBrains Mono', ui-monospace, monospace"
-                fontSize="8"
+                fontSize="9"
                 fill={D.inkSoft}
                 letterSpacing="0.05em"
               >

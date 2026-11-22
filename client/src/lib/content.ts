@@ -39,7 +39,7 @@ const SHEET_CONTENTS: Record<(typeof SECTIONS)[number]["id"], string> = {
   "build-verify":
     "The four-role loop, verdict triage, the escalation rule, ceremony sizing.",
   "field-notes":
-    "Ten costly lessons and one worked example — receipts included.",
+    "Thirteen costly lessons and one worked example — receipts included.",
   "phase-2":
     "Operating cadence, what the Verifier catches, and after the merge.",
   "meta-prs": "When the PR changes the spec itself — prompts and templates.",
@@ -235,7 +235,7 @@ export const SCHEMA_FILES = [
       "Context — one or two sentences on the slice",
       "Acceptance Criteria — the definition of done, with the expected test delta",
       "Constraints & anti-goals — what NOT to touch",
-      "Pre-confirmed facts — the Advisor's recon: paths, line numbers, symbol greps",
+      "Pre-confirmed facts — the Advisor's recon: base commit, anchored line numbers, symbol greps",
       "Files explicitly forbidden — zero overlap with the allowlist",
       "Starting point — files and known issues",
     ],
@@ -260,12 +260,13 @@ The agent MUST complete ALL of the following before committing:
 - DO NOT attempt to build the frontend UI for this endpoint.
 
 ## Pre-confirmed facts
-Filled by the Advisor from repo recon. The Builder works from these — it does not re-derive them.
-- \`src/api/routes.ts:42\` — \`registerRoutes(app)\` is the only route entry point.
+Filled by the Advisor from repo recon. The Builder works from these — it does not re-derive them. Every entry is something the Advisor observed, not remembered.
+- Recon base: \`<commit SHA of main the recon was run against>\`
+- \`src/api/routes.ts:42\` — \`registerRoutes(app)\` is the only route entry point. [Pair every line number with an anchor — a function name or unique snippet. Line numbers go stale; if they have shifted, the Builder locates by anchor.]
 - \`git grep -n oldHelperName\` → 3 references: \`routes.ts:88\`, \`controllers.ts:14\`, \`tests/routes.test.ts:31\` — all on the allowlist. [Grep every symbol being deleted or renamed; list every file that references it.]
 
 ## Files explicitly forbidden
-Only list files with ZERO overlap with the allowlist — a file that is both forbidden and plausibly needed creates a contradiction the Builder cannot resolve.
+Only list files with ZERO overlap with the allowlist — a file that is both forbidden and plausibly needed creates a contradiction the Builder cannot resolve. Name files by path, never by category ("the form-state file"): a category can match both lists.
 - \`src/billing/**\` — adjacent but out of scope for this slice.
 
 ## Starting Point
@@ -650,13 +651,14 @@ The agent MUST complete ALL of the following before committing:
 - DO NOT expand the slice
 
 ## Pre-confirmed facts
-<filled from repo recon — file paths with line numbers, function
+<filled from repo recon — the base commit SHA, file paths with line
+numbers and an anchor (function name or unique snippet), function
 signatures, grep results for any symbol being touched. For a trivial
 first slice, "None — trivial slice." is a valid entry.>
 
 ## Files explicitly forbidden
-<only files with ZERO overlap with the relevant-files list, or
-"none specified">
+<only files with ZERO overlap with the relevant-files list, named by
+path rather than category, or "none specified">
 
 ## Starting Point
 - Relevant files: <paths>
@@ -681,6 +683,7 @@ export const BUILDER_PROMPT = `You are an execution-focused senior software engi
 
 Pre-flight — run this before writing any code:
 \`\`\`bash
+git status --porcelain   # must print nothing — otherwise STOP and report
 git checkout main
 git fetch origin --prune
 git merge --ff-only origin/main
@@ -692,16 +695,18 @@ If \`git merge --ff-only\` fails, main has diverged locally — STOP and report.
 Operating contract:
 1. Read PROJECT.md for the project-level rules, then read HANDOFF.md for the slice-level scope.
 2. Treat the Acceptance Criteria in HANDOFF.md as the contract. Do not add features, broaden the task, or reinterpret the criteria.
-3. Treat HANDOFF.md's listed files as a strict allowlist. If the work requires editing, creating, or deleting any file not listed, STOP and report BLOCKED — do not quietly expand scope. When you delete or rename a symbol, grep every reference first; the cascading cleanup is part of the slice, but each file it touches must already be on the allowlist.
-4. A short implementation checklist is allowed. Roadmaps, architecture proposals, and "while I am here" refactors are not.
-5. Use the existing stack, patterns, and helper APIs documented in PROJECT.md and visible in the relevant files. No new dependencies unless the slice is explicitly a dependency change.
-6. Read only the files needed to complete and verify the slice. If you need more than five additional source files beyond the ones named in HANDOFF.md, state why before continuing.
-7. Verify with the project's REAL checks, by their exact script names from package.json / Makefile / pyproject.toml — never assume a script like \`npm test\` exists. Run the narrowest relevant checks and the build before you hand off.
+3. Treat HANDOFF.md's Pre-confirmed facts as given — do not re-derive them. If a line number has shifted, locate the code by its anchor. If a fact is wrong, STOP and report instead of improvising.
+4. Treat HANDOFF.md's listed files as a strict allowlist. If the work requires editing, creating, or deleting any file not listed, STOP and report BLOCKED — do not quietly expand scope. When you delete or rename a symbol, grep every reference first; the cascading cleanup is part of the slice, but each file it touches must already be on the allowlist.
+5. A short implementation checklist is allowed. Roadmaps, architecture proposals, and "while I am here" refactors are not.
+6. Use the existing stack, patterns, and helper APIs documented in PROJECT.md and visible in the relevant files. No new dependencies unless the slice is explicitly a dependency change.
+7. Read only the files needed to complete and verify the slice. If you need more than five additional source files beyond the ones named in HANDOFF.md, state why before continuing.
+8. Verify with the project's REAL checks, by their exact script names from package.json / Makefile / pyproject.toml — never assume a script like \`npm test\` exists. Run the narrowest relevant checks and the build before you hand off.
 
 Output when implementation is done:
 - Per-criterion status: MET / BLOCKED, with evidence (file:line).
 - Files changed and why — every file must trace to an Acceptance Criterion or the allowlist.
 - Checks run and their exact results.
+- Any deviation from the approach HANDOFF.md described, and why. A different implementation is fine when the Acceptance Criteria hold; an undeclared one is not.
 - Any declared stubs, hacks, or debt. Write "None" only if true.`;
 
 export const CLOSEOUT_PROMPT = `You have finished the implementation pass for the current slice. Your task now is to close it out cleanly, create the review surface, and prepare the next handoff.
@@ -717,16 +722,17 @@ Instructions:
 5. Commit and push on the branch you created in pre-flight:
 \`\`\`bash
 git add <only the allowlisted files>
+git diff --cached --name-only   # every staged path must be on the allowlist — otherwise STOP and report
 git commit -m "<type>(<scope>): <concise summary referencing the slice>"
 git push -u origin <branch-name>
 \`\`\`
-Do not change git config. Do not use \`--no-verify\`. Match the repo's commit convention (check for a commitlint config).
+Do not change git config. Do not use \`--no-verify\`. Do not force-push or amend a commit that is already pushed. Match the repo's commit convention (check for a commitlint config).
 6. Open the PR — your final, non-optional action:
 \`\`\`bash
 gh pr create --title "<title>" --body "<self-audit, touched-file table, declared stubs, out-of-scope changes, checks run>"
-gh pr view --json url,isDraft,state
+gh pr view --json url,isDraft,state,headRefOid
 \`\`\`
-A pushed branch with no PR is an incomplete task, and the PR must NOT be a draft. Confirm \`isDraft:false\` in the output above and report the URL.
+A pushed branch with no PR is an incomplete task, and the PR must NOT be a draft. Confirm \`isDraft:false\` in the output above and report the URL and the head commit SHA (\`headRefOid\`) — the Verifier's verdict will be tied to that commit. If this slice depends on a PR that has not merged yet, stack it: add \`--base <parent-branch>\` so it cannot merge first.
 
 Rules:
 - Do not write new feature code during closeout except for minimal fixes required to satisfy the current Acceptance Criteria.
@@ -736,19 +742,22 @@ Rules:
 export const VERIFIER_PROMPT = `You are a Verifier. You did not write this code. Your job is to decide whether the Pull Request actually satisfies the Acceptance Criteria in HANDOFF.md — nothing more, nothing less. You APPROVE or REJECT; you do not edit code, push commits, or fix things you see.
 
 Authoritative inputs:
-1. The PR description, only for the Builder's self-audit, declared stubs, declared out-of-scope changes, and any pasted Builder Brief.
+1. The PR description, only for the Builder's self-audit, declared stubs, declared out-of-scope changes, and any pasted Builder Brief. It is the Builder's claim, not evidence: never accept its reported check results in place of running the gates yourself.
 2. The base-version HANDOFF.md for the slice's Acceptance Criteria.
 3. The PR diff.
 
 META-PR EXCEPTION: If HANDOFF.md itself is changed by this PR, do NOT use the changed HANDOFF.md as the scope document. Treat the Builder Brief / Acceptance Criteria pasted into the PR description as the authoritative scope. If the PR description does not contain a Builder Brief, switch to the dedicated META-PR Verifier prompt and stop here.
 
-Setup — check out the branch and capture the diff:
+Setup — check out the PR and capture the diff:
 \`\`\`bash
 git fetch origin --prune
-git checkout <branch-name>
-git log --oneline main..HEAD
-git diff --stat main..HEAD
+gh pr checkout <PR number>             # without gh: git checkout <branch-name> && git pull --ff-only
+git rev-parse HEAD                     # your verdict covers this commit only — record it
+git log --oneline origin/main..HEAD
+git diff --stat origin/main...HEAD     # three dots: changes since the merge base
+gh pr checks <PR number>               # record CI status on this commit
 \`\`\`
+Diff against the merge base, exactly as written. Two dots, or a stale local main, report unrelated files as changed the moment main moves. For a stacked PR, substitute its base branch for \`origin/main\`.
 
 Instructions:
 1. Read the PR description, the base-version HANDOFF.md, and the PR diff first. Read additional files only when a specific Acceptance Criterion cannot be evaluated otherwise, and name that reason.
@@ -762,11 +771,12 @@ Instructions:
 <test>        # if the project has one
 <build>       # e.g. pnpm build
 \`\`\`
-If the project has no CI, this local run is the only gate there is. A red gate is a REJECT.
-5. Flag changes OUT OF SCOPE relative to the slice: unrelated refactors, dependency changes, formatting churn, new files, or edits outside the allowlist.
+If the project has no CI, this local run is the only gate there is. A red gate is a REJECT. If a gate cannot be run, mark it FAIL as "unverifiable" and say why — do not guess. Make any grep gate print an explicit result (\`<grep> && echo FAIL || echo OK\`) so empty output is never ambiguous.
+5. Flag changes OUT OF SCOPE relative to the slice: unrelated refactors, dependency changes, formatting churn, new files, or edits outside the allowlist. Removing code that only consumed a deleted or renamed symbol is expected cleanup, not scope creep, when the file is on the allowlist.
 6. Compare declared stubs / TODOs in the PR description against the diff. Undeclared stubs or skipped checks are findings.
 7. Green is not shipped. If the change is visual or depends on live external data, confirm the code matches spec but state that a human must eyeball the rendered preview or run a real before/after before merge — do not blind-approve appearance.
-8. Return a final verdict: APPROVE (all criteria met; any minor, declared, low-risk out-of-scope changes are noted as follow-ups, not blockers) or REJECT (one or more criteria unmet, unverifiable, a red gate, or materially out of scope).
+8. If you find something outside the Acceptance Criteria that looks like a real defect, record it in the notes as "POSSIBLE DEFECT:". It does not change the verdict; the gatekeeper answers it before merge.
+9. Return a final verdict, last, after the evidence it rests on: APPROVE (all criteria met; any minor, declared, low-risk out-of-scope changes are noted as follow-ups, not blockers) or REJECT (one or more criteria unmet, unverifiable, a red gate, or materially out of scope). State the head commit SHA the verdict covers.
 
 Do not suggest fixes. Do not write code. Your output is a verdict report.`;
 
@@ -784,11 +794,11 @@ Authorized change:
 Rules:
 1. This amendment authorizes ONLY the change named above. It is not an invitation to revisit, refactor, or "improve" anything else you noticed.
 2. All original Acceptance Criteria, constraints, and forbidden files remain in force.
-3. Apply the change on the SAME branch and push to the SAME PR. Do not open a new PR.
+3. Apply the change as a NEW commit on the SAME branch and push to the SAME PR. Do not open a new PR, force-push, or amend a pushed commit.
 4. If the amendment reveals yet another file outside the allowlist, STOP and report again. Do not chain expansions on your own authority.
 5. Re-run the project's real checks by their exact script names before pushing.
 
-When done, report: the diff summary of the amendment commit, the check results, and the PR URL.`;
+When done, report: the diff summary of the amendment commit, the check results, the PR URL, and the new head commit SHA — the earlier verdict does not cover it, so the Verifier re-runs on that commit.`;
 
 export const CALIBRATION_DEBRIEF_PROMPT = `You just completed the first slice of work on this repository using the
 Agent Handoff Framework. This was a calibration run — the point was not
@@ -945,10 +955,9 @@ either way; declaring them here is faster than getting a REJECT.)_
 ### Tests run
 
 \`\`\`
-$ pnpm test
-... 14 passed, 0 failed
-$ pnpm typecheck
-... 0 errors
+$ <test script — exact name from package.json> — 14 passed, 0 failed
+$ <typecheck script> — 0 errors
+$ <build script> — ok
 \`\`\`
 
 ### What the next Builder needs to know
@@ -970,7 +979,7 @@ export const VERIFIER_PR_COMMENT = `## Verifier Report
 **Context:** clean — no prior slices loaded
 **Builder model:** <provider/model id from PR>
 **Slice:** <slice name from HANDOFF.md>
-**Verdict:** <APPROVE | REJECT>
+**PR head:** <commit SHA this verdict covers>
 
 ---
 
@@ -979,6 +988,15 @@ export const VERIFIER_PR_COMMENT = `## Verifier Report
 - [PASS] <criterion 1> — evidence: \`src/api/routes.ts:42\`
 - [PASS] <criterion 2> — evidence: \`src/api/routes.ts:67\`
 - [FAIL] <criterion 3> — evidence: \`src/api/routes.ts:88\` (returns 500 on empty body, criterion required 400)
+
+### Gates run
+
+- [PASS] typecheck — \`<exact script>\`
+- [PASS] build — \`<exact script>\`
+- [PASS] tests — \`<exact script>\`: 14 passed, 0 skipped (expected 14)
+- CI on this commit: <green | red | none configured>
+
+_(Run them yourself, against the merge base: \`git diff --stat origin/main...HEAD\`. A gate that could not be run is a FAIL, marked "unverifiable".)_
 
 ### Out-of-scope changes
 
@@ -998,12 +1016,18 @@ _(or "None observed".)_
 <2–4 sentences max. Describe WHAT is broken or out of scope, not HOW to fix it.
 Example: "Endpoint is wired up but the empty-body error path is unhandled.
 Recommend REJECT and return to Builder. The logger refactor and the new lodash
-dependency should be split into their own slices.">
+dependency should be split into their own slices."
+Prefix anything outside the Acceptance Criteria that looks like a real defect
+with "POSSIBLE DEFECT:" — it does not change the verdict, but it needs an
+answer before merge.>
 
 ---
 
-_Verifier rules: read only the diff and HANDOFF.md, return a verdict with
-evidence, do not propose code changes, do not refactor, do not write code._
+**Verdict:** <APPROVE | REJECT> — covers commit <PR head SHA> only
+
+_Verifier rules: read only the diff and HANDOFF.md, run the gates yourself,
+return a verdict with evidence, do not propose code changes, do not refactor,
+do not write code. The verdict comes last so it follows from the evidence._
 `;
 
 /* --- LIBRARY INDEX — grouped by execution scenario ------------------------ */
@@ -1140,7 +1164,7 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         whenToUse:
           "Only when needed: the Builder STOPs on a non-allowlisted file, or a Verifier FAIL is a real but small defect. Never for expanding the slice.",
         context:
-          "Send in the same Builder session (or with the PR branch checked out). Names one file set and one reason; everything else in the original scope stands. The alternative — re-issuing the full prompt — throws away work that already passed.",
+          "Send in the same Builder session (or with the PR branch checked out). Names one file set and one reason; everything else in the original scope stands. The alternative — re-issuing the full prompt — throws away work that already passed. Afterwards, add any newly authorized file to the Verifier's allowlist and re-run the Verifier on the new head commit.",
         body: AMENDMENT_PROMPT,
         toastLabel: "Amendment prompt copied",
       },
@@ -1166,7 +1190,7 @@ export const PROMPT_LIBRARY: ReadonlyArray<{
         filename: "verifier-report.md",
         title: "Verifier PR comment — fill-in template",
         whenToUse:
-          "The Verifier posts this as the first comment on the PR, with the verdict line at the top.",
+          "The Verifier posts this as the first comment on the PR. The verdict line comes last, after the evidence it rests on, and names the commit it covers.",
         context:
           "Mirrors the Builder PR description so a human can compare claim against verdict in one scan. No fixes, no refactors.",
         body: VERIFIER_PR_COMMENT,
@@ -1210,7 +1234,7 @@ export const BUILD_VERIFY_STAGES = [
     tag: "A",
     actor: "Advisor",
     role: "Scopes the slice, grounds the prompts",
-    body: "Does the recon before any prompt exists: greps the repo to pre-confirm facts — file paths, line numbers, every reference to a symbol being touched — and drafts the Builder and Verifier prompts against that evidence. When the verdict returns, the Advisor interprets it (real defect, or a defect in the check itself?) and runs the post-merge housekeeping. The Advisor does not write the code and does not grade the PR.",
+    body: "Does the recon before any prompt exists: greps the repo to pre-confirm file paths, anchored line numbers, and every reference to a symbol being touched. Drafts the Builder and Verifier prompts from the same Acceptance Criteria, and puts nothing in a prompt that was not observed in the repo. When the verdict returns, the Advisor interprets it (real defect, or a defect in the check itself?) and runs the post-merge housekeeping. It does not write the code and does not grade the PR.",
   },
   {
     tag: "B",
@@ -1222,13 +1246,13 @@ export const BUILD_VERIFY_STAGES = [
     tag: "C",
     actor: "Verifier LLM",
     role: "Independent check",
-    body: "A different model in a fresh context window. Reads the PR description, PR diff, and base-version HANDOFF.md. Returns APPROVE or REJECT with evidence per Acceptance Criterion. Does not write code.",
+    body: "A different model in a fresh context window. Reads the PR description, PR diff, and base-version HANDOFF.md. Runs the gates itself, diffs against the merge base, and returns APPROVE or REJECT with evidence per Acceptance Criterion — a verdict that covers one head commit. Does not write code.",
   },
   {
     tag: "D",
     actor: "You (gatekeeper)",
     role: "Merges or returns",
-    body: "Reviews the Verifier's verdict — weighed against the Advisor's read on whether any FAIL is a real defect or a defect in the check itself. APPROVE → merge to main and run the next Builder; file a follow-up issue for any minor, out-of-scope cleanup the Verifier noted. REJECT → reopen the slice and send the verdict back to the Builder.",
+    body: "Reviews the Verifier's verdict alongside the Advisor's triage. APPROVE → confirm the approved commit is still the PR head, merge to main, and file a follow-up issue for any minor out-of-scope cleanup the Verifier noted. REJECT on a real defect → a small amendment goes back to the Builder on the same PR, and the Verifier re-runs on the new head commit.",
   },
 ] as const;
 
@@ -1243,7 +1267,7 @@ export const BUILD_VERIFY_PRINCIPLES = [
   },
   {
     title: "Review-input-first reading",
-    body: "The Verifier starts from the PR description, diff, and scope document. It may inspect additional files only when a specific Acceptance Criterion cannot be evaluated otherwise, and it should name that reason in the report.",
+    body: "The Verifier starts from the PR description, diff, and scope document. It may inspect additional files only when a specific Acceptance Criterion cannot be evaluated otherwise, and it should name that reason in the report. The PR description is the Builder's claim about the work, never evidence of it.",
   },
   {
     title: "Verdict, not advice",
@@ -1251,7 +1275,7 @@ export const BUILD_VERIFY_PRINCIPLES = [
   },
   {
     title: "The Verifier runs the gates, not just reads the diff",
-    body: "Reading the diff tells the Verifier what changed; it does not prove the tree still compiles. A mature Verifier checks out the branch and runs the project's real gates — typecheck, build, tests — by their exact script names (read package.json; never assume a script like 'npm test' exists), plus any forbidden-artifact greps, before forming a verdict. Review inputs are how it understands scope; running the gates is how it earns the verdict. When a repo has no CI to lean on, that local run is the only gate there is.",
+    body: "Reading the diff tells the Verifier what changed; it does not prove the tree still compiles. A mature Verifier checks out the branch and runs the project's real gates — typecheck, build, tests — by their exact script names (read package.json; never assume a script like 'npm test' exists), plus any forbidden-artifact greps, before forming a verdict. It diffs against the merge base (origin/main...HEAD, three dots) so a main that moved cannot leak unrelated files into the scope check, and it records the head commit: a verdict covers that commit and no later one. Review inputs are how it understands scope; running the gates is how it earns the verdict. When a repo has no CI to lean on, that local run is the only gate there is.",
   },
   {
     title: "Behavior, not shape",
@@ -1271,17 +1295,21 @@ export const BUILD_VERIFY_PRINCIPLES = [
 export const VERDICT_TRIAGE = {
   headline: "Read the verdict before you obey it.",
   intro:
-    "A Verifier can FAIL a correct PR. Its checks are authored artifacts — subject to the same defects as any other spec — so a REJECT is evidence to be read, not a command to be obeyed.",
+    "A Verifier can FAIL a correct PR. Its checks are authored artifacts — subject to the same defects as any other spec — so a REJECT is evidence to be read, not a command to be obeyed. Open the cited file:line in the actual diff; never triage from the verdict text alone.",
   question:
     "Is the cited file:line a real defect — or is the check itself the bug?",
   routes: [
     {
       label: "Real defect",
-      body: "Send a small, surgical amendment back to the Builder that fixes only the flagged issue. Do not re-issue the full slice prompt — the rest of the work already passed.",
+      body: "Send a small, surgical amendment back to the Builder that fixes only the flagged issue. Do not re-issue the full slice prompt — the rest of the work already passed. The amendment is a new commit, so the Verifier re-runs on the new head, with any newly authorized file added to its allowlist.",
     },
     {
       label: "Defective check",
       body: "Recommend merging anyway, with a one-line explanation on the PR. Then fix the defect where it lives — in the prompt template — so the same spurious FAIL never runs again.",
+    },
+    {
+      label: "Unclear",
+      body: "Do not guess in either direction. Name the evidence that would settle it — a command's output, a rendered screenshot, a reproduction — and get it before recommending merge or amendment.",
     },
   ],
   spuriousShapes: {
@@ -1300,7 +1328,7 @@ export const VERDICT_TRIAGE = {
     },
     {
       title: "“PR is up” and “merged” are claims, not facts",
-      body: "Verify the artifact before acting on the report: the PR exists and is not a draft, the verdict describes this diff, the merge commit is actually on main. A verdict whose details do not match the PR is worth less than the diff itself.",
+      body: "Verify the artifact before acting on the report: the PR exists and is not a draft, the verdict describes this diff, the merge commit is actually on main. A verdict whose details do not match the PR is worth less than the diff itself. An APPROVE covers exactly one commit: if the PR head moved after the verdict, the approval is stale — re-verify.",
     },
   ],
   escalationLink:
@@ -1350,7 +1378,7 @@ export const ESCALATION_RULE = {
 export const CEREMONY_SIZING = {
   headline: "The loop is a tool, not a tax.",
   intro:
-    "Not every change earns the full round-trip. Size the ceremony to the risk — and hold the gates constant no matter which path a change takes.",
+    "Not every change earns the full round-trip. Size the ceremony to the risk — and hold the gates constant no matter which path a change takes. The same sizing applies inside the loop: a one-line fix earns three to five verifier checks, not twelve.",
   fullLoop: {
     label: "Run the full loop when…",
     items: [
@@ -1413,35 +1441,49 @@ formats keep that signal usable.
 ## The loop
 
 \`\`\`
-                  HANDOFF.md
-                      │
-                      ▼
    ┌───────────────────────────────────┐
-   │  1. BUILDER LLM                   │
+   │  1. ADVISOR                       │
+   │  Recon on the real repo           │
+   │  Scopes HANDOFF.md                │
+   │  Drafts both prompts from the     │
+   │  same Acceptance Criteria         │
+   └───────────────────────────────────┘
+                      │
+                      ▼  (HANDOFF.md)
+   ┌───────────────────────────────────┐
+   │  2. BUILDER LLM                   │
    │  Reads PROJECT.md + HANDOFF.md    │
    │  Writes code, runs tests          │
    │  Updates CHANGELOG.md             │
    │  Drafts next HANDOFF.md           │
-   │  Opens PR on feature/<slice>      │
+   │  Opens PR on <type>/<slice>       │
    └───────────────────────────────────┘
                       │
                       ▼  (PR opened)
    ┌───────────────────────────────────┐
-   │  2. VERIFIER LLM   (different     │
+   │  3. VERIFIER LLM   (different     │
    │     model, clean context)         │
    │  Reads PR body + diff + HANDOFF.md│
-   │  Returns APPROVE / REJECT         │
-   │  with one line of evidence per    │
+   │  Runs the gates, diffs against    │
+   │  the merge base                   │
+   │  Returns APPROVE / REJECT for one │
+   │  head commit, with evidence per   │
    │  Acceptance Criterion.            │
+   └───────────────────────────────────┘
+                      │
+                      ▼  (verdict)
+   ┌───────────────────────────────────┐
+   │  4. ADVISOR TRIAGE                │
+   │  Real defect, or defective check? │
    └───────────────────────────────────┘
                       │
               ┌───────┴────────┐
               ▼                ▼
-           APPROVE           REJECT
+           APPROVE        REJECT (real defect)
               │                │
-       merge to main     reopen slice;
-       run next Builder  send verdict
-                         back to Builder
+       gatekeeper merges  amendment on the
+       → next slice       same PR; re-verify
+                          the new head commit
 \`\`\`
 
 ---
@@ -1483,6 +1525,10 @@ of them run, and interprets the verdict that comes back.
    verify, and does not merge on its own judgment. The moment the Advisor
    starts grading diffs or pushing commits, the independence of the other
    two lanes is gone.
+7. **A verdict covers one commit.** The Verifier diffs against the merge
+   base (\`origin/<base>...HEAD\`, three dots) and records the head SHA it
+   graded. Any commit pushed after the verdict — an amendment included —
+   means the Verifier runs again before merge.
 
 ---
 
@@ -1492,12 +1538,17 @@ of them run, and interprets the verdict that comes back.
    — or you write it; the previous Builder may have drafted a starting point.
 2. **Run the Builder.** Use Builder prompt + Closeout prompt.
 3. **Run the Verifier.** Different model, clean context, Verifier prompt.
-4. **Gatekeeper decides.** Merge, reject, or merge with follow-up.
-5. **Move to next slice.** Only after the current PR is closed.
+4. **Triage the verdict.** The Advisor opens every cited file:line in the
+   diff. Real defect: a small amendment on the same PR, then re-verify the
+   new head. Defective check: recommend merge and fix the prompt. Unclear:
+   get the evidence that settles it.
+5. **Gatekeeper decides.** Confirm the approved commit is still the PR head
+   and CI is green; then merge, reject, or merge with follow-up.
+6. **Move to next slice.** Only after the current PR is closed.
 
-If the Verifier returns REJECT twice in a row on the same slice, escalate to
-the gatekeeper for re-scoping. The slice itself may be wrong, not the
-Builder's execution.
+If the Verifier returns a genuine REJECT twice in a row on the same slice —
+both surviving triage — escalate to the gatekeeper for re-scoping. The slice
+itself may be wrong, not the Builder's execution.
 
 ---
 
@@ -1603,6 +1654,7 @@ Task:
 
 Pre-flight — run this before writing any code:
 \`\`\`bash
+git status --porcelain   # must print nothing — otherwise STOP and report
 git checkout main
 git fetch origin --prune
 git merge --ff-only origin/main
@@ -1719,7 +1771,7 @@ export const PHASE_TWO_VERIFIER_PR_COMMENT = `## Phase 2 Verifier Report
 **Builder model:** <provider/model id from PR — or "human">
 **PR:** #<N> — <title>
 **PROJECT.md ref:** <commit SHA the audit was run against>
-**Verdict:** <APPROVE | REJECT>  — on REJECT name the route: \`REJECT (fix the code)\` or \`REJECT (spec-update-required)\`
+**PR head:** <commit SHA this verdict covers>
 ---
 ### Findings
 - [MAJOR] <finding> — evidence: \`src/...:line\`. Violates PROJECT.md
@@ -1756,6 +1808,8 @@ violates the explicit non-goal in PROJECT.md § Non-goals #1. Recommend
 REJECT (spec-update-required) and surface to the Gatekeeper to decide whether the
 non-goal should be amended in a separate PR.">
 ---
+**Verdict:** <APPROVE | REJECT>  — on REJECT name the route: \`REJECT (fix the code)\` or \`REJECT (spec-update-required)\`. Covers commit <PR head SHA> only.
+
 _Phase 2 Verifier rules: read only the diff and PROJECT.md, return a
 verdict with evidence, do not propose code changes, do not refactor, do
 not write code. The Verifier reports drift; the Gatekeeper decides what
@@ -1780,7 +1834,8 @@ Setup — check out the branch and run the project's real gates yourself
 \`\`\`bash
 git fetch origin --prune
 git checkout <branch-name>
-git diff --stat main..HEAD
+git rev-parse HEAD                   # your verdict covers this commit only — record it
+git diff --stat origin/main...HEAD   # three dots: changes since the merge base
 <install / typecheck / build / tests — by their exact script names from package.json; never assume \`npm test\` exists>
 \`\`\`
 A red gate is a REJECT no matter how clean the diff reads; if the project
@@ -1816,7 +1871,8 @@ What I want from you:
    PR was explicitly scoped as a combined code + spec PR and includes a
    Spec Update Proposal in the PR description.
 
-5. End with an explicit verdict line in this format:
+5. End with an explicit verdict line in this format, naming the commit
+   SHA it covers:
 
    VERDICT: APPROVE — no MAJOR findings; merge as-is or with MINOR fixes.
    VERDICT: REJECT  — do not merge. Name the route in parentheses:
@@ -1990,7 +2046,8 @@ Setup — check out the branch and capture the diff:
 \`\`\`bash
 git fetch origin --prune
 git checkout <branch-name>
-git diff --stat main..HEAD
+git rev-parse HEAD                   # your verdict covers this commit only — record it
+git diff --stat origin/main...HEAD   # three dots: changes since the merge base
 \`\`\`
 If this META-PR includes code (a Phase 1 mid-slice META-PR often does), also run the project's real gates by their exact script names from package.json / Makefile (typecheck, build, tests — never assume \`npm test\` exists); a red gate is a REJECT. For a HANDOFF.md-only change there is nothing to build — the gate is whether the new HANDOFF.md faithfully matches the Builder Brief.
 
@@ -2019,7 +2076,8 @@ Setup — check out the branch and capture the diff:
 \`\`\`bash
 git fetch origin --prune
 git checkout <branch-name>
-git diff --stat main..HEAD
+git rev-parse HEAD                   # your verdict covers this commit only — record it
+git diff --stat origin/main...HEAD   # three dots: changes since the merge base
 \`\`\`
 A PROJECT.md-only change has nothing to build — the gate is whether the diff implements the Spec Update Proposal faithfully and edits no section the Proposal did not name. If the spec change carries code follow-up, also run the project's real gates by their exact script names (never assume \`npm test\` exists); a red gate is a REJECT.
 
@@ -2154,8 +2212,7 @@ export const META_VERIFIER_PR_COMMENT = `## META-PR Verifier Report
 **PR:** #<N> — <title>
 **Spec doc affected:** <HANDOFF.md | PROJECT.md>
 **Scope used for verification:** <Builder Brief from PR description | Spec Update Proposal from PR description> — NOT the changed file in the diff
-**Verdict:** <APPROVE | REJECT>  (Phase 1)
-            <APPROVE | REJECT>  (Phase 2 — on REJECT name the route: \`REJECT (fix the edits)\` or \`REJECT (proposal-insufficient)\`)
+**PR head:** <commit SHA this verdict covers>
 
 ---
 
@@ -2193,6 +2250,12 @@ If none, write: "None observed."
 - "Edit 3 in the Proposal removes a non-goal but the diff retains it; this is a FAIL on Edit 3."
 - "The Proposal is internally consistent but Edit 2's 'after' text contradicts Edit 5's 'after' text. REJECT (proposal-insufficient)."
 - "All proposed edits implemented faithfully; one MINOR formatting drift in section heading capitalization (line 47).">
+
+---
+
+**Verdict:** <APPROVE | REJECT>  (Phase 1)
+            <APPROVE | REJECT>  (Phase 2 — on REJECT name the route: \`REJECT (fix the edits)\` or \`REJECT (proposal-insufficient)\`)
+Covers commit <PR head SHA> only.
 
 ---
 
@@ -2239,6 +2302,14 @@ export const REVISION_TABLE = [
     date: "2026-07",
     description:
       "The Advisor named as a third role — verdict triage, after-the-merge protocol, ceremony sizing, HANDOFF template upgrade, loop figure redrawn (PRs #30–#36).",
+    drawn: "Advisor",
+    checked: "RM",
+  },
+  {
+    rev: "2.1",
+    date: "2026-11",
+    description:
+      "Verdicts tied to a head commit — merge-base diffs, evidence-first report templates, anchored pre-confirmed facts, an Unclear triage route, re-verify after amendment (PR #88).",
     drawn: "Advisor",
     checked: "RM",
   },
@@ -2342,6 +2413,27 @@ export const FIELD_NOTES = [
       label: "Fixed in PR #35",
       href: "https://github.com/roymcfarland/agent_handoff_guide/pull/35",
     },
+  },
+  {
+    n: "11",
+    title: "The file that was both allowed and forbidden",
+    story:
+      "A slice prompt allowed 'the file that owns the form state' and forbade 'any other page.' The form state lived in a page. The Builder edited the one file that satisfied both rules at once; the Verifier failed it on the more specific one. The work was correct, and a full round went to proving it.",
+    rule: "Name allowlisted files by path, never by category. Forbid only files with zero overlap with the allowlist.",
+  },
+  {
+    n: "12",
+    title: "The script that did not exist",
+    story:
+      "A verifier prompt said to run the typecheck under its conventional script name. This repository called it something else. The Verifier found the real script, ran it, watched it pass — and still logged the missing one as a FAIL, because the prompt said to run it and it could not.",
+    rule: "Open the manifest before writing a verification block. Use the exact script names defined there; a conventional name is a guess.",
+  },
+  {
+    n: "13",
+    title: "The regression guard that forbade the fix",
+    story:
+      "A verifier prompt carried a guard — default-case output must be identical to before — next to a rule requiring a new sanitizing step on that same output. The step changed the output on purpose. The Builder did as instructed and was rejected on the guard.",
+    rule: "Re-read the builder prompt before the verifier prompt is final. Prefer positive criteria — 'this path applies X' — to 'output unchanged', which backfires when the slice exists to change behavior.",
   },
 ] as const;
 
@@ -2452,7 +2544,7 @@ export const BYLINE = {
     "https://github.com/roymcfarland/agent_handoff_guide/pulls?q=is%3Apr+is%3Amerged",
   bio: "Roy is a software engineer and the founder of Worksmith Labs. He operates multi-agent development workflows daily; this framework — and the @llm-workbench tooling on npm — is distilled from that practice, not theorized about it.",
   availability:
-    "Contact re: executive management roles, specifically operations + AI implementation. Licensed Colorado attorney. PMP + PMI-CPMAI, expected July/Aug 2026.",
+    "Contact re: executive management roles, specifically operations + AI implementation. Licensed Colorado attorney.",
   ctaLabel: "Reach out on LinkedIn",
   ctaHref: "https://www.linkedin.com/in/roymcfarland/",
   profiles: [

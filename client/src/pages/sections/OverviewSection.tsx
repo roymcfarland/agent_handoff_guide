@@ -23,7 +23,7 @@ export default function OverviewSection() {
       className="relative"
     >
       <div className="container grid gap-10 py-20 sm:py-24 lg:grid-cols-12 lg:gap-12 lg:py-28">
-        <aside className="lg:col-span-3 lg:border lg:border-border lg:bg-background/80 lg:p-5 lg:shadow-[var(--card-shadow)]">
+        <aside className="order-2 lg:order-none lg:sticky lg:top-24 lg:col-span-3 lg:self-start lg:border lg:border-border lg:bg-background/80 lg:p-5 lg:shadow-[var(--card-shadow)]">
           <div className="stamp">FILE 00 / OVERVIEW</div>
           <dl className="mt-6 space-y-4 font-mono text-[11px] uppercase tracking-widest text-muted-foreground">
             <div>

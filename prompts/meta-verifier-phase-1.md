@@ -22,7 +22,8 @@ Setup — check out the branch and capture the diff:
 ```bash
 git fetch origin --prune
 git checkout <branch-name>
-git diff --stat main..HEAD
+git rev-parse HEAD                   # your verdict covers this commit only — record it
+git diff --stat origin/main...HEAD   # three dots: changes since the merge base
 ```
 If this META-PR includes code (a Phase 1 mid-slice META-PR often does), also run the project's real gates by their exact script names from package.json / Makefile (typecheck, build, tests — never assume `npm test` exists); a red gate is a REJECT. For a HANDOFF.md-only change there is nothing to build — the gate is whether the new HANDOFF.md faithfully matches the Builder Brief.
 

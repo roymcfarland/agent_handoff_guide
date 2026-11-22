@@ -16,11 +16,12 @@ export function MetaPRScopeDiagram() {
       title="META-PR verification chain"
       legend="Scope · diff · verdict"
       caption="The PR body carries immutable scope. The branch’s spec file is evidence, not the rubric."
+      contentClassName="overflow-x-auto"
     >
       <svg
         viewBox={`0 0 ${vbW} ${vbH}`}
         xmlns="http://www.w3.org/2000/svg"
-        className="mx-auto block h-auto w-full max-w-6xl"
+        className="mx-auto block h-auto w-full min-w-[720px] max-w-6xl"
         role="img"
         aria-label="Meta pull request, scope in pull request body, verifier compares diff to scope."
       >

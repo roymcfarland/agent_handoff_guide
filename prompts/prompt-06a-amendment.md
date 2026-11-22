@@ -20,8 +20,8 @@ Authorized change:
 Rules:
 1. This amendment authorizes ONLY the change named above. It is not an invitation to revisit, refactor, or "improve" anything else you noticed.
 2. All original Acceptance Criteria, constraints, and forbidden files remain in force.
-3. Apply the change on the SAME branch and push to the SAME PR. Do not open a new PR.
+3. Apply the change as a NEW commit on the SAME branch and push to the SAME PR. Do not open a new PR, force-push, or amend a pushed commit.
 4. If the amendment reveals yet another file outside the allowlist, STOP and report again. Do not chain expansions on your own authority.
 5. Re-run the project's real checks by their exact script names before pushing.
 
-When done, report: the diff summary of the amendment commit, the check results, and the PR URL.
+When done, report: the diff summary of the amendment commit, the check results, the PR URL, and the new head commit SHA — the earlier verdict does not cover it, so the Verifier re-runs on that commit.

@@ -31,7 +31,9 @@ export function BuildVerifyDiagram() {
           The Verifier is a different model in a clean context. It reads the PR
           body, diff, and{" "}
           <code className="font-mono text-foreground">HANDOFF.md</code>, returns
-          a verdict with evidence, and never writes code. The human gatekeeper
+          a verdict with evidence for one head commit, and never writes code. A
+          real defect goes back to the Builder as a small amendment on the same
+          PR, and the Verifier re-runs on the new head. The human gatekeeper
           makes the final merge call.
         </>
       }
@@ -42,7 +44,7 @@ export function BuildVerifyDiagram() {
         xmlns="http://www.w3.org/2000/svg"
         className="mx-auto block h-auto min-w-[680px] w-full max-w-5xl"
         role="img"
-        aria-label="Diagram of the build-and-verify loop: the Advisor does the recon, scopes HANDOFF.md, and drafts both prompts. HANDOFF.md feeds the Builder LLM, which opens a PR. A different Verifier LLM in a clean context reads the PR body, diff, and HANDOFF.md and returns an APPROVE or REJECT verdict. The verdict passes through the Advisor's triage — real defect, or defective check? — and the human gatekeeper merges on APPROVE or sends the verdict back on REJECT."
+        aria-label="Diagram of the build-and-verify loop: the Advisor does the recon, scopes HANDOFF.md, and drafts both prompts. HANDOFF.md feeds the Builder LLM, which opens a PR. A different Verifier LLM in a clean context reads the PR body, diff, and HANDOFF.md and returns an APPROVE or REJECT verdict tied to the PR's head commit. The verdict passes through the Advisor's triage — real defect, or defective check? — and the human gatekeeper merges on APPROVE. On a REJECT for a real defect, an amendment goes back to the Builder on the same PR and the Verifier re-runs on the new head commit."
       >
         <defs>
           <pattern
@@ -239,7 +241,7 @@ export function BuildVerifyDiagram() {
               · writes code, runs tests
             </text>
             <text x="120" y="266" fontSize="12">
-              · opens PR on feature/&lt;slice&gt;
+              · opens PR on &lt;type&gt;/&lt;slice&gt;
             </text>
           </g>
 
@@ -290,7 +292,7 @@ export function BuildVerifyDiagram() {
               · reads PR body + diff + HANDOFF.md
             </text>
             <text x="510" y="248" fontSize="12">
-              · checks each Acceptance Criterion
+              · runs gates · checks each criterion
             </text>
             <text x="510" y="266" fontSize="12">
               · returns verdict + evidence (no fixes)
@@ -428,7 +430,7 @@ export function BuildVerifyDiagram() {
             fontWeight="700"
             fill={ink}
           >
-            verdict
+            verdict @ head SHA
           </text>
 
           <g>
@@ -475,8 +477,8 @@ export function BuildVerifyDiagram() {
               strokeDasharray="6 4"
               markerEnd={`url(#${pid}-arrow)`}
             />
-            <text x="272" y="408" fontSize="11" fontWeight="700" fill={red}>
-              REJECT — send verdict back
+            <text x="284" y="462" fontSize="11" fontWeight="700" fill={red}>
+              REJECT — amend · re-verify
             </text>
           </g>
         </g>
