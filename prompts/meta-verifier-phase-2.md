@@ -22,7 +22,8 @@ Setup — check out the branch and capture the diff:
 ```bash
 git fetch origin --prune
 git checkout <branch-name>
-git diff --stat main..HEAD
+git rev-parse HEAD                   # your verdict covers this commit only — record it
+git diff --stat origin/main...HEAD   # three dots: changes since the merge base
 ```
 A PROJECT.md-only change has nothing to build — the gate is whether the diff implements the Spec Update Proposal faithfully and edits no section the Proposal did not name. If the spec change carries code follow-up, also run the project's real gates by their exact script names (never assume `npm test` exists); a red gate is a REJECT.
 

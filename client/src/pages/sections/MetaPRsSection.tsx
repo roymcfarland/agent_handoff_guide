@@ -205,8 +205,8 @@ export default function MetaPRsSection() {
             </h3>
             <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
               Same shape as the Phase 2 Verifier comment, with two additions:
-              the verdict line records which scope document was used (Builder
-              Brief or Spec Update Proposal), and there's a dedicated section
+              the header records which scope document was used (Builder Brief
+              or Spec Update Proposal), and there's a dedicated section
               for "spec doc sections changed but not in the Proposal" — the
               silent-scope-creep catcher.
             </p>

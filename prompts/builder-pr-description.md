@@ -61,10 +61,9 @@ either way; declaring them here is faster than getting a REJECT.)_
 ### Tests run
 
 ```
-$ pnpm test
-... 14 passed, 0 failed
-$ pnpm typecheck
-... 0 errors
+$ <test script — exact name from package.json> — 14 passed, 0 failed
+$ <typecheck script> — 0 errors
+$ <build script> — ok
 ```
 
 ### What the next Builder needs to know

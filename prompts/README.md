@@ -34,7 +34,7 @@ curl -O https://raw.githubusercontent.com/roymcfarland/agent_handoff_guide/main/
 - [`prompt-06-verifier.md`](./prompt-06-verifier.md) — **Verifier — independent check on the PR.** After the Builder opens the PR. A DIFFERENT LLM, in a CLEAN context window.
 - [`prompt-06a-amendment.md`](./prompt-06a-amendment.md) — **Amendment — minimal scope extension, same slice.** Only when needed: the Builder STOPs on a non-allowlisted file, or a Verifier FAIL is a real but small defect. Never for expanding the slice.
 - [`builder-pr-description.md`](./builder-pr-description.md) — **Builder PR description — fill-in template.** Paste into the PR body when the Builder opens the PR. Fill in the self-audit, scope-of-change, and declared stubs.
-- [`verifier-report.md`](./verifier-report.md) — **Verifier PR comment — fill-in template.** The Verifier posts this as the first comment on the PR, with the verdict line at the top.
+- [`verifier-report.md`](./verifier-report.md) — **Verifier PR comment — fill-in template.** The Verifier posts this as the first comment on the PR. The verdict line comes last, after the evidence it rests on, and names the commit it covers.
 - [`prompt-07-calibration-debrief.md`](./prompt-07-calibration-debrief.md) — **Calibration Debrief — propose PROJECT.md edits.** Run at the end of the first slice's cycle. Produces a structured proposal, not a rewrite.
 - [`handoff-template.md`](./handoff-template.md) — **HANDOFF.md — slice template.** Copy into your repo as HANDOFF.md and fill per slice.
 - [`build-and-verify.md`](./build-and-verify.md) — **Build & Verify — drop-in workflow spec.** Save as docs/build-and-verify.md in your repo.

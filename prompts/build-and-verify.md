@@ -33,35 +33,49 @@ formats keep that signal usable.
 ## The loop
 
 ```
-                  HANDOFF.md
-                      │
-                      ▼
    ┌───────────────────────────────────┐
-   │  1. BUILDER LLM                   │
+   │  1. ADVISOR                       │
+   │  Recon on the real repo           │
+   │  Scopes HANDOFF.md                │
+   │  Drafts both prompts from the     │
+   │  same Acceptance Criteria         │
+   └───────────────────────────────────┘
+                      │
+                      ▼  (HANDOFF.md)
+   ┌───────────────────────────────────┐
+   │  2. BUILDER LLM                   │
    │  Reads PROJECT.md + HANDOFF.md    │
    │  Writes code, runs tests          │
    │  Updates CHANGELOG.md             │
    │  Drafts next HANDOFF.md           │
-   │  Opens PR on feature/<slice>      │
+   │  Opens PR on <type>/<slice>       │
    └───────────────────────────────────┘
                       │
                       ▼  (PR opened)
    ┌───────────────────────────────────┐
-   │  2. VERIFIER LLM   (different     │
+   │  3. VERIFIER LLM   (different     │
    │     model, clean context)         │
    │  Reads PR body + diff + HANDOFF.md│
-   │  Returns APPROVE / REJECT         │
-   │  with one line of evidence per    │
+   │  Runs the gates, diffs against    │
+   │  the merge base                   │
+   │  Returns APPROVE / REJECT for one │
+   │  head commit, with evidence per   │
    │  Acceptance Criterion.            │
+   └───────────────────────────────────┘
+                      │
+                      ▼  (verdict)
+   ┌───────────────────────────────────┐
+   │  4. ADVISOR TRIAGE                │
+   │  Real defect, or defective check? │
    └───────────────────────────────────┘
                       │
               ┌───────┴────────┐
               ▼                ▼
-           APPROVE           REJECT
+           APPROVE        REJECT (real defect)
               │                │
-       merge to main     reopen slice;
-       run next Builder  send verdict
-                         back to Builder
+       gatekeeper merges  amendment on the
+       → next slice       same PR; re-verify
+                          the new head commit
 ```
 
 ---
@@ -103,6 +117,10 @@ of them run, and interprets the verdict that comes back.
    verify, and does not merge on its own judgment. The moment the Advisor
    starts grading diffs or pushing commits, the independence of the other
    two lanes is gone.
+7. **A verdict covers one commit.** The Verifier diffs against the merge
+   base (`origin/<base>...HEAD`, three dots) and records the head SHA it
+   graded. Any commit pushed after the verdict — an amendment included —
+   means the Verifier runs again before merge.
 
 ---
 
@@ -112,12 +130,17 @@ of them run, and interprets the verdict that comes back.
    — or you write it; the previous Builder may have drafted a starting point.
 2. **Run the Builder.** Use Builder prompt + Closeout prompt.
 3. **Run the Verifier.** Different model, clean context, Verifier prompt.
-4. **Gatekeeper decides.** Merge, reject, or merge with follow-up.
-5. **Move to next slice.** Only after the current PR is closed.
+4. **Triage the verdict.** The Advisor opens every cited file:line in the
+   diff. Real defect: a small amendment on the same PR, then re-verify the
+   new head. Defective check: recommend merge and fix the prompt. Unclear:
+   get the evidence that settles it.
+5. **Gatekeeper decides.** Confirm the approved commit is still the PR head
+   and CI is green; then merge, reject, or merge with follow-up.
+6. **Move to next slice.** Only after the current PR is closed.
 
-If the Verifier returns REJECT twice in a row on the same slice, escalate to
-the gatekeeper for re-scoping. The slice itself may be wrong, not the
-Builder's execution.
+If the Verifier returns a genuine REJECT twice in a row on the same slice —
+both surviving triage — escalate to the gatekeeper for re-scoping. The slice
+itself may be wrong, not the Builder's execution.
 
 ---
 
