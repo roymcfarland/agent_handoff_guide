@@ -317,8 +317,9 @@ export function ReferenceArchitectureDiagram() {
           markerEnd={`url(#${pid}-ar)`}
         />
         <text
-          x="396"
+          x="420"
           y="226"
+          textAnchor="middle"
           fontFamily="'JetBrains Mono', ui-monospace, monospace"
           fontSize="10"
           fontWeight="700"
@@ -335,9 +336,9 @@ export function ReferenceArchitectureDiagram() {
           markerEnd={`url(#${pid}-ai)`}
         />
         <text
-          x="624"
-          y="320"
-          textAnchor="middle"
+          x="634"
+          y="318"
+          textAnchor="start"
           fontFamily="'JetBrains Mono', ui-monospace, monospace"
           fontSize="10"
           fontWeight="700"

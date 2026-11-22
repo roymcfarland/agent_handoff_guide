@@ -25,7 +25,7 @@ function Field({
         y={y}
         fontFamily="'JetBrains Mono', ui-monospace, monospace"
         fontWeight="700"
-        fontSize="8"
+        fontSize="9"
         letterSpacing="0.12em"
         fill={D.red}
       >
@@ -189,11 +189,11 @@ export function PhaseModelDiagram() {
           stroke={D.red}
           strokeWidth="1"
         />
-        {wrapWords(`EXIT · ${p1.exit}`, maxChars, 2).map((line, li) => (
+        {wrapWords(`EXIT · ${p1.exit}`, 58, 2).map((line, li, all) => (
           <text
             key={li}
             x={leftX + panelW / 2}
-            y={354 + li * 14}
+            y={(all.length === 1 ? 364 : 357) + li * 14}
             textAnchor="middle"
             fontFamily="'JetBrains Mono', ui-monospace, monospace"
             fontWeight="700"
@@ -216,7 +216,7 @@ export function PhaseModelDiagram() {
         />
         <text
           x={gateX + gateW / 2}
-          y={212}
+          y={200}
           textAnchor="middle"
           fontFamily="'JetBrains Mono', ui-monospace, monospace"
           fontWeight="700"
@@ -227,23 +227,24 @@ export function PhaseModelDiagram() {
         </text>
         <text
           x={gateX + gateW / 2}
-          y={232}
+          y={236}
           textAnchor="middle"
           fontFamily="'JetBrains Mono', ui-monospace, monospace"
           fontSize="8"
           fill={D.inkSoft}
         >
-          CLOSE
+          VERDICT:
         </text>
         <text
-          x={gateX - 8}
-          y={250}
-          textAnchor="end"
+          x={gateX + gateW / 2}
+          y={249}
+          textAnchor="middle"
           fontFamily="'JetBrains Mono', ui-monospace, monospace"
-          fontSize="8"
-          fill={D.inkSoft}
+          fontWeight="700"
+          fontSize="9"
+          fill={D.ink}
         >
-          VERDICT:
+          CLOSE
         </text>
         <path
           d={`M ${leftX + panelW} 218 H ${gateX}`}
@@ -292,11 +293,11 @@ export function PhaseModelDiagram() {
           stroke={D.ink}
           strokeWidth="1"
         />
-        {wrapWords(`NO EXIT · ${p2.duration}`, maxChars, 2).map((line, li) => (
+        {wrapWords(`NO EXIT · ${p2.duration}`, 58, 2).map((line, li, all) => (
           <text
             key={li}
             x={rightX + panelW / 2}
-            y={354 + li * 14}
+            y={(all.length === 1 ? 364 : 357) + li * 14}
             textAnchor="middle"
             fontFamily="'JetBrains Mono', ui-monospace, monospace"
             fontWeight="700"

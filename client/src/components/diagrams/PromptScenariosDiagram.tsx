@@ -2,10 +2,10 @@ import { useId } from "react";
 import { PROMPT_LIBRARY } from "@/lib/content";
 import { DiagramShell } from "./DiagramShell";
 import { D } from "./diagramTokens";
-import { wrapWords } from "./svgText";
+import { wrapSentences, wrapWords } from "./svgText";
 
 function cadenceLines(s: string): string[] {
-  return wrapWords(s, 44, 4);
+  return wrapSentences(s, 38, 4);
 }
 
 /** Fig. 5 — Prompt scenarios with generous vertical rhythm. */
@@ -166,7 +166,7 @@ export function PromptScenariosDiagram() {
                 y="288"
                 textAnchor="middle"
                 fontFamily="'JetBrains Mono', ui-monospace, monospace"
-                fontSize="8"
+                fontSize="9"
                 fill={D.inkSoft}
                 letterSpacing="0.05em"
               >

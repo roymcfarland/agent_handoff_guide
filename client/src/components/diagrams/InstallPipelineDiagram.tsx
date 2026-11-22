@@ -10,7 +10,7 @@ export function InstallPipelineDiagram() {
   const pid = `${uid}-inst`;
 
   const cardW = 400;
-  const cardH = 112;
+  const cardH = 104;
   const gap = 28;
   const top = 40;
   const padX = 48;
@@ -66,10 +66,11 @@ export function InstallPipelineDiagram() {
         {INSTALL_STEPS.map((step, i) => {
           const y = top + i * (cardH + gap);
           const cx = padX + cardW / 2;
-          const titlePart = step.title.includes("—")
-            ? (step.title.split("—")[1]?.trim() ?? step.title)
-            : step.title;
-          const lines = wrapWords(titlePart, 46, 3);
+          const [head, ...rest] = step.title.split("—").map(s => s.trim());
+          const lines = wrapWords(head, 48, 2);
+          const detail = rest.join(" — ");
+          const detailLines = detail ? wrapWords(detail, 54, 2) : [];
+          const detailY = y + 52 + lines.length * 17 + 4;
 
           return (
             <g key={step.n}>
@@ -114,6 +115,19 @@ export function InstallPipelineDiagram() {
                   fontWeight="600"
                   fontSize="13"
                   fill={D.ink}
+                >
+                  {line}
+                </text>
+              ))}
+              {detailLines.map((line, li) => (
+                <text
+                  key={`d-${li}`}
+                  x={cx}
+                  y={detailY + li * 14}
+                  textAnchor="middle"
+                  fontFamily="'JetBrains Mono', ui-monospace, monospace"
+                  fontSize="10"
+                  fill={D.inkSoft}
                 >
                   {line}
                 </text>
