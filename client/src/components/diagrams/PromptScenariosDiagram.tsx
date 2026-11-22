@@ -25,11 +25,12 @@ export function PromptScenariosDiagram() {
       title="Prompt scenario map"
       legend="Install → loop → recovery"
       caption="Work one column at a time. Artifact counts match the expandable cards further down the page."
+      contentClassName="overflow-x-auto"
     >
       <svg
         viewBox={`0 0 ${vbW} ${vbH}`}
         xmlns="http://www.w3.org/2000/svg"
-        className="mx-auto block h-auto w-full max-w-6xl"
+        className="mx-auto block h-auto w-full min-w-[760px] max-w-6xl"
         role="img"
         aria-label="Three columns for install, recurring slice loop, and recovery prompts with artifact counts."
       >

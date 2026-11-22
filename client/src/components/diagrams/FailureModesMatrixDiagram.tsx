@@ -25,11 +25,12 @@ export function FailureModesMatrixDiagram() {
       title="Failure-mode index"
       legend={`${FAILURE_MODES.length} classes · workflow, not model`}
       caption="Skim the map first; each numbered card below expands the same idea in full."
+      contentClassName="overflow-x-auto"
     >
       <svg
         viewBox={`0 0 ${vbW} ${vbH}`}
         xmlns="http://www.w3.org/2000/svg"
-        className="mx-auto block h-auto w-full max-w-3xl"
+        className="mx-auto block h-auto w-full min-w-[620px] max-w-3xl"
         role="img"
         aria-label={`Grid of ${FAILURE_MODES.length} numbered failure mode titles, from "${FAILURE_MODES[0].title}" through "${FAILURE_MODES[FAILURE_MODES.length - 1].title}".`}
       >
